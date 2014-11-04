@@ -36,8 +36,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_js_utils',
     'glims',
+    'permissions',
+    'guardian',
     'rest_framework',
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,6 +52,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+#Guardian setting
+ANONYMOUS_USER_ID = -1
 
 ROOT_URLCONF = 'glims.urls'
 
@@ -99,5 +110,17 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend','rest_framework.filters.OrderingFilter','rest_framework.filters.SearchFilter',),
+    'PAGINATE_BY': 10,                 # Default to 10
+    'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 100             # Maximum limit allowed when using `?page_size=xxx`.
 }
+
+PERMISSIONS_APP = {
+    'manage_template': 'glims/manage_permissions.html',
+    'manage_user_template' : 'glims/manage_user_permissions.html',
+    'manage_group_template' : 'glims/manage_group_permissions.html',
+}
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
