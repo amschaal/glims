@@ -1,0 +1,41 @@
+{% load class_tag %}
+
+<h2>Manage User Permissions</h2>
+<form onSubmit="manage_user_permissions()">{{user_form}}<button>Manage permissions</button></form>
+{% if permissions.users.items|length > 0 %}
+<table class="table">
+<tr><th>User</th><th>Permissions</th><th></th></tr>
+{% for u,perms in permissions.users.items %}
+<tr><td>{{u}}</td><td>{% for p in perms %}{{p}}{% if not forloop.last %}, {% endif %}{% endfor %}</td><td><a href="{% url 'user_permissions' model=model pk=obj.pk user_id=u.id%}">Modify</a></td></tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<h2>Manage Group Permissions</h2>
+<form onSubmit="manage_group_permissions()">{{group_form}}<button>Manage permissions</button></form>
+{% if permissions.groups.items|length > 0 %}
+<table class="table">
+<tr><th>Group</th><th>Permissions</th><th></th></tr>
+{% for g,perms in permissions.groups.items %}
+<tr><td>{{g}}</td><td>{% for p in perms %}{{p}}{% if not forloop.last %}, {% endif %}{% endfor %}</td><td><a href="{% url 'group_permissions' model=model pk=obj.pk group_id=g.id%}">Modify</a></td></tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if inherited|length > 0%}
+<h2>Inherited Permissions</h2>
+{% for obj in inherited %}
+<h3><a href="{% url 'permissions' model=obj|get_class pk=obj.pk%}">{{obj|get_class}}: {{obj}}</a></h3>
+{% endfor %}
+{% endif %}
+
+
+
+<script>
+function manage_user_permissions(){
+	window.location.href="{% url 'user_permissions' model=model pk=obj.pk user_id=0%}".replace('/0/','/'+document.getElementById("id_user").value+'/');
+}
+function manage_group_permissions(){
+	window.location.href="{% url 'group_permissions' model=model pk=obj.pk group_id=0%}".replace('/0/','/'+document.getElementById("id_group").value+'/');
+}
+</script>

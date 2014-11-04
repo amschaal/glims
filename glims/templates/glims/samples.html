@@ -1,0 +1,28 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Samples{% endblock %}
+{% block breadcrumbs %} Samples {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            <i class="fa fa-flask"></i> Samples
+            <a href="#" class="pull-right">Add</a>
+          </div>
+          <div class="widget-body medium no-padding">
+            <div class="table-responsive">
+              <table class="table">
+              	<thead>
+              	<tr><th>Name</th><th>Description</th><th>Study</th><th>Permission</th></tr>
+              	</thead>
+                <tbody>
+                {% for s in samples %}
+                  <tr><td><a href="{%url 'sample' pk=s.id%}">{{s.name}}</a></td><td>{{s.description}}</td><td>{{s.study}}</td><td><a href="{% url 'permissions' model='Sample' pk=s.id %}">Permissions</a></td></tr>
+				{% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

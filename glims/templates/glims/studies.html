@@ -1,0 +1,28 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Studies{% endblock %}
+{% block breadcrumbs %} Studies {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            <i class="fa fa-suitcase"></i> Studies
+            <a href="#" class="pull-right">Add</a>
+          </div>
+          <div class="widget-body medium no-padding">
+            <div class="table-responsive">
+              <table class="table">
+              	<thead>
+              	<tr><th>Name</th><th>Description</th><th>PI</th><th>Permissions</th></tr>
+              	</thead>
+                <tbody>
+                {% for s in studies %}
+                  <tr><td><a href="{%url 'study' pk=s.id%}">{{s.name}}</a></td><td>{{s.description}}</td><td>{{s.pi}}</td><td><a href="{% url 'permissions' model='Study' pk=s.id %}">Permissions</a></td></tr>
+				{% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

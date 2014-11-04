@@ -1,0 +1,6 @@
+<h2>{{status}}</h2>
+<form method="post" action=".">
+{% csrf_token %}
+{{form}}
+<button>Update</button>
+</form>

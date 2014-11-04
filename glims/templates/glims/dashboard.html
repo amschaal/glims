@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" ng-app="Dashboard">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Dashboard</title>
+
+  <link rel="stylesheet" href="/static/responsive/lib/bootstrap/css/bootstrap.css"/>
+
+  <link rel="stylesheet" href="/static/responsive/lib/font-awesome/css/font-awesome.css"/>
+
+  <link rel="stylesheet" href="/static/responsive/css/dashboard/dashboard.css"/>
+
+  <!-- SCRIPTS -->
+  <!--  <script src="/static/responsive/lib/angular/angular.js"></script>-->
+  <script src="/static/vendor/angular/angular.min.js"></script>
+  <script src="/static/responsive/lib/angular-cookies/angular-cookies.js"></script>
+  <script src="/static/responsive/lib/angular-bootstrap/ui-bootstrap.js"></script>
+  <script src="/static/responsive/lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="/static/responsive/lib/angular-ui-router/angular-ui-router.js"></script>
+  <script src="/static/responsive/js/dashboard.js"></script>
+  <script>
+  angular.module('Dashboard').config(['$httpProvider', function($httpProvider) {
+	    $httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+	}]);
+  </script>
+  <!-- SCRIPTS -->
+
+</head>
+<body ng-controller="MasterCtrl">
+  <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
+
+    <!-- Sidebar -->
+
+    <div id="sidebar-wrapper">
+      <ul class="sidebar">
+        <li class="sidebar-main">
+          <a href="{% url 'home' %}">
+            Dashboard
+            <span class="menu-icon glyphicon glyphicon-transfer" ng-click="toggleSidebar()"></span>
+          </a>
+        </li>
+        <li class="sidebar-title"><span>NAVIGATION</span></li>
+        <li class="sidebar-list">
+          <a href="{% url 'studies' %}">Studies <span class="menu-icon fa fa-suitcase"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="{% url 'samples' %}">Samples <span class="menu-icon fa fa-flask"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="{% url 'experiments' %}">Experiments <span class="menu-icon fa fa-rocket"></span></a>
+        </li>
+       <!--  
+       <li class="sidebar-list">
+          <a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="#/tables">Tables <span class="menu-icon fa fa-table"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="#">Servers <span class="menu-icon fa fa-tasks"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="#">Settings <span class="menu-icon fa fa-cogs"></span></a>
+        </li>
+        <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
+        <li class="sidebar-list">
+          <a href="#" target="_blank">Forums <span class="menu-icon fa fa-external-link"></span></a>
+        </li>
+         -->
+      </ul>
+      <div class="sidebar-footer">
+        <div class="col-xs-8">
+          <a href="http://genomecenter.ucdavis.edu">
+            Genome Center
+          </a>
+        </div>
+        <div class="col-xs-4">
+          <a href="#" target="_blank">
+            About
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Sidebar -->
+
+    <div id="content-wrapper">
+      <div class="page-content">
+
+        <!-- Header Bar -->
+
+        <div class="row header">
+          <div class="col-xs-12">
+            <div class="user pull-right">
+              <div class="item dropdown">
+                <a href="#" class="dropdown-toggle">
+                  <img src="/static/responsive/img/avatar.jpg">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="dropdown-header">
+                    {{user.first_name}} {{user.last_name}}
+                  </li>
+                  <li class="divider"></li>
+                  <li class="link">
+                    <a href="#">
+                      Profile
+                    </a>
+                  </li>
+                  <li class="link">
+                    <a href="#">
+                      Menu Item
+                    </a>
+                  </li>
+                  <li class="link">
+                    <a href="#">
+                      Menu Item
+                    </a>
+                  </li>
+                  <li class="divider"></li>
+                  <li class="link">
+                    <a href="#">
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="item dropdown">
+               <a href="#" class="dropdown-toggle">
+                  <i class="fa fa-bell-o"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="dropdown-header">
+                    Notifications
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#">Server Down!</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="meta">
+              <div class="page">
+                {% block page%}Dashboard{% endblock %}
+              </div>
+              <div class="breadcrumb-links">
+                {% block breadcrumbs%}Home / Dashboard{% endblock %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- End Header Bar -->
+
+        <!-- Main Content -->
+        {% block content %}
+        <section data-ui-view></section>
+        {% endblock %}
+      </div><!-- End Page Content -->
+    </div><!-- End Content Wrapper -->
+  </div><!-- End Page Wrapper -->
+</body>
+</html>
