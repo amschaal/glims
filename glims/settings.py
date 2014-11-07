@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'guardian',
     'rest_framework',
     'crispy_forms',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -124,3 +125,5 @@ PERMISSIONS_APP = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+SENDFILE_BACKEND = 'sendfile.backends.development'

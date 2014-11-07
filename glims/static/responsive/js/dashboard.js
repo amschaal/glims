@@ -1,10 +1,14 @@
 (function(){ 
-angular.module('Dashboard', ['ui.bootstrap', 'ui.router', 'ngCookies']);
+angular.module('Dashboard', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngResource', 'glimsModels','remoteTable']);
 'use strict';
 angular.module('Dashboard').config(function($interpolateProvider) {
 	  $interpolateProvider.startSymbol('{[');
 	  $interpolateProvider.endSymbol(']}');
 	});
+angular.module('Dashboard').config(['$resourceProvider', function($resourceProvider) {
+	  // Don't strip trailing slashes from calculated URLs
+	  $resourceProvider.defaults.stripTrailingSlashes = false;
+	}]);
 
 /**
  * Route configuration for the Dashboard module.

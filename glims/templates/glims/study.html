@@ -8,13 +8,15 @@
           <div class="widget-header">
             <i class="fa fa-rocket"></i> {{study.name}}
           </div>
-          <div class="widget-body medium no-padding">
+          <div class="widget-body no-padding">
               <table class="table">
               	<tbody>
                 	<tr><th>Description</th><td>{{study.description}}</td></tr>
                 </tbody>
               </table>
 			  <a href="{% url 'permissions' model='Study' pk=study.id %}">Permissions</a>
+			  {% include "glims/attached_files.html" with files=study.files.all model='study' pk=study.id %}
+			  {% include "glims/partials/notes.html" with object_id=study.id object=study %}
           </div>
         </div>
       </div>

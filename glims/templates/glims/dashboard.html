@@ -14,11 +14,16 @@
 
   <!-- SCRIPTS -->
   <!--  <script src="/static/responsive/lib/angular/angular.js"></script>-->
+  <script src="{{ STATIC_URL }}django_js_utils.js"></script>
+  <script src="{% url 'jsurls' %}"></script>
   <script src="/static/vendor/angular/angular.min.js"></script>
+  <script src="/static/vendor/angular/angular-resource.min.js"></script>
   <script src="/static/responsive/lib/angular-cookies/angular-cookies.js"></script>
   <script src="/static/responsive/lib/angular-bootstrap/ui-bootstrap.js"></script>
   <script src="/static/responsive/lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <script src="/static/responsive/lib/angular-ui-router/angular-ui-router.js"></script>
+  <script src="/static/js/resources/models.js"></script>
+  <script src="/static/vendor/angular-remote-table/angular-remote-table.js"></script>
   <script src="/static/responsive/js/dashboard.js"></script>
   <script>
   angular.module('Dashboard').config(['$httpProvider', function($httpProvider) {

@@ -14,12 +14,13 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import StudyViewSet, SampleViewSet, ExperimentViewSet
+from api import StudyViewSet, SampleViewSet, ExperimentViewSet, NoteViewSet
 
 router = routers.DefaultRouter()
 router.register(r'studies', StudyViewSet)
 router.register(r'samples', SampleViewSet)
 router.register(r'experiments', ExperimentViewSet)
+router.register(r'notes', NoteViewSet)
 
 urlpatterns += patterns('',
     # Examples:
@@ -32,6 +33,8 @@ urlpatterns += patterns('',
     url(r'^study/(?P<pk>[\-\w]+)/$', 'glims.views.study', name='study'),
     url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
     url(r'^experiment/(?P<pk>[\-\w]+)/$', 'glims.views.experiment', name='experiment'),
+    url(r'^file/(?P<pk>\d+)/get/$', 'glims.views.get_file', name='get_file'),
+    url(r'^files/(?P<model>\w+)/(?P<pk>[\-\w]+)/attach/$', 'glims.views.attach_file', name='attach_file'),
     url(r'^studies/$', 'glims.views.studies', name='studies'),
     url(r'^samples/$', 'glims.views.samples', name='samples'),
     url(r'^experiments/$', 'glims.views.experiments', name='experiments'),
@@ -39,5 +42,6 @@ urlpatterns += patterns('',
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^api/', include(router.urls)),
+    url(r'^jsurls.js$', 'django_js_utils.views.jsurls', {}, 'jsurls'),
 )
 
