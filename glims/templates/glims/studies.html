@@ -8,16 +8,18 @@
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Studies
-            <a href="#" class="pull-right">Add</a>
+            <a href="{% url 'create_study' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body no-padding" ng-controller="StudyController">
-				<div remote-table url="/api/studies/">
+				<div remote-table url="/api/studies/" ng-init="params={{query}}">
+					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->
 						<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
 						<tr ng-repeat="row in rows">
 				        <td><a href="{[ studyLink(row) ]}">{[ row.name ]}</a></td>
+				        <td>{[ row.group ]}</td>
 				        <td>{[ row.description ]}</td>
 				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
 				      </tr>

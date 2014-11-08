@@ -11,10 +11,11 @@
       	<div class="widget">
           <div class="widget-header">
             <i class="fa fa-rocket"></i> Experiments
-            <a href="#" class="pull-right">Add</a>
+            <a href="{% url 'create_experiment' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body no-padding" ng-controller="ExperimentController">
-				<div remote-table url="/api/experiments/">
+				<div remote-table url="/api/experiments/" ng-init="params={{query}}">
+					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->

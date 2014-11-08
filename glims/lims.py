@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from uuid import uuid4
 from django.contrib.contenttypes.generic import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -51,12 +51,14 @@ revoke_permissions(permissions=[],users=[])
 
 
 '''
+def generate_pk():
+    return str(uuid4())[:20]
 
 class Study(models.Model):
-    id = models.CharField(max_length=20,unique=True,primary_key=True,default=uuid4)
-    pi = models.ForeignKey(User)
+    id = models.CharField(max_length=20,unique=True,primary_key=True,default=generate_pk)
+    group = models.ForeignKey(Group)
     name = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
     files = GenericRelation('File')
     def __unicode__(self):
         return self.name
@@ -67,14 +69,15 @@ class Study(models.Model):
         permissions = (
             ('view', 'View Study'),
             ('admin', 'Administer Study'),
+            ('pi', 'Can PI a Study'),
         )
 
 class Sample(models.Model):
-    id = models.CharField(max_length=30,unique=True,primary_key=True,default=uuid4)
+    id = models.CharField(max_length=30,unique=True,primary_key=True,default=generate_pk)
     study = models.ForeignKey(Study, related_name="samples")
     name = models.CharField(max_length=100)
-    description = models.TextField()
-    received = models.DateField(null=True)
+    description = models.TextField(null=True,blank=True)
+    received = models.DateField(null=True,blank=True)
     files = GenericRelation('File')
     def __unicode__(self):
         return self.name
@@ -103,10 +106,10 @@ class Sample(models.Model):
 
     
 class Experiment(models.Model):
-    id = models.CharField(max_length=30,unique=True,primary_key=True,default=uuid4)
+    id = models.CharField(max_length=30,unique=True,primary_key=True,default=generate_pk)
     sample = models.ForeignKey(Sample, related_name="experiments")
     name = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
     files = GenericRelation('File')
     def __unicode__(self):
         return self.name

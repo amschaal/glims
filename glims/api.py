@@ -10,6 +10,7 @@ from permissions.manage import get_all_user_objects, has_all_permissions
 # from models import 
 from django.core.exceptions import ObjectDoesNotExist
 from glims.serializers import *
+from rest_framework import filters
 
 
 class CustomPermission(permissions.BasePermission):
@@ -55,14 +56,15 @@ class StudyViewSet(viewsets.ModelViewSet):
     serializer_class = StudySerializer
     permission_classes = [CustomPermission]
     model = Study
-    filter_fields = ('name', 'description','pi')
-    search_fields = ('name', 'description')
+    filter_fields = ('name', 'description','group','group__name')
+    search_fields = ('name', 'description','group__name')
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Study)
     
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
     permission_classes = [CustomPermission]
+    filter_fields = ('name', 'description','study__group__name')
     search_fields = ('name', 'description')
     model = Sample
     def get_queryset(self):
@@ -71,6 +73,7 @@ class SampleViewSet(viewsets.ModelViewSet):
 class ExperimentViewSet(viewsets.ModelViewSet):
     serializer_class = ExperimentSerializer
     permission_classes = [CustomPermission]
+    filter_fields = ('name', 'description','sample__study__group__name')
     search_fields = ('name', 'description')
     model = Experiment
     def get_queryset(self):
@@ -91,3 +94,13 @@ class NoteViewSet(viewsets.ModelViewSet):
     model = Note
     def get_queryset(self):
         return Note.objects.all()#get_all_user_objects(self.request.user, ['view'], Experiment)
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    serializer_class = GroupSerializer
+#     permission_classes = [CustomPermission]
+    filter_fields = ('permissions__codename','name') #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
+    search_fields=['name']
+    model = Group
+    def get_queryset(self):
+        return Group.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)

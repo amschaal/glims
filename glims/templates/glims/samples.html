@@ -8,10 +8,11 @@
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-flask"></i> Samples
-            <a href="#" class="pull-right">Add</a>
+            <a href="{% url 'create_sample' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body no-padding" ng-controller="SampleController">
-				<div remote-table url="/api/samples/">
+				<div remote-table url="/api/samples/" ng-init="params={{query}}">
+					<span ng-if="k != 'search'" ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->

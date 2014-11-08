@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.views.generic import UpdateView
 from django.template.context import RequestContext
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -6,7 +7,8 @@ from lims import *
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import FileForm
+from forms import FileForm, StudyForm, ExperimentForm, SampleForm
+import json
 
 # @login_required
 def home(request):
@@ -21,15 +23,55 @@ def sample(request,pk):
 def experiment(request,pk):
     experiment = Experiment.objects.get(pk=pk)
     return render(request, 'glims/experiment.html', {'experiment':experiment} ,context_instance=RequestContext(request))
+def pis(request):
+    return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
 def studies(request):
-    studies = get_all_user_objects(request.user, ['view'], Study)#Study.objects.all()
-    return render(request, 'glims/studies.html', {'studies':studies} ,context_instance=RequestContext(request))
+#     studies = get_all_user_objects(request.user, ['view'], Study)#Study.objects.all()
+    query = json.dumps(request.GET)
+    return render(request, 'glims/studies.html', {'query':query} ,context_instance=RequestContext(request))
 def samples(request):
-    samples = get_all_user_objects(request.user, ['view'], Sample)#Sample.objects.all()
-    return render(request, 'glims/samples.html', {'samples':samples} ,context_instance=RequestContext(request))
+    query = json.dumps(request.GET)
+#     samples = get_all_user_objects(request.user, ['view'], Sample)#Sample.objects.all()
+    return render(request, 'glims/samples.html', {'query':query} ,context_instance=RequestContext(request))
 def experiments(request):
-    experiments = get_all_user_objects(request.user, ['view'], Experiment)#Experiment.objects.all()
-    return render(request, 'glims/experiments.html', {'experiments':experiments} ,context_instance=RequestContext(request))
+    query = json.dumps(request.GET)
+#     experiments = get_all_user_objects(request.user, ['view'], Experiment)#Experiment.objects.all()
+    return render(request, 'glims/experiments.html', {'query':query} ,context_instance=RequestContext(request))
+
+def create_study(request):
+    if request.method == 'GET':
+        form = StudyForm()
+    elif request.method == 'POST':
+        form = StudyForm(request.POST)
+        if form.is_valid():
+            study = form.save()
+            return redirect(study.get_absolute_url()) 
+    return render(request, 'glims/create_study.html', {'form':form} ,context_instance=RequestContext(request))
+
+def create_sample(request):
+    if request.method == 'GET':
+        form = SampleForm()
+    elif request.method == 'POST':
+        form = SampleForm(request.POST)
+        if form.is_valid():
+            sample = form.save()
+            return redirect(sample.get_absolute_url()) 
+    return render(request, 'glims/create_sample.html', {'form':form} ,context_instance=RequestContext(request))
+
+def create_experiment(request):
+    if request.method == 'GET':
+        form = ExperimentForm()
+    elif request.method == 'POST':
+        form = ExperimentForm(request.POST)
+        if form.is_valid():
+            experiment = form.save()
+            return redirect(experiment.get_absolute_url()) 
+    return render(request, 'glims/create_experiment.html', {'form':form} ,context_instance=RequestContext(request))
+
+class SampleUpdate(UpdateView):
+    template_name = 'glims/create_sample.html'
+    model = Sample
+
 def get_file(request,pk):
     file = File.objects.get(id=pk)
     return sendfile(request, file.file.path)
