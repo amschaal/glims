@@ -1,0 +1,22 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Create project{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'projects' %}">Projects</a> / Create {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+        <div class="row">
+      	<div class="col-lg-10">
+      	<h3>Upload file</h3>
+      	
+        <form method="post" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{next}}"/>
+          {{form|crispy}}
+          <button class="btn">Create</button>
+        </form>
+        </div>
+        </div>
+      </div>
+{% endblock %}

@@ -19,6 +19,7 @@
 						<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
 						<tr ng-repeat="row in rows">
 				        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
+				        <td><a href="{[ projectLink(row) ]}">{[ row.project ]}</a></td>
 				        <td>{[ row.description ]}</td>
 				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
 				      </tr>

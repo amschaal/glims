@@ -266,25 +266,25 @@ function $Resolve(  $q,    $injector) {
 
   /**
    * @ngdoc function
-   * @name ui.router.util.$resolve#study
+   * @name ui.router.util.$resolve#project
    * @methodOf ui.router.util.$resolve
    *
    * @description
    * Studies a set of invocables that are likely to be used multiple times.
    * <pre>
-   * $resolve.study(invocables)(locals, parent, self)
+   * $resolve.project(invocables)(locals, parent, self)
    * </pre>
    * is equivalent to
    * <pre>
    * $resolve.resolve(invocables, locals, parent, self)
    * </pre>
-   * but the former is more efficient (in fact `resolve` just calls `study` 
+   * but the former is more efficient (in fact `resolve` just calls `project` 
    * internally).
    *
    * @param {object} invocables Invocable objects
    * @return {function} a function to pass in locals, parent and self
    */
-  this.study = function (invocables) {
+  this.project = function (invocables) {
     if (!isObject(invocables)) throw new Error("'invocables' must be an object");
     
     // Perform a topological sort of invocables to build an ordered plan
@@ -395,7 +395,7 @@ function $Resolve(  $q,    $injector) {
           fail(reason);
         }
         // Wait for any parameter that we have a promise for (either from parent or from this
-        // resolve; in that case study() will have made sure it's ordered before us in the plan).
+        // resolve; in that case project() will have made sure it's ordered before us in the plan).
         forEach(params, function (dep) {
           if (promises.hasOwnProperty(dep) && !locals.hasOwnProperty(dep)) {
             waitParams++;
@@ -488,7 +488,7 @@ function $Resolve(  $q,    $injector) {
    * of all invocables, as well as any inherited and local values.
    */
   this.resolve = function (invocables, locals, parent, self) {
-    return this.study(invocables)(locals, parent, self);
+    return this.project(invocables)(locals, parent, self);
   };
 }
 

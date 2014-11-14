@@ -16,6 +16,7 @@
               </table>
 			  <a href="{% url 'permissions' model='Experiment' pk=experiment.id %}">Permissions</a>
 			  {% include "glims/attached_files.html" with files=experiment.files.all model='experiment' pk=experiment.id  %}
+			  {% include "glims/partials/notes.html" with object_id=experiment.id object=experiment %}
           </div>
         </div>
       </div>

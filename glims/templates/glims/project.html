@@ -1,0 +1,41 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Project{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'projects' %}">Projects</a> / {{project.name}} {% endblock %}
+{% block content %}
+<script src="/static/js/pages/project.js"></script>
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            <i class="fa fa-rocket"></i> {{project.name}}
+          </div>
+          <div class="widget-body no-padding">
+              <table class="table">
+              	<tbody>
+                	<tr><th>Description</th><td>{{project.description}}</td></tr>
+                </tbody>
+              </table>
+             <div ng-controller="SamplesController" ng-init="setSampleDefaults({project:'{{project.id}}'});init();">
+				<h3>Samples</h3>
+				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
+				<table class="table" ng-show="samples.length">
+              	<thead><tr><th>ID</th><td>Name</td><td>Description</td><td>Received</td><td></td></tr></thead>
+              	<tbody>
+                	<tr ng-repeat="s in samples">
+                		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
+                		<td ng-if="s.editing"><input ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
+                		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
+                		<td ng-if="s.editing"><input ng-model="s.received" value="{[s.received]}" placeholder="(Optional) YYYY-MM-DD"/></td><td ng-if="!s.editing">{[s.received]}</td>
+                		<td ng-if="s.editing"><button class="btn btn-warning btn-sm" ng-click="cancel(s,$index)">Cancel</button><button class="btn btn-danger btn-sm" ng-click="deleteSample(s,$index)">Delete</button><button class="btn btn-success btn-sm" ng-click="save(s);">Save</button></td><td ng-if="!s.editing"><i style="margin-left:5px" class="glyphicon glyphicon-pencil pull-right" ng-click="s.editing=true"></i></td>
+                	</tr>
+                </tbody>
+              </table>
+				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
+			</div>
+			  <a href="{% url 'permissions' model='Project' pk=project.id %}">Permissions</a>
+			  {% include "attachments/partials/attached_files.html" with object=project files=project.files.all model='project' pk=project.id %}
+			  {% include "attachments/partials/notes.html" with object_id=project.id object=project %}
+          </div>
+        </div>
+      </div>
+{% endblock %}

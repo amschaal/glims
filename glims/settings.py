@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django_js_utils',
     'glims',
     'permissions',
+    'attachments',
     'guardian',
     'rest_framework',
     'crispy_forms',

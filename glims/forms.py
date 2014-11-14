@@ -1,19 +1,19 @@
 from django.forms import ModelForm
-from glims.lims import File, Study, Sample, Experiment
+from glims.lims import Project, Sample, Experiment#, File
 
-class FileForm(ModelForm):
-    class Meta:
-        model = File
-        fields = ['file','name','description']
+# class FileForm(ModelForm):
+#     class Meta:
+#         model = File
+#         fields = ['file','name','description']
 
-class UpdateFileForm(ModelForm):
-    class Meta:
-        model = File
-        fields = ['name','description']
+# class UpdateFileForm(ModelForm):
+#     class Meta:
+#         model = File
+#         fields = ['name','description']
         
-class StudyForm(ModelForm):
+class ProjectForm(ModelForm):
     class Meta:
-        model = Study
+        model = Project
 
 class SampleForm(ModelForm):
     class Meta:

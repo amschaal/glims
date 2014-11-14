@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, renderer_cla
 from rest_framework.response import Response
 from rest_framework.renderers import JSONPRenderer, JSONRenderer
 from glims.models import JobFactory
-from glims.lims import Study, Sample, Experiment
+from glims.lims import Project, Sample, Experiment
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
@@ -37,34 +37,35 @@ def update_job(request, job_id):
     return Response({})
 
 
-# class StudyViewset(viewsets.ViewSet):
-#     queryset = Study.objects.all()
+# class ProjectViewset(viewsets.ViewSet):
+#     queryset = Project.objects.all()
 #     """
-#     A simple ViewSet that for listing or retrieving studies.
+#     A simple ViewSet that for listing or retrieving projects.
 #     """
 #     def list(self, request):
-#         queryset = get_all_user_objects(request.user, ['view'], Study)
-#         serializer = StudySerializer(queryset, many=True)
+#         queryset = get_all_user_objects(request.user, ['view'], Project)
+#         serializer = ProjectSerializer(queryset, many=True)
 #         return Response(serializer.data)
 #     def retrieve(self, request, pk=None):
-#         queryset = get_all_user_objects(request.user, ['view'], Study)
-#         study = get_object_or_404(queryset, pk=pk)
-#         serializer = StudySerializer(study)
+#         queryset = get_all_user_objects(request.user, ['view'], Project)
+#         project = get_object_or_404(queryset, pk=pk)
+#         serializer = ProjectSerializer(project)
 #         return Response(serializer.data)
 
-class StudyViewSet(viewsets.ModelViewSet):
-    serializer_class = StudySerializer
+class ProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
     permission_classes = [CustomPermission]
-    model = Study
+    model = Project
     filter_fields = ('name', 'description','group','group__name')
     search_fields = ('name', 'description','group__name')
     def get_queryset(self):
-        return get_all_user_objects(self.request.user, ['view'], Study)
+        return get_all_user_objects(self.request.user, ['view'], Project)
     
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
     permission_classes = [CustomPermission]
-    filter_fields = ('name', 'description','study__group__name')
+    filter_fields = ('name', 'project', 'description','project__group__name')
+    ordering_fields = ('name', 'project__name','received')
     search_fields = ('name', 'description')
     model = Sample
     def get_queryset(self):
@@ -73,12 +74,12 @@ class SampleViewSet(viewsets.ModelViewSet):
 class ExperimentViewSet(viewsets.ModelViewSet):
     serializer_class = ExperimentSerializer
     permission_classes = [CustomPermission]
-    filter_fields = ('name', 'description','sample__study__group__name')
+    filter_fields = ('name', 'description','sample__project__group__name')
     search_fields = ('name', 'description')
     model = Experiment
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Experiment)
-
+"""
 class FileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer
 #     permission_classes = [CustomPermission]
@@ -94,7 +95,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     model = Note
     def get_queryset(self):
         return Note.objects.all()#get_all_user_objects(self.request.user, ['view'], Experiment)
-
+"""
 
 class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer

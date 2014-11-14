@@ -4,8 +4,8 @@ angular.module('Dashboard')
 
 function PIController($scope) {
 	$scope.headers=[{'name':'name','label':'Name'}];
-	$scope.studiesLink = function(pi){return django_js_utils.urls.resolve('studies')+"?group__name="+pi.name;};
-	$scope.samplesLink = function(pi){return django_js_utils.urls.resolve('samples')+"?study__group__name="+pi.name;};
-	$scope.experimentsLink = function(pi){return django_js_utils.urls.resolve('experiments')+"?sample__study__group__name="+pi.name;};
+	$scope.projectsLink = function(pi){return django_js_utils.urls.resolve('projects')+"?group__name="+pi.name;};
+	$scope.samplesLink = function(pi){return django_js_utils.urls.resolve('samples')+"?project__group__name="+pi.name;};
+	$scope.experimentsLink = function(pi){return django_js_utils.urls.resolve('experiments')+"?sample__project__group__name="+pi.name;};
 }
 

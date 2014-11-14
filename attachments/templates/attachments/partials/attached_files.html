@@ -1,5 +1,6 @@
+{% load attachment_helpers %}
 <h3>Files</h3>
-
+{% with files=object|object_files%}
 {% if files|length > 0%}
 <table class="table">
  	<thead>
@@ -14,4 +15,5 @@
 {% else %}
 <h4>There are no attached files.</h4>
 {% endif %}
+{% endwith%}
 <a class="btn btn-success" href="{% url 'attach_file' model=model pk=pk %}">Add file</a>
