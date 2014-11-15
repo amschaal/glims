@@ -1,0 +1,48 @@
+#banner{
+background-image: url(http://www.metabolics-turkey.com/wp-content/uploads/2013/12/dna21.jpg);/*http://www.realdesktop.eu/data/media/5/blue%20by%20nkspace%20%20devianart.jpg*/
+height: 250px;
+background-repeat: no-repeat;
+text-align: center;
+background-position-y: -330px;
+background-size: cover;
+padding: 100px;
+}
+.navbar-brand{
+background-image: url('images/gc_logo.png');
+background-repeat: no-repeat;
+padding-left:60px;
+}
+#logo{
+	border: thin solid grey;
+}
+/*
+#main{
+margin-top:75px;	
+margin-left:10px;
+margin-right:10px;
+}
+*/
+.red{
+	color:red;
+}
+.green{
+	color:green;
+}
+body{
+	max-width:1280px;
+	margin: 0 auto;
+	background: url(images/cream_pixels.png) top left repeat;
+}
+img {
+-ms-interpolation-mode: bicubic;
+border: 0;
+height: auto;
+max-width: 100%;
+vertical-align: middle;
+}
+.navbar a{
+	color:white;
+}
+.navbar a:hover{
+	color:#c99700;
+}
