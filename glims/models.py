@@ -2,6 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from glims.settings import ADMIN_EMAIL
 
+    
+class Plugin(models.Model):
+    id = models.CharField(max_length=50,primary_key=True)
+    app = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    description = models.TextField()
+    page = models.CharField(max_length=50) #choices= Project, Sample, Experiment
+    template = models.CharField(max_length=250) #template to render
+    def __unicode__(self):
+        return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
+    
+
+
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=100)
     subject = models.CharField(max_length=250)
@@ -53,6 +66,7 @@ class EmailRecipient(models.Model):
     address = models.CharField(max_length=75)
     sent = models.DateTimeField(auto_now=False, null=True, blank=True)
 #     def generate_email(self):
+
 
 
 # from django.db import models

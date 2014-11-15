@@ -1,0 +1,33 @@
+- model: glims.plugin
+  pk: attachments.project_files
+  fields:
+    app: attachments
+    name: Attach Project File
+    description: Attach arbitrary files
+    page: project
+    template: attachments/partials/attached_files.html
+- model: glims.plugin
+  pk: attachments.sample_files
+  fields:
+    app: attachments
+    name: Attach Sample File
+    description: Attach arbitrary files
+    page: sample
+    template: attachments/partials/attached_files.html
+- model: glims.plugin
+  pk: attachments.project_notes
+  fields:
+    app: attachments
+    name: Attach Project Note
+    description: Attach and respond to notes
+    page: project
+    template: attachments/partials/notes.html
+- model: glims.plugin
+  pk: attachments.sample_notes
+  fields:
+    app: attachments
+    name: Attach Sample Note
+    description: Attach and respond to notes
+    page: sample
+    template: attachments/partials/notes.html
+    

@@ -31,7 +31,7 @@
 		<ng-include src="'noteResponses.html'"></ng-include>
 	</div>
 </script> 
-<div ng-controller="NotesController" ng-init="setNoteDefaults({content_type:{{object|content_type_id}},object_id:'{{object_id}}'});init();">
+<div ng-controller="NotesController" ng-init="setNoteDefaults({content_type:{{object|content_type_id}},object_id:'{{pk}}'});init();">
 	<h3>Notes</h3>
 	<ng-include src="'noteResponses.html'"></ng-include>
 	<button ng-click="newNote()" class="btn btn-success">Add note</button>

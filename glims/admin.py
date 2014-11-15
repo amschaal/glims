@@ -1,6 +1,6 @@
 from django.contrib import admin
 from models import EmailTemplate
-from lims import Project, Sample, Experiment#, File
+from lims import Project, Sample, Experiment, ProjectType
 from guardian.admin import GuardedModelAdmin
 from  django.contrib.contenttypes.generic import GenericInlineModelAdmin, GenericStackedInline
 
@@ -25,9 +25,11 @@ class SampleAdmin(GuardedModelAdmin):
     model = Sample
 class ExperimentAdmin(GuardedModelAdmin):
     model = Experiment
-
+class ProjectTypeAdmin(GuardedModelAdmin):
+    model = ProjectType
 
 admin.site.register(EmailTemplate, EmailTemplateAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(Experiment, ExperimentAdmin)
+admin.site.register(ProjectType, ProjectTypeAdmin)

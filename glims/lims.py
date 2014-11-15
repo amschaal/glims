@@ -5,6 +5,7 @@ from django.contrib.contenttypes.generic import GenericForeignKey, GenericRelati
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from models import Plugin
 import operator
 '''
 Contains base structure for LIMS components
@@ -54,12 +55,19 @@ revoke_permissions(permissions=[],users=[])
 def generate_pk():
     return str(uuid4())[:20]
 
+class ProjectType(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    plugins = models.ManyToManyField(Plugin,null=True,blank=True)
+    def __unicode__(self):
+        return self.name
+
 class Project(models.Model):
     id = models.CharField(max_length=20,unique=True,primary_key=True,default=generate_pk)
+    type = models.ForeignKey(ProjectType)
     group = models.ForeignKey(Group)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
-    files = GenericRelation('File')
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
@@ -78,7 +86,6 @@ class Sample(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     received = models.DateField(null=True,blank=True)
-    files = GenericRelation('File')
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
@@ -110,7 +117,6 @@ class Experiment(models.Model):
     sample = models.ForeignKey(Sample, related_name="experiments")
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
-    files = GenericRelation('File')
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):

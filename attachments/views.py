@@ -23,6 +23,6 @@ def attach_file(request,model,pk):
             obj.content_type = ct
             obj.save()
             return redirect(next)
-    return render(request, 'glims/attach_file.html', {'form':form, 'obj': obj, 'next':next} ,context_instance=RequestContext(request))
+    return render(request, 'attachments/attach_file.html', {'form':form, 'obj': obj, 'next':next} ,context_instance=RequestContext(request))
             
             

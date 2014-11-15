@@ -33,8 +33,10 @@
 				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
 			</div>
 			  <a href="{% url 'permissions' model='Project' pk=project.id %}">Permissions</a>
-			  {% include "attachments/partials/attached_files.html" with object=project files=project.files.all model='project' pk=project.id %}
-			  {% include "attachments/partials/notes.html" with object_id=project.id object=project %}
+			  <h3>Plugins</h3>
+			  {% for plugin in plugins%}
+			  {% include plugin.template with object=project model='project' pk=project.id %}
+			  {% endfor %}
           </div>
         </div>
       </div>

@@ -15,14 +15,17 @@ def home(request):
     return render(request, 'glims/dashboard.html', {},context_instance=RequestContext(request))
 def project(request, pk):
     project = Project.objects.get(pk=pk)
+    plugins = project.type.plugins.filter(page='project')
 #     ct = ContentType.objects.get_for_model(project)
-    return render(request, 'glims/project.html', {'project':project} ,context_instance=RequestContext(request))
+    return render(request, 'glims/project.html', {'project':project,'plugins':plugins} ,context_instance=RequestContext(request))
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
-    return render(request, 'glims/sample.html', {'sample':sample} ,context_instance=RequestContext(request))
+    plugins = sample.project.type.plugins.filter(page='sample')
+    return render(request, 'glims/sample.html', {'sample':sample,'plugins':plugins} ,context_instance=RequestContext(request))
 def experiment(request,pk):
     experiment = Experiment.objects.get(pk=pk)
-    return render(request, 'glims/experiment.html', {'experiment':experiment} ,context_instance=RequestContext(request))
+    plugins = experiment.sample.project.type.plugins.filter(page='experiment')
+    return render(request, 'glims/experiment.html', {'experiment':experiment,'plugins':plugins} ,context_instance=RequestContext(request))
 def pis(request):
     return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
 def projects(request):
