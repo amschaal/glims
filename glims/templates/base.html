@@ -1,0 +1,117 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" ng-app="main">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+
+    <title>GLIMS</title>
+
+    <!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/css/style.css">
+	<link rel="stylesheet" href="/static/css/fam-icons.css">
+	<style> 
+	.starter-template {
+	  padding: 40px 15px;
+	  text-align: center;
+	}
+</style>
+    <!-- Optional theme -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/static/css/caes.css">
+{% block css %}
+{% endblock %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>	
+<script src="/static/angular/angular-file-upload-html5-shim.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-resource.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.min.js"></script>
+<script src="/static/angular/bootstrap-ui.js"></script>
+<script src="/static/angular/angular-file-upload.min.js"></script>
+<!-- <script type="text/javascript" src="url 'jsurls' "></script> -->
+
+<script>
+main = angular.module('main', ['ui.bootstrap','ngResource','angularFileUpload']);
+main.config(function($interpolateProvider) {
+	  $interpolateProvider.startSymbol('{[');
+	  $interpolateProvider.endSymbol(']}');
+	});
+main.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+}]);
+</script>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  	{% block banner %}
+	{% endblock banner %}
+	<div id="logo">
+				<a href="http://wwwdev.genomecenter.ucdavis.edu/"><img src="/static/css/images/gcheader.png" width="1280" height="100" alt="UC Davis Genome Center"></a>
+			</div>
+    <nav class="navbar navbar-static-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" ng-init="isCollapsed=true" ng-click="isCollapsed = !isCollapsed">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" collapse="isCollapsed">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'home'%}">Home</a></li>
+            {% if user.is_staff %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+          
+          {% block header-user %}
+          {% if user.is_authenticated %}
+          <ul class="nav navbar-nav pull-right">
+            <li><span class="glyphicon glyphicon-user"></span> {{ user.username }} <a href="{% url 'logout'%}?next={%url 'login'%}" style="display:inline-block">{% trans 'Sign Out' %}</a></li>
+            </ul>
+          {% else %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'login'%}">Login</a></li>
+			</ul>
+          {% endif %}
+          {% endblock header-user %}
+
+        </div>
+      </div>
+    </nav>
+
+	<div id="main" class="container-fluid">
+	{% block full_content %}
+	<div class="row">
+    <div id="content" class="col-xs-12 col-sm-12">
+	{% block content%}
+
+     {% endblock %}
+    </div><!-- /.container -->
+	</div>
+	{% endblock %}
+	</div>
+	{% block scripts %}
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+   	{% endblock %}
+  </body>
+</html>

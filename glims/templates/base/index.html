@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content%}
+	<div class="starter-template">
+        <h1>Bootstrap starter template</h1>
+        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    
+	    <div ng-controller="ButtonsCtrl">
+		    <h4>Single toggle</h4>
+		    <pre>{[singleModel]}</pre>
+		    <button type="button" class="btn btn-primary" ng-model="singleModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+		        Single Toggle
+		    </button>
+		    <h4>Checkbox</h4>
+		    <pre>{[checkModel]}</pre>
+		    <div class="btn-group">
+		        <button type="button" class="btn btn-primary" ng-model="checkModel.left" btn-checkbox>Left</button>
+		        <button type="button" class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</button>
+		        <button type="button" class="btn btn-primary" ng-model="checkModel.right" btn-checkbox>Right</button>
+		    </div>
+		    <h4>Radio</h4>
+		    <pre>{[radioModel]}</pre>
+		    <div class="btn-group">
+		        <button type="button" class="btn btn-primary" ng-model="radioModel" btn-radio="'Left'">Left</button>
+		        <button type="button" class="btn btn-primary" ng-model="radioModel" btn-radio="'Middle'">Middle</button>
+		        <button type="button" class="btn btn-primary" ng-model="radioModel" btn-radio="'Right'">Right</button>
+		    </div>
+		</div>
+      
+      </div>
+{% endblock %}
+     
+	{% block scripts %}
+       <script>
+    var ButtonsCtrl = function ($scope) {
+
+    	  $scope.singleModel = 1;
+
+    	  $scope.radioModel = 'Middle';
+
+    	  $scope.checkModel = {
+    	    left: false,
+    	    middle: true,
+    	    right: false
+    	  };
+    	};
+   	
+   	</script>
+   	{% endblock %}
