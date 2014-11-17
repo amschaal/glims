@@ -7,7 +7,7 @@
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-rocket"></i> {{project.name}}
+            <i class="fa fa-rocket"></i> {{project.name}}<a href="{% url 'permissions' model='Project' pk=project.id %}" class="pull-right">Permissions</a>
           </div>
           <div class="widget-body no-padding">
               <table class="table">
@@ -33,7 +33,6 @@
               </table>
 				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
 			</div>
-			  <a href="{% url 'permissions' model='Project' pk=project.id %}">Permissions</a>
 			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
         </div>

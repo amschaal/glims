@@ -46,37 +46,7 @@
             <span class="menu-icon glyphicon glyphicon-transfer" ng-click="toggleSidebar()"></span>
           </a>
         </li>
-        <li class="sidebar-title"><span>NAVIGATION</span></li>
-        <li class="sidebar-list">
-          <a href="{% url 'pis' %}">PIs <span class="menu-icon fa fa-group"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="{% url 'projects' %}">Projects <span class="menu-icon fa fa-suitcase"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="{% url 'samples' %}">Samples <span class="menu-icon fa fa-flask"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="{% url 'experiments' %}">Experiments <span class="menu-icon fa fa-rocket"></span></a>
-        </li>
-       <!--  
-       <li class="sidebar-list">
-          <a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="#/tables">Tables <span class="menu-icon fa fa-table"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="#">Servers <span class="menu-icon fa fa-tasks"></span></a>
-        </li>
-        <li class="sidebar-list">
-          <a href="#">Settings <span class="menu-icon fa fa-cogs"></span></a>
-        </li>
-        <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
-        <li class="sidebar-list">
-          <a href="#" target="_blank">Forums <span class="menu-icon fa fa-external-link"></span></a>
-        </li>
-         -->
+        {% include 'glims/partials/sidebar.html' %}
       </ul>
       <div class="sidebar-footer">
         <div class="col-xs-8">
