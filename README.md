@@ -1,29 +1,3 @@
 # README #
 
-@todo: Write readme
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+GLIMS is designed as a somewhat generic laboratory information management system.  Data follows a normalized workflow including projects, samples, and various types of experiments.  GLIMS is customizable via the creation of plugins in the form of django apps.
