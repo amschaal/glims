@@ -3,9 +3,10 @@ from glims.lims import Project, Sample, Experiment#, File, Note
 from django.contrib.auth.models import Group
 class ProjectSerializer(serializers.ModelSerializer):
     group = serializers.RelatedField(many=False)
+    type = serializers.RelatedField(many=False)
     class Meta:
         model = Project
-        fields = ('id','name','description','group')
+        fields = ('id','name','type','description','group')
 #         read_only_fields = ('',)
 
 class SampleSerializer(serializers.ModelSerializer):

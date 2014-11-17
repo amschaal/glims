@@ -17,12 +17,7 @@
                 </tbody>
               </table>
 			  <a href="{% url 'permissions' model='Sample' pk=sample.id %}">Permissions</a>
-			  {% if plugins|length > 0%}
-			  <h3>Plugins</h3>
-			  {% for plugin in plugins%}
-			  {% include plugin.template with object=sample model='sample' pk=sample.id %}
-			  {% endfor %}
-			  {% endif %}
+			  {% include 'glims/partials/plugins.html' with object=sample model='sample' pk=sample.id %}
           </div>
         </div>
       </div>

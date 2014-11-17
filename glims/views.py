@@ -15,15 +15,14 @@ def home(request):
     return render(request, 'glims/dashboard.html', {},context_instance=RequestContext(request))
 def project(request, pk):
     project = Project.objects.get(pk=pk)
-    inlines = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.INLINE_LAYOUT).order_by('weight')
-    tabs = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.TABBED_LAYOUT).order_by('weight')
-    #project.type.plugins.filter(page='project')
-#     ct = ContentType.objects.get_for_model(project)
+    inlines = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
+    tabs = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
     return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
-    plugins = sample.project.type.plugins.filter(page='sample')
-    return render(request, 'glims/sample.html', {'sample':sample,'plugins':plugins} ,context_instance=RequestContext(request))
+    inlines = ProjectTypePlugins.objects.filter(type=sample.project.type,layout=ProjectTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
+    tabs = ProjectTypePlugins.objects.filter(type=sample.project.type,layout=ProjectTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
+    return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 def experiment(request,pk):
     experiment = Experiment.objects.get(pk=pk)
     plugins = experiment.sample.project.type.plugins.filter(page='experiment')

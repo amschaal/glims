@@ -1,0 +1,10 @@
+{% for plugin in inlines%}
+{% include plugin.plugin.template %}
+{% endfor %}
+{% if tabs|length > 0%}
+<tabset>
+{% for plugin in tabs%}
+<tab heading="{{plugin.header}}">{% include plugin.plugin.template %}</tab>
+{% endfor %}
+</tabset>
+{% endif %}
