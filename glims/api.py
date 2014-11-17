@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [CustomPermission]
     model = Project
     filter_fields = ('name', 'description','group','group__name')
-    search_fields = ('name', 'description','group__name')
+    search_fields = ('name', 'description','group__name','type__name')
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Project)
     

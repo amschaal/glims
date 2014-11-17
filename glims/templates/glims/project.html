@@ -34,10 +34,7 @@
 				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
 			</div>
 			  <a href="{% url 'permissions' model='Project' pk=project.id %}">Permissions</a>
-			  <h3>Plugins</h3>
-			  {% for plugin in plugins%}
-			  {% include plugin.template with object=project model='project' pk=project.id %}
-			  {% endfor %}
+			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
         </div>
       </div>
