@@ -58,10 +58,25 @@ def generate_pk():
 class ProjectType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
-    plugins = models.ManyToManyField(Plugin,null=True,blank=True)
+    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ProjectTypePlugins')
     def __unicode__(self):
         return self.name
+    class Meta:
+        app_label = 'glims'
 
+
+class ProjectTypePlugins(models.Model):
+    INLINE_LAYOUT = 'inline'
+    TABBED_LAYOUT = 'tabbed'
+    LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
+    type = models.ForeignKey(ProjectType)
+    plugin = models.ForeignKey(Plugin)
+    weight = models.IntegerField(default=0)
+    layout = models.CharField(max_length=10,choices=LAYOUTS)
+    header = models.CharField(max_length=30, null=True, blank=True)
+    class Meta:
+        app_label = 'glims'
+    
 class Project(models.Model):
     id = models.CharField(max_length=20,unique=True,primary_key=True,default=generate_pk)
     type = models.ForeignKey(ProjectType)
