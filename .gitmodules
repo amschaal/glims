@@ -1,0 +1,3 @@
+[submodule "attachments"]
+	path = attachments
+	url = git@bitbucket.org:amschaal/attachments.git
