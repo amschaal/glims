@@ -1,3 +1,6 @@
 [submodule "attachments"]
 	path = attachments
 	url = git@bitbucket.org:amschaal/attachments.git
+[submodule "glims/static/vendor/angular-remote-table"]
+	path = glims/static/vendor/angular-remote-table
+	url = git@github.com:amschaal/angular-remote-table.git
