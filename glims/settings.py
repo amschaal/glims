@@ -40,10 +40,12 @@ INSTALLED_APPS = (
     'glims',
     'permissions',
     'attachments',
+    'proteomics',
     'guardian',
     'rest_framework',
     'crispy_forms',
     'django_extensions',
+    'django_hstore',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -53,6 +55,17 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "glims.context_processors.menus"
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -71,13 +84,21 @@ WSGI_APPLICATION = 'glims.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
+#     'default': {
+#         'ENGINE':'django.db.backends.mysql',
+#         'NAME': 'glims',
+#         'USER': 'dev',
+#         'PASSWORD': 'dev',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#     }
     'default': {
-        'ENGINE':'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'glims',
-        'USER': 'dev',
-        'PASSWORD': 'dev',
+        'USER': 'glims',
+        'PASSWORD': 'glims',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PORT': '5433',
     }
 }
 
@@ -128,3 +149,7 @@ PERMISSIONS_APP = {
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 SENDFILE_BACKEND = 'sendfile.backends.development'
+
+MENUS = (
+    'proteomics/menu.html',
+)

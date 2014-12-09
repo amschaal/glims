@@ -14,11 +14,14 @@ from glims.lims import Project, Sample, Experiment#, File
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
+        exclude = ('data','refs')
 
 class SampleForm(ModelForm):
     class Meta:
         model = Sample
+        exclude = ('data','refs')
 
 class ExperimentForm(ModelForm):
     class Meta:
         model = Experiment
+        exclude = ('data','refs')
