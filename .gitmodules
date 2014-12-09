@@ -4,3 +4,6 @@
 [submodule "glims/static/vendor/angular-remote-table"]
 	path = glims/static/vendor/angular-remote-table
 	url = git@github.com:amschaal/angular-remote-table.git
+[submodule "proteomics"]
+	path = proteomics
+	url = git@bitbucket.org:amschaal/proteomics_lims.git

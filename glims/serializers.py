@@ -14,11 +14,13 @@ class SampleSerializer(serializers.ModelSerializer):
 #     project_id = serializers.RelatedField(many=False)
     class Meta:
         model = Sample
+        exclude = ('data','refs')
 #         fields = ('id','sample_id','project_id','name','description')
         
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
+        exclude = ('data','refs')
         
 # class FileSerializer(serializers.ModelSerializer):
 #     class Meta:

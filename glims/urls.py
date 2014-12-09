@@ -4,6 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
+from proteomics import urls as proteomics_urls
 
 urlpatterns = patterns('',)
 # if USE_CAS:
@@ -50,7 +51,8 @@ urlpatterns += patterns('',
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
+    url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
     url(r'^api/', include(router.urls)),
-    url(r'^jsurls.js$', 'django_js_utils.views.jsurls', {}, 'jsurls'),
+    url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
 )
 

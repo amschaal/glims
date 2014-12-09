@@ -15,17 +15,17 @@ def home(request):
     return render(request, 'glims/dashboard.html', {},context_instance=RequestContext(request))
 def project(request, pk):
     project = Project.objects.get(pk=pk)
-    inlines = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
-    tabs = ProjectTypePlugins.objects.filter(type=project.type,layout=ProjectTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
+    inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
+    tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
     return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
-    inlines = ProjectTypePlugins.objects.filter(type=sample.project.type,layout=ProjectTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
-    tabs = ProjectTypePlugins.objects.filter(type=sample.project.type,layout=ProjectTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
+    inlines = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
+    tabs = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
     return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 def experiment(request,pk):
     experiment = Experiment.objects.get(pk=pk)
-    plugins = experiment.sample.project.type.plugins.filter(page='experiment')
+    plugins = experiment.sample.type.plugins.filter(page='experiment')
     return render(request, 'glims/experiment.html', {'experiment':experiment,'plugins':plugins} ,context_instance=RequestContext(request))
 def pis(request):
     return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
@@ -75,6 +75,7 @@ def create_experiment(request):
 class SampleUpdate(UpdateView):
     template_name = 'glims/create_sample.html'
     model = Sample
+    form_class = SampleForm
 
 """
 def get_file(request,pk):

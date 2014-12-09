@@ -55,31 +55,77 @@ revoke_permissions(permissions=[],users=[])
 def generate_pk():
     return str(uuid4())[:20]
 
-class ProjectType(models.Model):
+
+class ModelType(models.Model):
+    content_type = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
-    description = models.TextField(null=True,blank=True)
-    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ProjectTypePlugins')
+    description = models.TextField()
     def __unicode__(self):
-        return self.name
-    class Meta:
-        app_label = 'glims'
+        return "%s: %s" % (self.content_type, self.name)
+    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
+#   *fields - A postgres json field
+#       Contains the field definitions for custom model attributes
 
 
-class ProjectTypePlugins(models.Model):
+class ModelTypePlugins(models.Model):
     INLINE_LAYOUT = 'inline'
     TABBED_LAYOUT = 'tabbed'
     LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
-    type = models.ForeignKey(ProjectType)
+    type = models.ForeignKey(ModelType)
     plugin = models.ForeignKey(Plugin)
     weight = models.IntegerField(default=0)
     layout = models.CharField(max_length=10,choices=LAYOUTS)
     header = models.CharField(max_length=30, null=True, blank=True)
+
+
+
+from django_hstore import hstore
+class ExtensibleModel(models.Model):
+    type = models.ForeignKey(ModelType, null=True, blank=True)
+    data = hstore.DictionaryField()#schema=get_schema
+    refs = hstore.ReferencesField()
+    objects = hstore.HStoreManager()
     class Meta:
-        app_label = 'glims'
+        abstract = True
+
+"""
+        
+class MyModel(ExtensibleModel)
+    name = models.CharField(max_length=50)
+#https://docs.djangoproject.com/en/1.7/topics/db/models/#proxy-models    
+class MyModelExtended(MyModel):
+    class Meta:
+        proxy = True
+    def ref_field_options(self,field_name):
+        if field_name == 'run':
+            return Run.objects.filter(foo=bar).values('id','name')
+        ...
+"""
+# class ProjectType(models.Model):
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(null=True,blank=True)
+#     plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ProjectTypePlugins')
+#     def __unicode__(self):
+#         return self.name
+#     class Meta:
+#         app_label = 'glims'
+
+
+# class ProjectTypePlugins(models.Model):
+#     INLINE_LAYOUT = 'inline'
+#     TABBED_LAYOUT = 'tabbed'
+#     LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
+#     type = models.ForeignKey(ProjectType)
+#     plugin = models.ForeignKey(Plugin)
+#     weight = models.IntegerField(default=0)
+#     layout = models.CharField(max_length=10,choices=LAYOUTS)
+#     header = models.CharField(max_length=30, null=True, blank=True)
+#     class Meta:
+#         app_label = 'glims'
     
-class Project(models.Model):
+class Project(ExtensibleModel):
     id = models.CharField(max_length=20,unique=True,primary_key=True,default=generate_pk)
-    type = models.ForeignKey(ProjectType)
+#     type = models.ForeignKey(ProjectType)
     group = models.ForeignKey(Group)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
@@ -95,7 +141,7 @@ class Project(models.Model):
             ('pi', 'Can PI a Project'),
         )
 
-class Sample(models.Model):
+class Sample(ExtensibleModel):
     sample_id = models.CharField(max_length=30,unique=True)
     project = models.ForeignKey(Project, related_name="samples")
     name = models.CharField(max_length=100)
@@ -126,8 +172,7 @@ class Sample(models.Model):
     
         
 
-    
-class Experiment(models.Model):
+class Experiment(ExtensibleModel):
     id = models.CharField(max_length=30,unique=True,primary_key=True,default=generate_pk)
     sample = models.ForeignKey(Sample, related_name="experiments")
     name = models.CharField(max_length=100)
@@ -156,7 +201,8 @@ class Experiment(models.Model):
             if model == 'Project':
                 queries.append(Q(sample__project__pk__in = pks))
         return Experiment.objects.filter(reduce(operator.or_, queries))
-    
+
+
 # Attach a file to just about anything:
 # file = File(text='My wonderful note',created_by=request.user,content_object=some_model_instance)
 # file.save()

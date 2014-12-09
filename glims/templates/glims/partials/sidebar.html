@@ -11,3 +11,8 @@
 <li class="sidebar-list">
   <a href="{% url 'experiments' %}">Experiments <span class="menu-icon fa fa-rocket"></span></a>
 </li>
+
+{% for menu in menus %}
+{% include menu %}
+{% endfor %}
+
