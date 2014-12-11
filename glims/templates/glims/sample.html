@@ -7,14 +7,18 @@
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-rocket"></i> {{sample.name}} 
-            <a href="{% url 'permissions' model='Sample' pk=sample.id %}" class="pull-right">Permissions</a>
             <a href="{% url 'update_sample' pk=sample.id %}" class="btn btn-sm btn-success">Edit</a>
+            <a href="{% url 'permissions' model='Sample' pk=sample.id %}" class="pull-right">Permissions</a>
+            
           </div>
           <div class="widget-body no-padding">
               <table class="table">
               	<tbody>
               		<tr><th>Project</th><td><a href="{% url 'project' pk=sample.project.id %}">{{sample.project}}</a></td></tr>
                 	<tr><th>Description</th><td>{{sample.description}}</td></tr>
+                	{% for k,v in sample.data.items %}
+                	<tr><th>{{k}}</th><td>{{v}}</td></tr>
+                	{% endfor %}
                 </tbody>
               </table>
 			  {% include 'glims/partials/plugins.html' with object=sample model='sample' pk=sample.id %}
