@@ -7,13 +7,19 @@
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-rocket"></i> {{project.name}}<a href="{% url 'permissions' model='Project' pk=project.id %}" class="pull-right">Permissions</a>
+            <i class="fa fa-rocket"></i> {{project.name}}
+            <a href="{% url 'update_project' pk=project.id %}" class="btn btn-sm btn-success pull-right">Edit</a>
+            <a href="{% url 'permissions' model='Project' pk=project.id %}" class="pull-right">Permissions</a>
+            
           </div>
           <div class="widget-body no-padding">
               <table class="table">
               	<tbody>
 					<tr><th>Type</th><td>{{project.type}}</td></tr>
                 	<tr><th>Description</th><td>{{project.description}}</td></tr>
+                	{% for k,v in project.data.items %}
+                	<tr><th>{{k}}</th><td>{{v}}</td></tr>
+                	{% endfor %}
                 </tbody>
               </table>
              <div ng-controller="SamplesController" ng-init="setSampleDefaults({project:'{{project.id}}'});init();">

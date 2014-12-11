@@ -12,6 +12,9 @@
               <table class="table">
               	<tbody>
                 	<tr><th>Description</th><td>{{experiment.description}}</td></tr>
+                	{% for k,v in experiment.data.items %}
+                	<tr><th>{{k}}</th><td>{{v}}</td></tr>
+                	{% endfor %}
                 </tbody>
               </table>
 			  <a href="{% url 'permissions' model='Experiment' pk=experiment.id %}">Permissions</a>

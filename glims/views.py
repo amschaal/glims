@@ -76,6 +76,11 @@ class SampleUpdate(UpdateView):
     template_name = 'glims/create_sample.html'
     model = Sample
     form_class = SampleForm
+class ProjectUpdate(UpdateView):
+    template_name = 'glims/create_project.html'
+    model = Project
+    form_class = ProjectForm
+
 
 """
 def get_file(request,pk):

@@ -6,6 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from models import Plugin
+from django_hstore import hstore
+from jsonfield import JSONField
 import operator
 '''
 Contains base structure for LIMS components
@@ -55,14 +57,15 @@ revoke_permissions(permissions=[],users=[])
 def generate_pk():
     return str(uuid4())[:20]
 
-
 class ModelType(models.Model):
     content_type = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     description = models.TextField()
+    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
+    schema = JSONField()
     def __unicode__(self):
         return "%s: %s" % (self.content_type, self.name)
-    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
+    
 #   *fields - A postgres json field
 #       Contains the field definitions for custom model attributes
 
@@ -79,7 +82,6 @@ class ModelTypePlugins(models.Model):
 
 
 
-from django_hstore import hstore
 class ExtensibleModel(models.Model):
     type = models.ForeignKey(ModelType, null=True, blank=True)
     data = hstore.DictionaryField()#schema=get_schema

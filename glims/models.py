@@ -12,7 +12,6 @@ class Plugin(models.Model):
     template = models.CharField(max_length=250) #template to render
     def __unicode__(self):
         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
-    
 
 
 class EmailTemplate(models.Model):
