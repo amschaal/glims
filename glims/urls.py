@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
+from django.conf.urls.static import static
 from glims import views as glims_views
 from django.contrib import admin
 admin.autodiscover()
@@ -16,14 +18,16 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, ExperimentViewSet, GroupViewSet
+from api import ProjectViewSet, SampleViewSet, ExperimentViewSet, GroupViewSet, ModelTypeSerializerViewSet
 
 router = routers.DefaultRouter()
+router.register(r'model_types', ModelTypeSerializerViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'samples', SampleViewSet)
 router.register(r'experiments', ExperimentViewSet)
 # router.register(r'notes', NoteViewSet)
 router.register(r'groups', GroupViewSet)
+
 
 
 urlpatterns += patterns('',
@@ -50,10 +54,12 @@ urlpatterns += patterns('',
     url(r'^experiments/create$', 'glims.views.create_experiment', name='create_experiment'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
+    url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
-)
+)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+ 
