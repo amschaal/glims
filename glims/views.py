@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import UpdateView
 from django.template.context import RequestContext
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
 from django.contrib.auth.decorators import login_required
@@ -41,6 +42,10 @@ def experiments(request):
     query = json.dumps(request.GET)
 #     experiments = get_all_user_objects(request.user, ['view'], Experiment)#Experiment.objects.all()
     return render(request, 'glims/experiments.html', {'query':query} ,context_instance=RequestContext(request))
+
+def model_types(request):
+    content_types = ContentType.objects.all()
+    return render(request, 'glims/model_types.html', {'content_types':content_types} ,context_instance=RequestContext(request))
 
 def create_project(request):
     if request.method == 'GET':

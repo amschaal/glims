@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, renderer_cla
 from rest_framework.response import Response
 from rest_framework.renderers import JSONPRenderer, JSONRenderer
 from glims.models import JobFactory
-from glims.lims import Project, Sample, Experiment
+from glims.lims import Project, Sample, Experiment, ModelType
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
@@ -51,6 +51,14 @@ def update_job(request, job_id):
 #         project = get_object_or_404(queryset, pk=pk)
 #         serializer = ProjectSerializer(project)
 #         return Response(serializer.data)
+class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
+    serializer_class = ModelTypeSerializer
+    permission_classes = [CustomPermission]
+    filter_fields = ('content_type',)
+    search_fields = ('content_type', 'name','description')
+    model = ModelType
+#     def get_queryset(self):
+#         return get_all_user_objects(self.request.user, ['view'], Experiment)
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
