@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
 from glims import views as glims_views
 from django.contrib import admin
 admin.autodiscover()
@@ -40,18 +41,20 @@ urlpatterns += patterns('',
     url(r'^$', 'glims.views.home', name='home'),
     url(r'^project/(?P<pk>[\-\w]+)/$', 'glims.views.project', name='project'),
     url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
-    url(r'^sample/(?P<pk>[\-\w]+)/update/$', glims_views.SampleUpdate.as_view(), name='update_sample'),
+    url(r'^sample/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.SampleUpdate.as_view()), name='update_sample'),
     url(r'^experiment/(?P<pk>[\-\w]+)/$', 'glims.views.experiment', name='experiment'),
 #     url(r'^file/(?P<pk>\d+)/get/$', 'glims.views.get_file', name='get_file'),
 #     url(r'^files/(?P<model>\w+)/(?P<pk>[\-\w]+)/attach/$', 'glims.views.attach_file', name='attach_file'),
     url(r'^pis/$', 'glims.views.pis', name='pis'),
     url(r'^projects/$', 'glims.views.projects', name='projects'),
     url(r'^projects/create$', 'glims.views.create_project', name='create_project'),
-    url(r'^projects/(?P<pk>[\-\w]+)/update/$', glims_views.ProjectUpdate.as_view(), name='update_project'),
+    url(r'^projects/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.ProjectUpdate.as_view()), name='update_project'),
     url(r'^samples/$', 'glims.views.samples', name='samples'),
     url(r'^samples/create$', 'glims.views.create_sample', name='create_sample'),
+#     url(r'^workflow/$', 'glims.views.workflow', name='workflow'),
+    url(r'^workflows/(?P<pk>[\d]+)/$', 'glims.views.workflow', name='workflow'),
+    url(r'^workflows/create/$', 'glims.views.create_workflow', name='create_workflow'),
     url(r'^experiments/$', 'glims.views.experiments', name='experiments'),
-    url(r'^experiments/create$', 'glims.views.create_experiment', name='create_experiment'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),

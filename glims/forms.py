@@ -1,5 +1,5 @@
 from django import forms
-from glims.lims import Project, Sample, Experiment, ModelType
+from glims.lims import Project, Sample, Experiment, ModelType, WorkflowTemplate, Workflow, Process
 
 # class FileForm(ModelForm):
 #     class Meta:
@@ -48,15 +48,17 @@ class ExtensibleModelForm(forms.ModelForm):
         super(ExtensibleModelForm,self).__init__(*args, **kwargs)
         content_type = self.__class__._meta.model.__name__.lower()
         instance = kwargs.get('instance', None)
-        self.fields['type'].queryset = ModelType.objects.filter(content_type=content_type)
+        if self.fields.has_key('type'):
+            self.fields['type'].queryset = ModelType.objects.filter(content_type=content_type)
         if instance:
             if instance.type:
 #                 print instance.type.schema
 #                 print instance.data
-                for field in instance.type.schema:
-                    field_name = 'data__%s'%field['name']
-                    initial = instance.data[field['name']] if instance.data.has_key(field['name']) else None
-                    self.fields[field_name] = get_field(field,initial)
+                if instance.type.schema:
+                    for field in instance.type.schema:
+                        field_name = 'data__%s'%field['name']
+                        initial = instance.data[field['name']] if instance.data.has_key(field['name']) else None
+                        self.fields[field_name] = get_field(field,initial)
     def save(self, commit=True):
         instance = super(ExtensibleModelForm, self).save(commit=False)
         for key in self.cleaned_data.keys():
@@ -81,3 +83,46 @@ class ExperimentForm(ExtensibleModelForm):
     class Meta:
         model = Experiment
         exclude = ('data','refs')
+
+
+class WorkflowTemplateForm(forms.ModelForm):
+    class Meta:
+        model = WorkflowTemplate
+    def __init__(self,*args,**kwargs):
+        super(forms.ModelForm,self).__init__(*args, **kwargs)
+        self.fields['type'].queryset = ModelType.objects.filter(content_type='workflow')
+
+class WorkflowProcessForm(forms.ModelForm):
+    class Meta:
+        model = WorkflowTemplate
+    def __init__(self,*args,**kwargs):
+        super(forms.ModelForm,self).__init__(*args, **kwargs)
+        self.fields['process'].queryset = ModelType.objects.filter(content_type='process')
+
+class CreateWorkflowForm(forms.ModelForm):
+    class Meta:
+        model = Workflow
+        fields = ('workflow_template','name','description')
+
+class WorkflowForm(ExtensibleModelForm):
+    class Meta:
+        model = Workflow
+        exclude = exclude = ('type','data','refs','workflow_template')
+        
+class ProcessForm(ExtensibleModelForm):
+    class Meta:
+        model = Process
+        exclude = exclude = ('type','data','refs','workflow')
+
+# class ProcessTemplate(models.Model):
+#     type = models.ForeignKey(ModelType)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(null=True,blank=True)
+# 
+# class WorkflowTemplate(models.Model):
+#     type = models.ForeignKey(ModelType)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(null=True,blank=True)
+#     process_templates = models.ManyToManyField(ProcessTemplate,through="WorkflowProcess")
+
+

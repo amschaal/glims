@@ -62,7 +62,7 @@ class ModelType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
-    schema = JSONField()
+    schema = JSONField(null=True,blank=True)
     def __unicode__(self):
         return "%s: %s" % (self.content_type, self.name)
     
@@ -171,8 +171,46 @@ class Sample(ExtensibleModel):
             if model == 'Project':
                 queries.append(Q(project__pk__in = pks))
         return Sample.objects.filter(reduce(operator.or_, queries))
+
+# class ProcessTemplate(models.Model):
+#     type = models.ForeignKey(ModelType)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(null=True,blank=True)
+
+class WorkflowTemplate(models.Model):
+    type = models.ForeignKey(ModelType,related_name='+')
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    processes = models.ManyToManyField(ModelType,through="WorkflowProcess",related_name='+')
+    def __unicode__(self):
+        return self.name
+
+class WorkflowProcess(models.Model):
+    workflow = models.ForeignKey(WorkflowTemplate)
+    process = models.ForeignKey(ModelType,related_name='+')
+    order = models.IntegerField()
     
-        
+
+class Workflow(ExtensibleModel):
+#     sample_id = models.CharField(max_length=30,unique=True)
+    workflow_template = models.ForeignKey(WorkflowTemplate)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    def __unicode__(self):
+        return self.name
+    def get_absolute_url(self):
+        return reverse('workflow', args=[str(self.id)])
+
+class Process(ExtensibleModel):
+#     sample_id = models.CharField(max_length=30,unique=True)
+    #A null value for the following implies that THIS is a template!
+    workflow = models.ForeignKey(Workflow, related_name="processes")
+#     workflow_process = models.ForeignKey(WorkflowProcess)
+#     process_template = models.ForeignKey(ProcessTemplate)
+    def __unicode__(self):
+        return self.name
+    def get_absolute_url(self):
+        return reverse('process', args=[str(self.id)])
 
 class Experiment(ExtensibleModel):
     id = models.CharField(max_length=30,unique=True,primary_key=True,default=generate_pk)
