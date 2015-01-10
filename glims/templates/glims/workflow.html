@@ -1,0 +1,37 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Project{% endblock %}
+{% block breadcrumbs %}<a href="">Workflow</a> / {{workflow.name}} {% endblock %}
+{% block content %}
+<script src="/static/js/pages/project.js"></script>
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            {{workflow.name}}
+          </div>
+          <div class="widget-body no-padding">
+          	<h2>Workflow</h2>
+          	<form method="POST" action=".">
+          	  {% csrf_token %}
+				<input type="hidden" name="workflow" value="submit"/>
+			  {{workflow_form|crispy}}
+			  <button class="btn btn-default">Submit</button>
+			  </form>
+			<h2>Processes</h2>
+			<accordion close-others="true">  
+			{% for process in processes %}
+				<accordion-group heading="{{process.process.type.name}}" is-open="{% if process.submitted%}true{%else%}false{%endif%}">
+				<form method="POST" action="#process_{{process.process.id}}" id="process_{{process.process.id}}">
+				{% csrf_token %}
+				<input type="hidden" name="process_id" value="{{process.process.id}}"/>
+	          	{{process.form|crispy}}
+	          	<button class="btn btn-default">Submit</button>
+	          	</form>
+	          	</accordion-group>
+	          	{% endfor %}
+          	</accordion>
+          </div>
+        </div>
+      </div>
+{% endblock %}
