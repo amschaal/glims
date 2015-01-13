@@ -1,6 +1,6 @@
 from django.contrib import admin
 from models import EmailTemplate
-from lims import Project, Sample, Experiment, ModelType, WorkflowTemplate,  WorkflowProcess#, ProjectType, ProjectTypePlugins
+from lims import Project, Sample, ModelType, WorkflowTemplate,  WorkflowProcess#, ProjectType, ProjectTypePlugins
 from forms import WorkflowTemplateForm, WorkflowProcessForm
 from guardian.admin import GuardedModelAdmin
 from  django.contrib.contenttypes.generic import GenericInlineModelAdmin, GenericStackedInline
@@ -27,8 +27,6 @@ class ProjectAdmin(GuardedModelAdmin):
 #     ]
 class SampleAdmin(GuardedModelAdmin):
     model = Sample
-class ExperimentAdmin(GuardedModelAdmin):
-    model = Experiment
 class ModelTypeAdmin(GuardedModelAdmin):
     model = ModelType
 
@@ -56,7 +54,6 @@ class WorkflowTemplateAdmin(admin.ModelAdmin):
 admin.site.register(EmailTemplate, EmailTemplateAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
-admin.site.register(Experiment, ExperimentAdmin)
 admin.site.register(ModelType, ModelTypeAdmin)
 admin.site.register(WorkflowTemplate, WorkflowTemplateAdmin)
 

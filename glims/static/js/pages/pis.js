@@ -1,5 +1,5 @@
 
-angular.module('Dashboard')
+angular.module('mainapp')
 .controller('PIController', ['$scope', PIController]);
 
 function PIController($scope) {

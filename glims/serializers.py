@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from glims.lims import Project, Sample, Experiment, ModelType#, File, Note
+from glims.lims import Project, Sample, ModelType, Pool#, File, Note
 from django.contrib.auth.models import Group
 from rest_framework_hstore.serializers import HStoreSerializer
 
@@ -20,12 +20,14 @@ class SampleSerializer(HStoreSerializer):
         model = Sample
         exclude = ('refs',)
 #         fields = ('id','sample_id','project_id','name','description')
-        
-class ExperimentSerializer(HStoreSerializer):
+
+class PoolSerializer(HStoreSerializer):
+#     project = ProjectSerializer(many=False,read_only=True)
+#     project_id = serializers.RelatedField(many=False)
     class Meta:
-        model = Experiment
+        model = Pool
         exclude = ('refs',)
-        
+
 class ModelTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ModelType

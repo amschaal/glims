@@ -1,5 +1,5 @@
 
-angular.module('Dashboard')
+angular.module('mainapp')
 .controller('ProjectController', ['$scope', ProjectController]);
 
 function ProjectController($scope) {

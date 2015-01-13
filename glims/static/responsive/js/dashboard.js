@@ -1,19 +1,19 @@
 (function(){ 
-angular.module('Dashboard', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngResource', 'glimsModels','remoteTable']);
+angular.module('mainapp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngResource', 'glimsModels','remoteTable']);
 'use strict';
-angular.module('Dashboard').config(function($interpolateProvider) {
+angular.module('mainapp').config(function($interpolateProvider) {
 	  $interpolateProvider.startSymbol('{[');
 	  $interpolateProvider.endSymbol(']}');
 	});
-angular.module('Dashboard').config(['$resourceProvider', function($resourceProvider) {
+angular.module('mainapp').config(['$resourceProvider', function($resourceProvider) {
 	  // Don't strip trailing slashes from calculated URLs
 	  $resourceProvider.defaults.stripTrailingSlashes = false;
 	}]);
 
 /**
- * Route configuration for the Dashboard module.
+ * Route configuration for the mainapp module.
  */
-angular.module('Dashboard').config(['$stateProvider', '$urlRouterProvider', 
+angular.module('mainapp').config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider) {
 
     // For unmatched routes
@@ -23,7 +23,7 @@ angular.module('Dashboard').config(['$stateProvider', '$urlRouterProvider',
     $stateProvider
         .state('index', {
             url: '/',
-            templateUrl: 'dashboard.html'
+            templateUrl: 'mainapp.html'
         })
         .state('tables', {
             url: '/tables', 
@@ -34,7 +34,7 @@ angular.module('Dashboard').config(['$stateProvider', '$urlRouterProvider',
 /**
  * Master Controller
  */
-angular.module('Dashboard')
+angular.module('mainapp')
     .controller('MasterCtrl', ['$scope', '$cookieStore', MasterCtrl]);
 
 function MasterCtrl($scope, $cookieStore) {
@@ -86,11 +86,11 @@ function MasterCtrl($scope, $cookieStore) {
 /**
  * Alerts Controller
  */
-angular.module('Dashboard').controller('AlertsCtrl', ['$scope', AlertsCtrl]);
+angular.module('mainapp').controller('AlertsCtrl', ['$scope', AlertsCtrl]);
 
 function AlertsCtrl($scope) {
     $scope.alerts = [
-        { type: 'success', msg: 'Thanks for visiting! Feel free to create pull requests to improve the dashboard!' },
+        { type: 'success', msg: 'Thanks for visiting! Feel free to create pull requests to improve the mainapp!' },
         { type: 'danger', msg: 'Found a bug? Create an issue with as many details as you can.' },
         { type: 'danger', msg: 'Testing' }
     ];
@@ -107,7 +107,7 @@ function AlertsCtrl($scope) {
  * Loading Directive
  * @see http://tobiasahlin.com/spinkit/
  */
-angular.module('Dashboard').directive('rdLoading', rdLoading);
+angular.module('mainapp').directive('rdLoading', rdLoading);
 
 function rdLoading () {
     var directive = {

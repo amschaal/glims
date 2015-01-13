@@ -84,7 +84,7 @@ class ModelTypePlugins(models.Model):
 
 class ExtensibleModel(models.Model):
     type = models.ForeignKey(ModelType, null=True, blank=True)
-    data = hstore.DictionaryField()#schema=get_schema
+    data = hstore.DictionaryField(null=True)#schema=get_schema
     refs = hstore.ReferencesField()
     objects = hstore.HStoreManager()
     class Meta:
@@ -177,6 +177,18 @@ class Sample(ExtensibleModel):
 #     name = models.CharField(max_length=100)
 #     description = models.TextField(null=True,blank=True)
 
+
+class Pool(ExtensibleModel):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    created = models.DateField(auto_now=True)
+    samples = models.ManyToManyField(Sample,related_name='pools')
+    sample_data = JSONField(null=True,blank=True)
+    def __unicode__(self):
+        return self.name
+    def get_absolute_url(self):
+        return reverse('pool', args=[str(self.id)])
+
 class WorkflowTemplate(models.Model):
     type = models.ForeignKey(ModelType,related_name='+')
     name = models.CharField(max_length=100)
@@ -189,58 +201,27 @@ class WorkflowProcess(models.Model):
     workflow = models.ForeignKey(WorkflowTemplate)
     process = models.ForeignKey(ModelType,related_name='+')
     order = models.IntegerField()
-    
 
 class Workflow(ExtensibleModel):
-#     sample_id = models.CharField(max_length=30,unique=True)
+    samples = models.ManyToManyField(Sample)
+    pool = models.ForeignKey(Pool,null=True,blank=True)
     workflow_template = models.ForeignKey(WorkflowTemplate)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
+    created = models.DateField(auto_now=True)
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
         return reverse('workflow', args=[str(self.id)])
 
 class Process(ExtensibleModel):
-#     sample_id = models.CharField(max_length=30,unique=True)
-    #A null value for the following implies that THIS is a template!
     workflow = models.ForeignKey(Workflow, related_name="processes")
-#     workflow_process = models.ForeignKey(WorkflowProcess)
-#     process_template = models.ForeignKey(ProcessTemplate)
+#     workflow_process = models.ForeignKey(WorkflowProcess,related_name='+')
+    sample_data = JSONField(null=True,blank=True)
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
         return reverse('process', args=[str(self.id)])
-
-class Experiment(ExtensibleModel):
-    id = models.CharField(max_length=30,unique=True,primary_key=True,default=generate_pk)
-    sample = models.ForeignKey(Sample, related_name="experiments")
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True,blank=True)
-    def __unicode__(self):
-        return self.name
-    def get_absolute_url(self):
-        return reverse('experiment', args=[str(self.id)])
-    class Meta:
-        app_label = 'glims'
-        permissions = (
-            ('view', 'View Experiment'),
-            ('admin', 'Administer Experiment'),
-        )
-    def inherit_from(self):
-        return [self.sample,self.sample.project]
-    inherited_classes = [Project,Sample]
-    @staticmethod
-    def get_all_objects(model_pks={}):
-        queries = []
-        for model, pks in model_pks.items():
-            if model == 'Experiment':
-                queries.append(Q(pk__in = pks))
-            if model == 'Sample':
-                queries.append(Q(sample__pk__in = pks))
-            if model == 'Project':
-                queries.append(Q(sample__project__pk__in = pks))
-        return Experiment.objects.filter(reduce(operator.or_, queries))
 
 
 # Attach a file to just about anything:
