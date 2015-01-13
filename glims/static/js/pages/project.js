@@ -1,5 +1,5 @@
 
-angular.module('Dashboard')
+angular.module('mainapp')
 .controller('SamplesController', ['$scope','Sample', SamplesController]);
 
 function SamplesController($scope,$Sample) {

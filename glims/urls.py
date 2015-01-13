@@ -19,14 +19,13 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, ExperimentViewSet, GroupViewSet, ModelTypeSerializerViewSet
+from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet
 
 router = routers.DefaultRouter()
 router.register(r'model_types', ModelTypeSerializerViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'samples', SampleViewSet)
-router.register(r'experiments', ExperimentViewSet)
-# router.register(r'notes', NoteViewSet)
+router.register(r'pools', PoolViewSet)
 router.register(r'groups', GroupViewSet)
 
 
@@ -39,10 +38,9 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^$', 'glims.views.home', name='home'),
-    url(r'^project/(?P<pk>[\-\w]+)/$', 'glims.views.project', name='project'),
-    url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
-    url(r'^sample/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.SampleUpdate.as_view()), name='update_sample'),
-    url(r'^experiment/(?P<pk>[\-\w]+)/$', 'glims.views.experiment', name='experiment'),
+    url(r'^projects/(?P<pk>[\-\w]+)/$', 'glims.views.project', name='project'),
+    url(r'^samples/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
+    url(r'^samples/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.SampleUpdate.as_view()), name='update_sample'),
 #     url(r'^file/(?P<pk>\d+)/get/$', 'glims.views.get_file', name='get_file'),
 #     url(r'^files/(?P<model>\w+)/(?P<pk>[\-\w]+)/attach/$', 'glims.views.attach_file', name='attach_file'),
     url(r'^pis/$', 'glims.views.pis', name='pis'),
@@ -51,16 +49,23 @@ urlpatterns += patterns('',
     url(r'^projects/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.ProjectUpdate.as_view()), name='update_project'),
     url(r'^samples/$', 'glims.views.samples', name='samples'),
     url(r'^samples/create$', 'glims.views.create_sample', name='create_sample'),
+    url(r'^pools/$', 'glims.views.pools', name='pools'),
+    url(r'^pools/create$', 'glims.views.create_pool', name='create_pool'),
+    url(r'^pools/(?P<pk>[\-\w]+)/$', 'glims.views.pool', name='pool'),
+    url(r'^pools/(?P<pk>[\-\w]+)/delete/$', 'glims.views.delete_pool', name='delete_pool'),
+    url(r'^cart/$', 'glims.views.cart', name='cart'),
 #     url(r'^workflow/$', 'glims.views.workflow', name='workflow'),
     url(r'^workflows/(?P<pk>[\d]+)/$', 'glims.views.workflow', name='workflow'),
     url(r'^workflows/create/$', 'glims.views.create_workflow', name='create_workflow'),
-    url(r'^experiments/$', 'glims.views.experiments', name='experiments'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
+    url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
+    url(r'^api/add_samples_to_cart/$', 'glims.api.add_samples_to_cart', name='add_samples_to_cart'),
+    url(r'^api/remove_samples_from_cart/$', 'glims.api.remove_samples_from_cart', name='remove_samples_from_cart'),
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

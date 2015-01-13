@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, renderer_cla
 from rest_framework.response import Response
 from rest_framework.renderers import JSONPRenderer, JSONRenderer
 from glims.models import JobFactory
-from glims.lims import Project, Sample, Experiment, ModelType
+from glims.lims import Project, Sample, ModelType
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
@@ -27,7 +27,6 @@ class CustomPermission(permissions.BasePermission):
         # Instance must have an attribute named `owner`.
         return has_all_permissions(request.user, obj, ['admin'])
 
-
 @api_view(['POST'])
 # @permission_classes((ServerAuth, ))  
 def update_job(request, job_id):
@@ -35,6 +34,26 @@ def update_job(request, job_id):
     job = JobFactory.get_job(job_id)
     job.update_status(status)
     return Response({})
+
+@api_view(['POST'])
+def add_samples_to_cart(request):
+    sample_ids = request.DATA.get('sample_ids',[])
+    cart = request.session.get('sample_cart', {})
+    samples = Sample.objects.filter(pk__in=sample_ids)
+    for sample in samples:
+        cart[sample.id] = SampleSerializer(sample).data
+    request.session['sample_cart'] = cart
+    return Response(cart)
+
+@api_view(['POST'])
+def remove_samples_from_cart(request):
+    sample_ids = request.DATA.get('sample_ids',[])
+    cart = request.session.get('sample_cart', {})
+    for sample_id in sample_ids:
+        print sample_id
+        cart.pop(str(sample_id),None)
+    request.session['sample_cart'] = cart
+    return Response(cart)
 
 
 # class ProjectViewset(viewsets.ViewSet):
@@ -78,15 +97,17 @@ class SampleViewSet(viewsets.ModelViewSet):
     model = Sample
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Sample)
-
-class ExperimentViewSet(viewsets.ModelViewSet):
-    serializer_class = ExperimentSerializer
+    
+class PoolViewSet(viewsets.ModelViewSet):
+    serializer_class = PoolSerializer
     permission_classes = [CustomPermission]
-    filter_fields = ('name', 'description','sample__project__group__name')
-    search_fields = ('name', 'description')
-    model = Experiment
+    filter_fields = ('name','type__name')
+    ordering_fields = ('name', 'created','type__name')
+    search_fields = ('name', 'description','type__name')
+    model = Pool
     def get_queryset(self):
-        return get_all_user_objects(self.request.user, ['view'], Experiment)
+        return get_all_user_objects(self.request.user, ['view'], Pool)
+
 """
 class FileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer

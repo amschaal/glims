@@ -1,5 +1,5 @@
 from django import forms
-from glims.lims import Project, Sample, Experiment, ModelType, WorkflowTemplate, Workflow, Process
+from glims.lims import Project, Sample, ModelType, WorkflowTemplate, Workflow, Process, Pool
 
 # class FileForm(ModelForm):
 #     class Meta:
@@ -59,6 +59,9 @@ class ExtensibleModelForm(forms.ModelForm):
                         field_name = 'data__%s'%field['name']
                         initial = instance.data[field['name']] if instance.data.has_key(field['name']) else None
                         self.fields[field_name] = get_field(field,initial)
+                        
+        for field in self.fields.keys():
+            self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field)})
     def save(self, commit=True):
         instance = super(ExtensibleModelForm, self).save(commit=False)
         for key in self.cleaned_data.keys():
@@ -79,11 +82,10 @@ class SampleForm(ExtensibleModelForm):
         model = Sample
         exclude = ('data','refs')
 
-class ExperimentForm(ExtensibleModelForm):
+class PoolForm(ExtensibleModelForm):
     class Meta:
-        model = Experiment
-        exclude = ('data','refs')
-
+        model = Pool
+        exclude = ('data','refs','samples','sample_data')
 
 class WorkflowTemplateForm(forms.ModelForm):
     class Meta:
@@ -107,12 +109,12 @@ class CreateWorkflowForm(forms.ModelForm):
 class WorkflowForm(ExtensibleModelForm):
     class Meta:
         model = Workflow
-        exclude = exclude = ('type','data','refs','workflow_template')
+        exclude = exclude = ('type','data','refs','workflow_template','samples')
         
 class ProcessForm(ExtensibleModelForm):
     class Meta:
         model = Process
-        exclude = exclude = ('type','data','refs','workflow')
+        exclude = exclude = ('type','data','refs','workflow','sample_data')
 
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)

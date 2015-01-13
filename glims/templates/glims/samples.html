@@ -16,12 +16,13 @@
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
+						<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th><th></th></thead>
 						<tr ng-repeat="row in rows">
 				        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
 				        <td><a href="{[ projectLink(row) ]}">{[ row.project ]}</a></td>
 				        <td>{[ row.description ]}</td>
 				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
+				        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
 				      </tr>
 					</table>
 					<div remote-pagination></div>

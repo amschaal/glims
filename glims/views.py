@@ -8,7 +8,7 @@ from lims import *
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import ProjectForm, ExperimentForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm#, FileForm
+from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm#, FileForm
 import json
 
 @login_required
@@ -27,10 +27,9 @@ def sample(request,pk):
     tabs = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
     return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 @login_required
-def experiment(request,pk):
-    experiment = Experiment.objects.get(pk=pk)
-    plugins = experiment.sample.type.plugins.filter(page='experiment')
-    return render(request, 'glims/experiment.html', {'experiment':experiment,'plugins':plugins} ,context_instance=RequestContext(request))
+def pool(request,pk):
+    pool = Pool.objects.get(pk=pk)
+    return render(request, 'glims/pool.html', {'pool':pool} ,context_instance=RequestContext(request))
 @login_required
 def pis(request):
     return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
@@ -45,13 +44,11 @@ def samples(request):
 #     samples = get_all_user_objects(request.user, ['view'], Sample)#Sample.objects.all()
     return render(request, 'glims/samples.html', {'query':query} ,context_instance=RequestContext(request))
 @login_required
-def experiments(request):
-    query = json.dumps(request.GET)
-#     experiments = get_all_user_objects(request.user, ['view'], Experiment)#Experiment.objects.all()
-    return render(request, 'glims/experiments.html', {'query':query} ,context_instance=RequestContext(request))
-# @login_required
-# def workflow(request):
-#     return render(request, 'glims/workflow.html', {} ,context_instance=RequestContext(request))
+def pools(request):
+    return render(request, 'glims/pools.html', {} ,context_instance=RequestContext(request))
+@login_required
+def cart(request):
+    return render(request, 'glims/cart.html', {} ,context_instance=RequestContext(request))
 @login_required
 def model_types(request):
     content_types = ContentType.objects.all()
@@ -76,6 +73,26 @@ def create_sample(request):
             sample = form.save()
             return redirect(sample.get_absolute_url()) 
     return render(request, 'glims/create_sample.html', {'form':form} ,context_instance=RequestContext(request))
+
+@login_required
+def create_pool(request):
+    if request.method == 'GET':
+        form = PoolForm()
+    elif request.method == 'POST':
+        form = PoolForm(request.POST)
+        if form.is_valid():
+            pool = form.save()
+            sample_ids = request.session.get('sample_cart', {}).keys()
+            pool.samples = Sample.objects.filter(pk__in=sample_ids)
+            pool.save()
+            return redirect(pool.get_absolute_url()) 
+    return render(request, 'glims/create_pool.html', {'form':form} ,context_instance=RequestContext(request))
+@login_required
+def delete_pool(request,pk):
+    pool = Pool.objects.get(pk=pk)
+    pool.delete()
+    return redirect('pools') 
+
 @login_required
 def create_workflow(request):
     if request.method == 'GET':

@@ -1,5 +1,5 @@
 
-angular.module('Dashboard')
+angular.module('mainapp')
 .controller('ModelTypesController', ['$scope','Sample', ModelTypesController]);
 
 function ModelTypesController($scope,$Sample) {
