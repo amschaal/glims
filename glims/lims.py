@@ -55,7 +55,7 @@ revoke_permissions(permissions=[],users=[])
 
 '''
 def generate_pk():
-    return str(uuid4())[:20]
+    return str(uuid4())[:15]
 
 class ModelType(models.Model):
     content_type = models.CharField(max_length=100)
@@ -83,8 +83,11 @@ class ModelTypePlugins(models.Model):
 
 
 class ExtensibleModel(models.Model):
+#     id = models.CharField(max_length=30,primary_key=True,default=generate_pk)
     type = models.ForeignKey(ModelType, null=True, blank=True)
-    data = hstore.DictionaryField(null=True)#schema=get_schema
+    data = JSONField(null=True,blank=True,default={})
+    #@deprecated: will use json, eventually will use native jsonb field with Django 1.8 
+#     data = hstore.DictionaryField(null=True)#schema=get_schema
     refs = hstore.ReferencesField()
     objects = hstore.HStoreManager()
     class Meta:
@@ -126,7 +129,7 @@ class MyModelExtended(MyModel):
 #         app_label = 'glims'
     
 class Project(ExtensibleModel):
-    id = models.CharField(max_length=20,unique=True,primary_key=True,default=generate_pk)
+    
 #     type = models.ForeignKey(ProjectType)
     group = models.ForeignKey(Group)
     name = models.CharField(max_length=100)

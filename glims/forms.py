@@ -13,6 +13,8 @@ from glims.lims import Project, Sample, ModelType, WorkflowTemplate, Workflow, P
 def get_field(field={}, initial=None):
     
     kwargs = {'initial':initial}
+    if not field.has_key('kwargs'):
+        field['kwargs']={}
     kwargs['label'] = field['kwargs']['label'] if field['kwargs'].has_key('label') else field['name']
     kwargs['required'] = field['kwargs']['required'] if field['kwargs'].has_key('required') else False
     if field.has_key('__meta__'):
@@ -45,6 +47,7 @@ def get_field(field={}, initial=None):
 
 class ExtensibleModelForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
+        angular_prefix = kwargs.pop('angular_prefix', None)
         super(ExtensibleModelForm,self).__init__(*args, **kwargs)
         content_type = self.__class__._meta.model.__name__.lower()
         instance = kwargs.get('instance', None)
@@ -59,9 +62,10 @@ class ExtensibleModelForm(forms.ModelForm):
                         field_name = 'data__%s'%field['name']
                         initial = instance.data[field['name']] if instance.data.has_key(field['name']) else None
                         self.fields[field_name] = get_field(field,initial)
-                        
-        for field in self.fields.keys():
-            self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field)})
+        if angular_prefix:
+            for field in self.fields.keys():
+                print "content_type:%s"% content_type
+                self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field),'initial-value':''})
     def save(self, commit=True):
         instance = super(ExtensibleModelForm, self).save(commit=False)
         for key in self.cleaned_data.keys():
@@ -114,7 +118,7 @@ class WorkflowForm(ExtensibleModelForm):
 class ProcessForm(ExtensibleModelForm):
     class Meta:
         model = Process
-        exclude = exclude = ('type','data','refs','workflow','sample_data')
+        exclude =  ('type','data','refs','workflow','sample_data')
 
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)

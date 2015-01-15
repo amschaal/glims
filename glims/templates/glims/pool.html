@@ -1,4 +1,5 @@
 {% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
 {% block page %}Pools{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'pools' %}">Pools</a> / {{pool.name}} {% endblock %}
 {% block content %}
@@ -11,21 +12,32 @@
              <a href="{% url 'delete_pool' pk=pool.id %}" onClick="if(!confirm('Are you sure you want to delete this pool'))return false;" class="btn btn-sm btn-danger pull-right">Delete</a>
           </div>
           <div class="widget-body no-padding">
+          <div ng-controller="PoolController">
+          <form name="{{ form.form_name }}" novalidate>
+          <button ng-click="print()">Print</button>
+          <button ng-click="submit()">Submit</button>
+          <div angular-form>
+          {{form|crispy}}
+          </div>
+          </form>
+          </div>
+          
+              <!-- 
               <table class="table">
               	<tbody>
 					<tr><th>Type</th><td>{{pool.type}}</td></tr>
                 	<tr><th>Description</th><td>{{pool.description}}</td></tr>
-                	<tr><th>Samples</th><td>{{pool.samples.all}}</td></tr>
                 	{% for k,v in pool.data.items %}
                 	<tr><th>{{k}}</th><td>{{v}}</td></tr>
                 	{% endfor %}
                 </tbody>
               </table>
-             <div ng-controller="SamplesController">
+               -->
+             <div ng-controller="SamplesController" ng-init="init({{samples}})">
 				<h3>Samples</h3>
 				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
 				<table class="table" ng-show="samples.length">
-              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Received</td><td></td></tr></thead>
+              	<thead><tr><td>ID</td><td>Name</td><td>Description</td></tr></thead>
               	<tbody>
                 	<tr ng-repeat="s in samples">
                 		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
