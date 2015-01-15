@@ -55,7 +55,17 @@ def remove_samples_from_cart(request):
     request.session['sample_cart'] = cart
     return Response(cart)
 
-
+@api_view(['POST'])
+def update_pool(request,pk):
+    from glims.forms import PoolForm
+    pool = Pool.objects.get(pk=pk)
+#     plugins = workflow.plugins.filter(page='workflow')
+    form = PoolForm(request.DATA,instance=pool)
+    if form.is_valid():
+        form.save()
+        return Response({'status':'ok'})
+    else:
+        return Response({'errors':form.errors})
 # class ProjectViewset(viewsets.ViewSet):
 #     queryset = Project.objects.all()
 #     """

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
+from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
@@ -25,11 +26,14 @@ def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
     inlines = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
-    return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
+    pool_workflows = Workflow.objects.filter(pool__id__in=[pool['id'] for pool in sample.pools.all().values('id')])
+    return render(request, 'glims/sample.html', {'sample':sample,'pool_workflows':pool_workflows,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 @login_required
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
-    return render(request, 'glims/pool.html', {'pool':pool} ,context_instance=RequestContext(request))
+    samples = SampleSerializer(pool.samples.all()).data
+    form = PoolForm(instance=pool,angular_prefix='pool')
+    return render(request, 'glims/pool.html', {'pool':pool,'form':form,'samples':json.dumps(samples)} ,context_instance=RequestContext(request))
 @login_required
 def pis(request):
     return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
@@ -123,10 +127,13 @@ def workflow(request,pk):
     for process in workflow.processes.all():
         print "%s:%s"%(request.POST.get('process_id'),process.id)
         if request.POST and request.POST.get('process_id','') == str(process.id):
-            print "POST!!!!"
+            print "POST!!!!(%s)" %  str(process.id)
             form = ProcessForm(request.POST,instance=process)
+            form.is_valid()
+            print form.cleaned_data
             if form.is_valid():
-                form.save()
+                form.save(commit=True)
+                print 'SAVING!!'
             processes.append({'process':process, 'form':form, 'valid':form.is_valid(),'submitted':True})
         else:
             processes.append({'process':process, 'form':ProcessForm(instance=process)})

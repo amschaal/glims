@@ -68,6 +68,8 @@ urlpatterns += patterns('',
     url(r'^api/remove_samples_from_cart/$', 'glims.api.remove_samples_from_cart', name='remove_samples_from_cart'),
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
+    
+    url(r'^api/pool/(?P<pk>\d+)/update$', 'glims.api.update_pool', name='update_pool'),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  
