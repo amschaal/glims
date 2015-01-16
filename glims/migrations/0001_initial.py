@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import glims.lims
+import jsonfield.fields
 import django_hstore.fields
 
 
@@ -50,18 +50,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Experiment',
-            fields=[
-                ('id', models.CharField(default=glims.lims.generate_pk, max_length=30, unique=True, serialize=False, primary_key=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField(null=True, blank=True)),
-            ],
-            options={
-                'permissions': (('view', 'View Experiment'), ('admin', 'Administer Experiment')),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Job',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -85,6 +73,19 @@ class Migration(migrations.Migration):
                 ('content_type', models.CharField(max_length=100)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField()),
+                ('schema', jsonfield.fields.JSONField(null=True, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ModelTypePlugins',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('weight', models.IntegerField(default=0)),
+                ('layout', models.CharField(max_length=10, choices=[(b'inline', b'Inline'), (b'tabbed', b'Tab')])),
+                ('header', models.CharField(max_length=30, null=True, blank=True)),
             ],
             options={
             },
@@ -105,12 +106,45 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='Pool',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('refs', django_hstore.fields.ReferencesField()),
+                ('name', models.CharField(max_length=100)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('created', models.DateField(auto_now=True)),
+                ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Process',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('refs', django_hstore.fields.ReferencesField()),
+                ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
+                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.CharField(default=glims.lims.generate_pk, max_length=20, unique=True, serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('refs', django_hstore.fields.ReferencesField()),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('group', models.ForeignKey(to='auth.Group')),
+                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
             ],
             options={
                 'permissions': (('view', 'View Project'), ('admin', 'Administer Project'), ('pi', 'Can PI a Project')),
@@ -118,64 +152,111 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='ProjectType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField(null=True, blank=True)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='ProjectTypePlugins',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('weight', models.IntegerField(default=0)),
-                ('layout', models.CharField(max_length=10, choices=[(b'inline', b'Inline'), (b'tabbed', b'Tab')])),
-                ('header', models.CharField(max_length=30, null=True, blank=True)),
-                ('plugin', models.ForeignKey(to='glims.Plugin')),
-                ('type', models.ForeignKey(to='glims.ProjectType')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Sample',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('data', django_hstore.fields.DictionaryField()),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('refs', django_hstore.fields.ReferencesField()),
                 ('sample_id', models.CharField(unique=True, max_length=30)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('received', models.DateField(null=True, blank=True)),
                 ('project', models.ForeignKey(related_name='samples', to='glims.Project')),
-                ('type', models.ForeignKey(to='glims.ModelType')),
+                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
             ],
             options={
                 'permissions': (('view', 'View Sample'), ('admin', 'Administer Sample')),
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='Workflow',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('refs', django_hstore.fields.ReferencesField()),
+                ('name', models.CharField(max_length=100)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('created', models.DateField(auto_now=True)),
+                ('pool', models.ForeignKey(blank=True, to='glims.Pool', null=True)),
+                ('samples', models.ManyToManyField(to='glims.Sample')),
+                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='WorkflowProcess',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('order', models.IntegerField()),
+                ('process', models.ForeignKey(related_name='+', to='glims.ModelType')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='WorkflowTemplate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('processes', models.ManyToManyField(related_name='+', through='glims.WorkflowProcess', to='glims.ModelType')),
+                ('type', models.ForeignKey(related_name='+', to='glims.ModelType')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
         migrations.AddField(
-            model_name='projecttype',
-            name='plugins',
-            field=models.ManyToManyField(to='glims.Plugin', null=True, through='glims.ProjectTypePlugins', blank=True),
+            model_name='workflowprocess',
+            name='workflow',
+            field=models.ForeignKey(to='glims.WorkflowTemplate'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='project',
+            model_name='workflow',
+            name='workflow_template',
+            field=models.ForeignKey(to='glims.WorkflowTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='process',
+            name='workflow',
+            field=models.ForeignKey(related_name='processes', to='glims.Workflow'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='pool',
+            name='samples',
+            field=models.ManyToManyField(related_name='pools', to='glims.Sample'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='pool',
             name='type',
-            field=models.ForeignKey(to='glims.ProjectType'),
+            field=models.ForeignKey(blank=True, to='glims.ModelType', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='experiment',
-            name='sample',
-            field=models.ForeignKey(related_name='experiments', to='glims.Sample'),
+            model_name='modeltypeplugins',
+            name='plugin',
+            field=models.ForeignKey(to='glims.Plugin'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='modeltypeplugins',
+            name='type',
+            field=models.ForeignKey(to='glims.ModelType'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='modeltype',
+            name='plugins',
+            field=models.ManyToManyField(to='glims.Plugin', null=True, through='glims.ModelTypePlugins', blank=True),
             preserve_default=True,
         ),
         migrations.CreateModel(

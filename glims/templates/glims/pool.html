@@ -14,10 +14,9 @@
           <div class="widget-body no-padding">
           <div ng-controller="PoolController">
           <form name="{{ form.form_name }}" novalidate>
-          <button ng-click="print()">Print</button>
-          <button ng-click="submit()">Submit</button>
-          <div angular-form>
-          {{form|crispy}}
+          <div angular-formsd>
+          {% crispy form form.helper %}
+          <button ng-click="submit()" class="btn btn-default">Submit</button>
           </div>
           </form>
           </div>

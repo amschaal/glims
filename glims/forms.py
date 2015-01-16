@@ -1,5 +1,7 @@
 from django import forms
 from glims.lims import Project, Sample, ModelType, WorkflowTemplate, Workflow, Process, Pool
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Field, Div, HTML
 
 # class FileForm(ModelForm):
 #     class Meta:
@@ -30,25 +32,35 @@ def get_field(field={}, initial=None):
     if field['class'] == 'CharField':
         return forms.CharField(**kwargs)
     if field['class'] == 'FloatField':
-        try:
-            kwargs['initial'] = float(kwargs['initial'])
-        except Exception:
-            pass
+#         try:
+#             kwargs['initial'] = float(kwargs['initial'])
+#         except Exception:
+#             pass
         return forms.FloatField(**kwargs)
     if field['class'] == 'IntegerField':
-        try:
-            kwargs['initial'] = int(kwargs['initial'])
-        except Exception:
-            pass
+#         try:
+#             kwargs['initial'] = int(kwargs['initial'])
+#         except Exception:
+#             pass
         return forms.IntegerField(**kwargs)
     if field['class'] == 'BooleanField':
-        kwargs['initial'] = True if kwargs['initial']=='true' else False
+#         kwargs['initial'] = True if kwargs['initial']=='true' else False
         return forms.BooleanField(**kwargs)
 
 class ExtensibleModelForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
         angular_prefix = kwargs.pop('angular_prefix', None)
+        #Change any AJAX submitted data into same format expected by form data
+        if len(args) > 0:
+            if args[0].has_key('data'):
+                if isinstance(args[0]['data'], dict):
+                    for key,value in args[0]['data'].iteritems():
+                        args[0]['data__'+key]=value    
         super(ExtensibleModelForm,self).__init__(*args, **kwargs)
+        
+        
+        
+        
         content_type = self.__class__._meta.model.__name__.lower()
         instance = kwargs.get('instance', None)
         if self.fields.has_key('type'):
@@ -65,7 +77,17 @@ class ExtensibleModelForm(forms.ModelForm):
         if angular_prefix:
             for field in self.fields.keys():
                 print "content_type:%s"% content_type
-                self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field),'initial-value':''})
+                self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field.replace('data__','data.')),'initial-value':''})
+    
+        self.helper = FormHelper(self)
+#         self.helper.all().wrap(Field, css_class="col-xs-3 col-sm-4")
+#         self.helper.all().wrap(Div, css_class="has-error")
+#         HTML("<h1></h1>")
+#         self.helper.all().insert(1,HTML('<h1>Blah</h1>'))
+        if angular_prefix:
+            self.helper.field_template = 'glims/crispy/field.html'
+        
+        
     def save(self, commit=True):
         instance = super(ExtensibleModelForm, self).save(commit=False)
         for key in self.cleaned_data.keys():
