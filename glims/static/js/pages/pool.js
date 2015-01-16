@@ -17,6 +17,8 @@ function PoolController($scope,$http) {
 			console.log('data',data);
 			if (data.errors)
 				$scope.errors=data.errors;
+			else
+				$scope.errors={};
 		});
 	}
 	
