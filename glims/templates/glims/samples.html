@@ -11,7 +11,7 @@
             <a href="{% url 'create_sample' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body no-padding" ng-controller="SampleController">
-				<div remote-table url="/api/samples/" ng-init="params={{query}}">
+				<div remote-table url="{% url 'sample-list' %}" ng-init="params={{query}}">
 					<span ng-if="k != 'search'" ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">

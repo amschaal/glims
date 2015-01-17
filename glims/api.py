@@ -56,6 +56,19 @@ def remove_samples_from_cart(request):
     return Response(cart)
 
 @api_view(['POST'])
+def remove_pool_samples(request,pk):
+    sample_ids = request.DATA.get('sample_ids',[])
+    pool = Pool.objects.get(pk=pk)
+    for s in Sample.objects.filter(id__in=sample_ids):
+        pool.samples.remove(s)
+    return Response({'status':'ok'})
+#     for sample_id in sample_ids:
+#         print sample_id
+#         cart.pop(str(sample_id),None)
+#     request.session['sample_cart'] = cart
+#     return Response(cart)
+
+@api_view(['POST'])
 def update_pool(request,pk):
     from glims.forms import PoolForm
     pool = Pool.objects.get(pk=pk)
@@ -105,8 +118,18 @@ class SampleViewSet(viewsets.ModelViewSet):
     ordering_fields = ('name', 'project__name','received')
     search_fields = ('name', 'description')
     model = Sample
+#     def get_queryset(self):
+#         return get_all_user_objects(self.request.user, ['view'], Sample)
     def get_queryset(self):
-        return get_all_user_objects(self.request.user, ['view'], Sample)
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Sample.objects.all()
+        pool = self.request.QUERY_PARAMS.get('pool', None)
+        if pool is not None:
+            queryset = queryset.filter(pools__id=pool)
+        return queryset
     
 class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer

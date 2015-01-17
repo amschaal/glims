@@ -50,6 +50,8 @@ def get_field(field={}, initial=None):
 class ExtensibleModelForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
         angular_prefix = kwargs.pop('angular_prefix', None)
+        field_template = kwargs.pop('field_template', None)
+        ajax_only = kwargs.pop('ajax_only', None)
         #Change any AJAX submitted data into same format expected by form data
         if len(args) > 0:
             if args[0].has_key('data'):
@@ -77,15 +79,14 @@ class ExtensibleModelForm(forms.ModelForm):
         if angular_prefix:
             for field in self.fields.keys():
                 print "content_type:%s"% content_type
-                self.fields[field].widget.attrs.update({'ng-model':'%s.%s'%(content_type,field.replace('data__','data.')),'initial-value':''})
-    
-        self.helper = FormHelper(self)
-#         self.helper.all().wrap(Field, css_class="col-xs-3 col-sm-4")
-#         self.helper.all().wrap(Div, css_class="has-error")
-#         HTML("<h1></h1>")
-#         self.helper.all().insert(1,HTML('<h1>Blah</h1>'))
-        if angular_prefix:
-            self.helper.field_template = 'glims/crispy/field.html'
+                kwargs = {'ng-model':'%s.%s'%(angular_prefix,field.replace('data__','data.'))}
+                if not ajax_only:
+                    kwargs['initial-value']=''
+                self.fields[field].widget.attrs.update(kwargs)
+                
+        if field_template:
+            self.helper = FormHelper(self)
+            self.helper.field_template = field_template
         
         
     def save(self, commit=True):

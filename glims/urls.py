@@ -69,7 +69,8 @@ urlpatterns += patterns('',
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
     
-    url(r'^api/pool/(?P<pk>\d+)/update$', 'glims.api.update_pool', name='update_pool'),
+    url(r'^api/pool/(?P<pk>\d+)/update/$', 'glims.api.update_pool', name='update_pool'),
+    url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.remove_pool_samples', name='remove_pool_samples'),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  
