@@ -13,12 +13,9 @@
           </div>
           <div class="widget-body no-padding">
           <div ng-controller="PoolController">
-          <form name="{{ form.form_name }}" novalidate>
-          <div angular-formsd>
           {% crispy form form.helper %}
+          <alert ng-show="message" type="success" close="message=false;">{[message]}</alert>
           <button ng-click="submit()" class="btn btn-default">Submit</button>
-          </div>
-          </form>
           </div>
           
               <!-- 
@@ -32,16 +29,37 @@
                 </tbody>
               </table>
                -->
-             <div ng-controller="SamplesController" ng-init="init({{samples}})">
+
+	<script type="text/ng-template" id="myModalContent.html">
+		<div class="modal-header">
+            <h3 class="modal-title">{[sample.name]}</h3>
+        </div>
+        <div class="modal-body">
+			{[sample_data]}
+			{[override]}
+        	<div style="padding:25px;">{% crispy sample_form sample_form.helper %}</div>    
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+	
+             <div ng-controller="SamplesController" ng-init="init({pool:{{pool.id}}})">
 				<h3>Samples</h3>
+				
 				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
 				<table class="table" ng-show="samples.length">
-              	<thead><tr><td>ID</td><td>Name</td><td>Description</td></tr></thead>
+              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td></td></tr></thead>
               	<tbody>
                 	<tr ng-repeat="s in samples">
                 		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
                 		<td ng-if="s.editing"><input ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
                 		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
+                		<td>
+                			<button class="btn btn-danger" ng-click="removeSample(s,$index)">Remove</button>
+                			<button class="btn btn-default" ng-click="open(s,'lg')">Edit</button>	
+                		</td>
                 	</tr>
                 </tbody>
               </table>

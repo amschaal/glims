@@ -31,9 +31,10 @@ def sample(request,pk):
 @login_required
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
-    samples = SampleSerializer(pool.samples.all()).data
-    form = PoolForm(instance=pool,angular_prefix='pool')
-    return render(request, 'glims/pool.html', {'pool':pool,'form':form,'samples':json.dumps(samples)} ,context_instance=RequestContext(request))
+#     samples = SampleSerializer(pool.samples.all()).data
+    form = PoolForm(instance=pool,angular_prefix='pool',field_template='glims/crispy/field.html')
+    sample_form = PoolForm(instance=pool,angular_prefix='sample_data',field_template='glims/crispy/sample_field.html',ajax_only=True)
+    return render(request, 'glims/pool.html', {'pool':pool,'form':form,'sample_form':sample_form} ,context_instance=RequestContext(request))
 @login_required
 def pis(request):
     return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
