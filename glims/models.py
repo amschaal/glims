@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from glims.settings import ADMIN_EMAIL
+from jsonfield import JSONField
 
     
 class Plugin(models.Model):
@@ -76,15 +77,19 @@ from django.contrib.sessions.serializers import JSONSerializer
 
 # Because we are using proxy models, most information should be contained in this base class.  
 # Additional information will need to be added to subclasses by using another table related by Foreign Key
+
 class Job(models.Model):
+    parent = models.ForeignKey('self',related_name="children",blank=True,null=True)
     type = models.CharField(max_length=50)
     name = models.CharField(max_length=100,blank=True,null=True)
     description = models.TextField(blank=True,null=True)
     status = models.CharField(max_length=50,blank=True,null=True)
     path = models.CharField(max_length=250)
     job_id = models.CharField(max_length=30,blank=True,null=True)
-    _args = models.TextField(blank=True,null=True)
-    _config = models.TextField(blank=True,null=True)
+    args = JSONField(blank=True,null=True, default=[])
+    config = JSONField(blank=True,null=True, default={})
+    data = JSONField(blank=True,null=True, default={})
+    created = models.DateTimeField(auto_now=True)
 #     def __init__(self, job):
 #         self.job = job
     def run(self,**kwargs):
@@ -94,47 +99,61 @@ class Job(models.Model):
     
     """
     def update_status(self, status, **kwargs):
-        self.job.status = status
-        self.job.save()
+        self.status = status
+        self.save()
         """
         if status == 'foo':
             do bar
         elif status == 'yin':
             do yang
         """
-@receiver(pre_save, sender=Job)
-def save_job(sender,instance,*args,**kwargs):
-    js = JSONSerializer()
-    if hasattr(instance,'args'):
-        instance._args = js.dumps(instance.args)
-    if hasattr(instance,'config'):
-        instance._config = js.dumps(instance.config)
-@receiver(post_init, sender=Job)
-def init_job(sender, **kwargs):
-    js = JSONSerializer()
-    job = kwargs['instance']
-    if job._args is not None:
-        job.args = js.loads(job._args)
-    else:
-        job.args = []
-    if job._config is not None:
-        job.config = js.loads(job._config)
-    else:
-        job.config = {}
+# class SubJob(models.Model):
+#     job = models.ForeignKey(Job, related_name="subjobs")
+#     job_id = models.CharField(max_length=30,blank=True,null=True)
+#     status = models.CharField(max_length=50,blank=True,null=True)
+#     data = JSONField(blank=True,null=True,default={})
+#     """
+#     update_status is called via REST API
+#     
+#     """
+#     def update_status(self, status, **kwargs):
+#         self.job.status = status
+#         self.save()
+# @receiver(pre_save, sender=Job)
+# def save_job(sender,instance,*args,**kwargs):
+#     js = JSONSerializer()
+#     if hasattr(instance,'args'):
+#         instance._args = js.dumps(instance.args)
+#     if hasattr(instance,'config'):
+#         instance._config = js.dumps(instance.config)
+# @receiver(post_init, sender=Job)
+# def init_job(sender, **kwargs):
+#     js = JSONSerializer()
+#     job = kwargs['instance']
+#     if job._args is not None:
+#         job.args = js.loads(job._args)
+#     else:
+#         job.args = []
+#     if job._config is not None:
+#         job.config = js.loads(job._config)
+#     else:
+#         job.config = {}
 
 class JobFactory:
     @staticmethod
     def create_job(cls,**kwargs):
-        js = JSONSerializer()
-        if kwargs.has_key('args'):
-            kwargs['_args'] = js.dumps(kwargs['args'])
+#         js = JSONSerializer()
+#         if kwargs.has_key('args'):
+#             kwargs['_args'] = js.dumps(kwargs['args'])
         kwargs['type']=cls.__name__
         return cls.objects.create(**kwargs)
     @staticmethod
-    def get_job(id):
-        job = Job.objects.get(id=id)
+    def get_job(job_id):
+        job = Job.objects.get(job_id=job_id)
+        print 'type'
+        print job.type
         cls = globals()[job.type]
-        return cls.objects.get(id=id)
+        return cls.objects.get(job_id=job_id)
 
 # class Job(object):
 
@@ -195,6 +214,9 @@ class DRMAAJob(Job):
         jt.remoteCommand = self.path
         if hasattr(self,'args'):
             jt.args = self.args
+        if self.config:
+            print self.config
+            jt.environment = self.config
         #jt.joinFiles = True
         self.jt = jt
         return jt
@@ -204,6 +226,7 @@ class DRMAAJob(Job):
         if hasattr(self,'native_specification'):
             jt.nativeSpecification = self.native_specification
         self.job_id = self.session.runJob(jt)
+        self.save()
         print "Job created: " + self.job_id
         # Disable this option if you want to use get_drmaa_status
         if cleanup:

@@ -12,7 +12,7 @@
           <div class="widget-header">
             Model Types
           </div>
-          <div class="widget-body no-padding" ng-controller="ModelTypesController">
+          <div class="widget-body" ng-controller="ModelTypesController">
           		{{content_types}}
 				<div remote-table url="/api/model_types/">
 					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>

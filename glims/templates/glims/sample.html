@@ -11,10 +11,13 @@
             <a href="{% url 'permissions' model='Sample' pk=sample.id %}" class="pull-right">Permissions</a>
             
           </div>
-          <div class="widget-body no-padding">
+          <div class="widget-body">
               <table class="table">
               	<tbody>
+              		<tr><th>Created</th><td>{{sample.created}}</td></tr>
+              		{% if sample.project %}
               		<tr><th>Project</th><td><a href="{% url 'project' pk=sample.project.id %}">{{sample.project}}</a></td></tr>
+              		{% endif %}
                 	<tr><th>Description</th><td>{{sample.description}}</td></tr>
                 	{% for k,v in sample.data.items %}
                 	<tr><th>{{k}}</th><td>{{v}}</td></tr>

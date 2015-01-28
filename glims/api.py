@@ -10,7 +10,7 @@ from permissions.manage import get_all_user_objects, has_all_permissions
 # from models import 
 from django.core.exceptions import ObjectDoesNotExist
 from glims.serializers import *
-from rest_framework import filters
+from rest_framework import filters, generics
 
 
 class CustomPermission(permissions.BasePermission):
@@ -31,7 +31,9 @@ class CustomPermission(permissions.BasePermission):
 # @permission_classes((ServerAuth, ))  
 def update_job(request, job_id):
     status = request.DATA.get('status')
+    data = request.DATA.get('data',{})
     job = JobFactory.get_job(job_id)
+    job.data.update(data)
     job.update_status(status)
     return Response({})
 
@@ -61,12 +63,17 @@ def remove_pool_samples(request,pk):
     pool = Pool.objects.get(pk=pk)
     for s in Sample.objects.filter(id__in=sample_ids):
         pool.samples.remove(s)
+        pool.sample_data.pop(str(s.id),None)
+    pool.save()
     return Response({'status':'ok'})
-#     for sample_id in sample_ids:
-#         print sample_id
-#         cart.pop(str(sample_id),None)
-#     request.session['sample_cart'] = cart
-#     return Response(cart)
+
+@api_view(['POST'])
+def add_pool_samples(request,pk):
+    sample_ids = request.DATA.get('sample_ids',[])
+    pool = Pool.objects.get(pk=pk)
+    for s in Sample.objects.filter(id__in=sample_ids):
+        pool.samples.add(s)
+    return Response({'status':'ok'})
 
 @api_view(['POST'])
 def update_pool(request,pk):
@@ -76,9 +83,40 @@ def update_pool(request,pk):
     form = PoolForm(request.DATA,instance=pool)
     if form.is_valid():
         form.save()
-        return Response({'status':'ok'})
+        return Response({'status':'ok','data':PoolSerializer(pool).data})
     else:
         return Response({'errors':form.errors})
+@api_view(['POST'])
+def update_pool_sample(request,pool_id,sample_id):
+    from glims.forms import PoolForm
+    pool = Pool.objects.get(pk=pool_id)
+    pool_data = PoolSerializer(pool).data
+    original_data = request.DATA.copy()
+    data = request.DATA.pop('data')
+    pool_data.update(request.DATA)
+    pool_data['data'].update(data)
+    
+#     plugins = workflow.plugins.filter(page='workflow')
+    form = PoolForm(pool_data,instance=pool)
+    if form.is_valid():
+        pool.sample_data[str(sample_id)] = original_data
+        pool.save()
+        return Response({'status':'ok','data':original_data})
+    else:
+        return Response({'errors':form.errors})
+    
+    
+@api_view(['POST'])
+def update_workflow(request,pk):
+    from glims.forms import WorkflowForm
+    workflow = Workflow.objects.get(pk=pk)
+#     plugins = workflow.plugins.filter(page='workflow')
+    form = WorkflowForm(request.DATA,instance=workflow)
+    if form.is_valid():
+        form.save()
+        return Response({'status':'ok','data':WorkflowSerializer(workflow).data})
+    else:
+        return Response({'errors':form.errors})    
 # class ProjectViewset(viewsets.ViewSet):
 #     queryset = Project.objects.all()
 #     """
@@ -113,7 +151,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
-    permission_classes = [CustomPermission]
+#     permission_classes = [CustomPermission]
     filter_fields = ('name', 'project', 'description','project__group__name')
     ordering_fields = ('name', 'project__name','received')
     search_fields = ('name', 'description')
@@ -140,7 +178,20 @@ class PoolViewSet(viewsets.ModelViewSet):
     model = Pool
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Pool)
+    
+class WorkflowViewSet(viewsets.ModelViewSet):
+    serializer_class = WorkflowSerializer
+    filter_fields = ('name','type__name')
+    ordering_fields = ('name', 'created','type__name')
+    search_fields = ('name', 'description','type__name')
+    model = Workflow
 
+class JobViewset(viewsets.ReadOnlyModelViewSet):
+    model = Job
+    serializer_class = JobSerializer
+    search_fields = ('name', 'description','type','status','job_id')
+    ordering_fields = ('name','type','status','job_id')
+    filter_fields = ('type','status')
 """
 class FileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer

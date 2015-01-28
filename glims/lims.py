@@ -9,51 +9,7 @@ from models import Plugin
 from django_hstore import hstore
 from jsonfield import JSONField
 import operator
-'''
-Contains base structure for LIMS components
 
-Permissions are inherited from owner->project->project->sample (start at sample level until you get to owner)
-
-
-PI (Billing system)
--------------------
-name
-type (PI, Company, etc)
-assign_permissions(permissions=[],users=[])
-revoke_permissions(permissions=[],users=[])
-
-
-Project (Abstract)
-------------------
-PI (references User)
-name
-assign_permissions(permissions=[],users=[])
-revoke_permissions(permissions=[],users=[])
-
-
-Maybe not needed: Project (Abstract)
-------------------
-project
-name
-assign_permissions(permissions=[],users=[])
-revoke_permissions(permissions=[],users=[])
-
-
-Sample (Abstract)
------------------
-project
-assign_permissions(permissions=[],users=[])
-revoke_permissions(permissions=[],users=[])
-
-Experiment (Abstract)
-------------------
-sample
-name
-assign_permissions(permissions=[],users=[])
-revoke_permissions(permissions=[],users=[])
-
-
-'''
 def generate_pk():
     return str(uuid4())[:15]
 
@@ -88,8 +44,8 @@ class ExtensibleModel(models.Model):
     data = JSONField(null=True,blank=True,default={})
     #@deprecated: will use json, eventually will use native jsonb field with Django 1.8 
 #     data = hstore.DictionaryField(null=True)#schema=get_schema
-    refs = hstore.ReferencesField()
-    objects = hstore.HStoreManager()
+#     refs = hstore.ReferencesField()
+#     objects = hstore.HStoreManager()
     class Meta:
         abstract = True
 
@@ -147,10 +103,11 @@ class Project(ExtensibleModel):
         )
 
 class Sample(ExtensibleModel):
-    sample_id = models.CharField(max_length=30,unique=True)
-    project = models.ForeignKey(Project, related_name="samples")
+    sample_id = models.CharField(max_length=60,unique=True)
+    project = models.ForeignKey(Project, related_name="samples",null=True,blank=True)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
+    created = models.DateTimeField(auto_now=True)
     received = models.DateField(null=True,blank=True)
     def __unicode__(self):
         return self.name
@@ -186,7 +143,7 @@ class Pool(ExtensibleModel):
     description = models.TextField(null=True,blank=True)
     created = models.DateField(auto_now=True)
     samples = models.ManyToManyField(Sample,related_name='pools')
-    sample_data = JSONField(null=True,blank=True)
+    sample_data = JSONField(null=True,blank=True,default={})
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):

@@ -17,5 +17,21 @@ angular.module('glimsModels', ['ngResource'])
     create : { method : 'POST' },
     remove : { method : 'DELETE' }
   });
+}])
+.factory('Workflow', ['$resource', function ($resource) {
+  return $resource('/api/workflows/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
+    save : { method : 'PUT' },
+    create : { method : 'POST' },
+    remove : { method : 'DELETE' }
+  });
+}])
+.factory('Pool', ['$resource', function ($resource) {
+  return $resource('/api/pools/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
+    save : { method : 'PUT' },
+    create : { method : 'POST' },
+    remove : { method : 'DELETE' }
+  });
 }]);
 

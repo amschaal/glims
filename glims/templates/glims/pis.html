@@ -10,7 +10,7 @@
             <i class="fa fa-suitcase"></i> PIs
             <a href="#" class="pull-right">Add</a>
           </div>
-          <div class="widget-body no-padding" ng-controller="PIController">
+          <div class="widget-body" ng-controller="PIController">
 				<div remote-table url="/api/groups/" ng-init="params={'permissions__codename':'pi'}">
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
 					<table class="table table-striped table-condensed">
