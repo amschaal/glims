@@ -10,7 +10,7 @@
             <i class="fa fa-suitcase"></i> Projects
             <a href="{% url 'create_project' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
-          <div class="widget-body no-padding" ng-controller="ProjectController">
+          <div class="widget-body" ng-controller="ProjectController">
 				<div remote-table url="/api/projects/" ng-init="params={{query}}">
 					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>

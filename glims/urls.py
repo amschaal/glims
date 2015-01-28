@@ -19,14 +19,17 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet
+from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset
 
 router = routers.DefaultRouter()
 router.register(r'model_types', ModelTypeSerializerViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'samples', SampleViewSet)
 router.register(r'pools', PoolViewSet)
+router.register(r'workflows', WorkflowViewSet)
+router.register(r'jobs', JobViewset)
 router.register(r'groups', GroupViewSet)
+
 
 
 
@@ -55,8 +58,11 @@ urlpatterns += patterns('',
     url(r'^pools/(?P<pk>[\-\w]+)/delete/$', 'glims.views.delete_pool', name='delete_pool'),
     url(r'^cart/$', 'glims.views.cart', name='cart'),
 #     url(r'^workflow/$', 'glims.views.workflow', name='workflow'),
+    url(r'^workflows/$', 'glims.views.workflows', name='workflows'),
     url(r'^workflows/(?P<pk>[\d]+)/$', 'glims.views.workflow', name='workflow'),
     url(r'^workflows/create/$', 'glims.views.create_workflow', name='create_workflow'),
+    url(r'^jobs/$', 'glims.views.jobs', name='jobs'),
+    url(r'^jobs/(?P<job_id>[\d]+)/$', 'glims.views.job', name='job'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
@@ -68,9 +74,13 @@ urlpatterns += patterns('',
     url(r'^api/remove_samples_from_cart/$', 'glims.api.remove_samples_from_cart', name='remove_samples_from_cart'),
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
-    
+    url(r'^api/job/(?P<job_id>\d+)/update/$', 'glims.api.update_job', name='update_job'),
     url(r'^api/pool/(?P<pk>\d+)/update/$', 'glims.api.update_pool', name='update_pool'),
+    url(r'^api/pool/(?P<pool_id>\d+)/sample/(?P<sample_id>\d+)/update/$', 'glims.api.update_pool_sample', name='update_pool_sample'),
     url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.remove_pool_samples', name='remove_pool_samples'),
+    url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.add_pool_samples', name='add_pool_samples'),
+
+    url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  

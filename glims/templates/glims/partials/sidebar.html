@@ -15,6 +15,12 @@
 <li class="sidebar-list">
   <a href="{% url 'pools' %}">Pools</a>
 </li>
+<li class="sidebar-list">
+  <a href="{% url 'workflows' %}">Workflows</a>
+</li>
+<li class="sidebar-list">
+  <a href="{% url 'jobs' %}">Jobs</a>
+</li>
 {% for menu in menus %}
 {% include menu %}
 {% endfor %}

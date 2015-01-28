@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
+from models import JobFactory
 from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
@@ -32,8 +33,8 @@ def sample(request,pk):
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
 #     samples = SampleSerializer(pool.samples.all()).data
-    form = PoolForm(instance=pool,angular_prefix='pool',field_template='glims/crispy/field.html')
-    sample_form = PoolForm(instance=pool,angular_prefix='sample_data',field_template='glims/crispy/sample_field.html',ajax_only=True)
+    form = PoolForm(instance=pool,prefix="pool",angular_prefix='pool',field_template='glims/crispy/field.html')
+    sample_form = PoolForm(instance=pool,prefix="sample",angular_prefix='sample_data',field_template='glims/crispy/sample_field.html',ajax_only=True)
     return render(request, 'glims/pool.html', {'pool':pool,'form':form,'sample_form':sample_form} ,context_instance=RequestContext(request))
 @login_required
 def pis(request):
@@ -51,6 +52,16 @@ def samples(request):
 @login_required
 def pools(request):
     return render(request, 'glims/pools.html', {} ,context_instance=RequestContext(request))
+@login_required
+def workflows(request):
+    return render(request, 'glims/workflows.html', {} ,context_instance=RequestContext(request))
+@login_required
+def jobs(request):
+    return render(request, 'glims/jobs.html', {} ,context_instance=RequestContext(request))
+@login_required
+def job(request,job_id):
+    job = JobFactory.get_job(job_id)
+    return render(request, 'glims/job.html', {'job':job} ,context_instance=RequestContext(request))
 @login_required
 def cart(request):
     return render(request, 'glims/cart.html', {} ,context_instance=RequestContext(request))
@@ -97,6 +108,17 @@ def delete_pool(request,pk):
     pool = Pool.objects.get(pk=pk)
     pool.delete()
     return redirect('pools') 
+@login_required
+def delete_sample(request,pk):
+    sample = Sample.objects.get(pk=pk)
+    sample.delete()
+    return redirect('samples')
+@login_required
+def delete_project(request,pk):
+    project = Project.objects.get(pk=pk)
+    project.delete()
+    return redirect('projects')
+
 
 @login_required
 def create_workflow(request):
@@ -117,27 +139,28 @@ def create_workflow(request):
 def workflow(request,pk):
     workflow = Workflow.objects.get(pk=pk)
 #     plugins = workflow.plugins.filter(page='workflow')
-    if request.POST.get('workflow',False):
-        workflow_form = WorkflowForm(request.POST,instance=workflow)
-        if workflow_form.is_valid():
-            workflow_form.save()
-    else:
-        workflow_form = WorkflowForm(instance=workflow)
+    workflow_form = WorkflowForm(instance=workflow,prefix="workflow",angular_prefix='workflow',field_template='glims/crispy/field.html')
+#     if request.POST.get('workflow',False):
+#         workflow_form = WorkflowForm(request.POST,instance=workflow)
+#         if workflow_form.is_valid():
+#             workflow_form.save()
+#     else:
+#         workflow_form = WorkflowForm(instance=workflow)
     processes = []
     
     for process in workflow.processes.all():
-        print "%s:%s"%(request.POST.get('process_id'),process.id)
-        if request.POST and request.POST.get('process_id','') == str(process.id):
-            print "POST!!!!(%s)" %  str(process.id)
-            form = ProcessForm(request.POST,instance=process)
-            form.is_valid()
-            print form.cleaned_data
-            if form.is_valid():
-                form.save(commit=True)
-                print 'SAVING!!'
-            processes.append({'process':process, 'form':form, 'valid':form.is_valid(),'submitted':True})
-        else:
-            processes.append({'process':process, 'form':ProcessForm(instance=process)})
+#         print "%s:%s"%(request.POST.get('process_id'),process.id)
+#         if request.POST and request.POST.get('process_id','') == str(process.id):
+#             print "POST!!!!(%s)" %  str(process.id)
+#             form = ProcessForm(request.POST,instance=process)
+#             form.is_valid()
+#             print form.cleaned_data
+#             if form.is_valid():
+#                 form.save(commit=True)
+#                 print 'SAVING!!'
+#             processes.append({'process':process, 'form':form, 'valid':form.is_valid(),'submitted':True})
+#         else:
+        processes.append({'process':process, 'form':ProcessForm(instance=process,prefix="process_%d"%process.id,angular_prefix='process_%d'%process.id)})
     return render(request, 'glims/workflow.html', {'workflow':workflow,'workflow_form':workflow_form,'processes':processes} ,context_instance=RequestContext(request))
 # @login_required
 # def update_process(request,pk):

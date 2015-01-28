@@ -57,7 +57,7 @@ class ExtensibleModelForm(forms.ModelForm):
             if args[0].has_key('data'):
                 if isinstance(args[0]['data'], dict):
                     for key,value in args[0]['data'].iteritems():
-                        args[0]['data__'+key]=value    
+                        args[0]['data.'+key]=value    
         super(ExtensibleModelForm,self).__init__(*args, **kwargs)
         
         
@@ -73,13 +73,12 @@ class ExtensibleModelForm(forms.ModelForm):
 #                 print instance.data
                 if instance.type.schema:
                     for field in instance.type.schema:
-                        field_name = 'data__%s'%field['name']
+                        field_name = 'data.%s'%field['name']
                         initial = instance.data[field['name']] if instance.data.has_key(field['name']) else None
                         self.fields[field_name] = get_field(field,initial)
         if angular_prefix:
             for field in self.fields.keys():
-                print "content_type:%s"% content_type
-                kwargs = {'ng-model':'%s.%s'%(angular_prefix,field.replace('data__','data.'))}
+                kwargs = {'ng-model': '%s.%s'%(angular_prefix,field)}
                 if not ajax_only:
                     kwargs['initial-value']=''
                 self.fields[field].widget.attrs.update(kwargs)
@@ -87,17 +86,18 @@ class ExtensibleModelForm(forms.ModelForm):
         if field_template:
             self.helper = FormHelper(self)
             self.helper.field_template = field_template
-        
-        
+#         for field in self.fields.keys():
+#             ng_model = '%s.%s'%(angular_prefix,field.replace('data__','data.'))
+#             self.fields[field].ng_model = ng_model
     def save(self, commit=True):
         instance = super(ExtensibleModelForm, self).save(commit=False)
+        print self.cleaned_data.keys()
         for key in self.cleaned_data.keys():
-            if key[:6] == 'data__':
-                instance.data[key[6:]] = self.cleaned_data[key]
+            if key[:5] == 'data.':
+                instance.data[key[5:]] = self.cleaned_data[key]
         if commit:
             instance.save()
         return instance
-
 
 class ProjectForm(ExtensibleModelForm):
     class Meta:
