@@ -10,6 +10,7 @@
             Job {{job.job_id}}
           </div>
           <div class="widget-body">
+          		{{job.get_status_message}}
               <table class="table">
               		<tr><th>Created</th><td>{{job.created}}</td></tr>
 					<tr><th>Type</th><td>{{job.type}}</td></tr>

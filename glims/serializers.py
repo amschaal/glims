@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from glims.lims import Project, Sample, ModelType, Pool, Workflow#, File, Note
-from glims.models import Job
+from glims.models import Job, JobSubmission
 from django.contrib.auth.models import Group
 from rest_framework_hstore.serializers import HStoreSerializer
 
@@ -50,6 +50,10 @@ class PoolSerializer(serializers.ModelSerializer):
     sample_data = JSONWritableField()
     class Meta:
         model = Pool
+
+class JobSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobSubmission
 
 class JobSerializer(serializers.ModelSerializer):
     config = JSONWritableField()

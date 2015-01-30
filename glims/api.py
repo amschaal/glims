@@ -43,7 +43,7 @@ def add_samples_to_cart(request):
     cart = request.session.get('sample_cart', {})
     samples = Sample.objects.filter(pk__in=sample_ids)
     for sample in samples:
-        cart[sample.id] = SampleSerializer(sample).data
+        cart[str(sample.id)] = SampleSerializer(sample).data
     request.session['sample_cart'] = cart
     return Response(cart)
 
@@ -52,7 +52,6 @@ def remove_samples_from_cart(request):
     sample_ids = request.DATA.get('sample_ids',[])
     cart = request.session.get('sample_cart', {})
     for sample_id in sample_ids:
-        print sample_id
         cart.pop(str(sample_id),None)
     request.session['sample_cart'] = cart
     return Response(cart)
@@ -186,6 +185,13 @@ class WorkflowViewSet(viewsets.ModelViewSet):
     search_fields = ('name', 'description','type__name')
     model = Workflow
 
+class JobSubmissionViewset(viewsets.ReadOnlyModelViewSet):
+    model = JobSubmission
+    serializer_class = JobSubmissionSerializer
+    search_fields = ('name', 'description','type','status','id')
+    ordering_fields = ('name')
+#     filter_fields = ('type','status')
+    
 class JobViewset(viewsets.ReadOnlyModelViewSet):
     model = Job
     serializer_class = JobSerializer

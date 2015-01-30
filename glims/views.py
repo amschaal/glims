@@ -56,8 +56,8 @@ def pools(request):
 def workflows(request):
     return render(request, 'glims/workflows.html', {} ,context_instance=RequestContext(request))
 @login_required
-def jobs(request):
-    return render(request, 'glims/jobs.html', {} ,context_instance=RequestContext(request))
+def job_submissions(request):
+    return render(request, 'glims/job_submissions.html', {} ,context_instance=RequestContext(request))
 @login_required
 def job(request,job_id):
     job = JobFactory.get_job(job_id)
