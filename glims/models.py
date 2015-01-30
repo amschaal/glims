@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from glims.settings import ADMIN_EMAIL
 from jsonfield import JSONField
+import string, random
 
     
 class Plugin(models.Model):
@@ -78,14 +79,28 @@ from django.contrib.sessions.serializers import JSONSerializer
 # Because we are using proxy models, most information should be contained in this base class.  
 # Additional information will need to be added to subclasses by using another table related by Foreign Key
 
+
+def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+class JobSubmission(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
+    submitter = models.ForeignKey(User)
+    job_name = models.CharField(max_length=100,blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
+    @staticmethod
+    def create(id_prefix,kwargs={}):
+        kwargs['id'] = "%s_%s" % (id_prefix,id_generator(size=10))
+        return JobSubmission(**kwargs)
+    
 class Job(models.Model):
-    parent = models.ForeignKey('self',related_name="children",blank=True,null=True)
+    submission = models.ForeignKey(JobSubmission,related_name="jobs",blank=True,null=True)
     type = models.CharField(max_length=50)
     name = models.CharField(max_length=100,blank=True,null=True)
     description = models.TextField(blank=True,null=True)
     status = models.CharField(max_length=50,blank=True,null=True)
     path = models.CharField(max_length=250)
-    job_id = models.CharField(max_length=30,blank=True,null=True)
+    job_id = models.CharField(max_length=75,blank=True,null=True)
     args = JSONField(blank=True,null=True, default=[])
     config = JSONField(blank=True,null=True, default={})
     data = JSONField(blank=True,null=True, default={})
@@ -139,6 +154,8 @@ class Job(models.Model):
 #     else:
 #         job.config = {}
 
+
+
 class JobFactory:
     @staticmethod
     def create_job(cls,**kwargs):
@@ -147,6 +164,18 @@ class JobFactory:
 #             kwargs['_args'] = js.dumps(kwargs['args'])
         kwargs['type']=cls.__name__
         return cls.objects.create(**kwargs)
+    @staticmethod
+    def create_job_array(cls,begin, end, step,**kwargs):
+        template_job = JobFactory.create_job(cls,**kwargs)
+        ids = template_job.run_array_job(begin,end,step)
+        template_job.delete()
+        jobs = []
+        for id in ids:
+            job = JobFactory.create_job(cls,**kwargs)
+            job.job_id = id
+            job.save()
+            jobs.append(job)
+        return jobs
     @staticmethod
     def get_job(job_id):
         job = Job.objects.get(job_id=job_id)
@@ -176,6 +205,7 @@ import drmaa
 class DRMAAJob(Job):
     class Meta:
         proxy = True
+    INVALID = 'invalid'
     DRMAA_STATE = {
         drmaa.JobState.UNDETERMINED: 'process status cannot be determined',
         drmaa.JobState.QUEUED_ACTIVE: 'job is queued and active',
@@ -187,6 +217,7 @@ class DRMAAJob(Job):
         drmaa.JobState.USER_SUSPENDED: 'job is user suspended',
         drmaa.JobState.DONE: 'job finished normally',
         drmaa.JobState.FAILED: 'job finished, but failed',
+        INVALID:'job status is not available',
     }
     def __init__(self, *args, **kwargs):
         super(DRMAAJob, self).__init__(*args, **kwargs)
@@ -203,6 +234,7 @@ class DRMAAJob(Job):
                 self.session.initialize()
                 self.config['session'] = self.session.contact
             print 'A session was started successfully'
+        return self.session
     def exit(self):
         if hasattr(self,'session'):
             if hasattr(self,'jt'):
@@ -214,31 +246,46 @@ class DRMAAJob(Job):
         jt.remoteCommand = self.path
         if hasattr(self,'args'):
             jt.args = self.args
-        if self.config:
-            print self.config
-            jt.environment = self.config
+        if hasattr(self.config,'job_name'):
+            jt.jobName= self.config['job_name']
+        print self.config
+        if self.config.has_key('native_specification'):
+            print "Set Native"
+            jt.nativeSpecification = self.config['native_specification']
         #jt.joinFiles = True
         self.jt = jt
         return jt
     def run(self,cleanup=True):
         self.start_session()
         jt = self.create_template()
-        if hasattr(self,'native_specification'):
-            jt.nativeSpecification = self.native_specification
         self.job_id = self.session.runJob(jt)
-        self.save()
+        self.status = self.get_status() 
+#         self.save()
         print "Job created: " + self.job_id
         # Disable this option if you want to use get_drmaa_status
         if cleanup:
             self.exit()
-    #Buggy: Only seems to work with SGE when the session has not been exited
-    def get_drmaa_status(self):
+    #returns array of job ids
+    def run_array_job(self, begin=1, end=1, step=1, cleanup=True):
+        self.start_session()
+        jt = self.create_template()
+        print 'Native Spec' + jt.nativeSpecification
+        job_ids = self.session.runBulkJobs(jt,begin, end, step)
+        if cleanup:
+            self.exit()
+        return job_ids
+    def get_status_message(self):
+        return DRMAAJob.DRMAA_STATE[self.get_status()]
+    def get_status(self):
         if self.job_id:
-            self.start_session()
-            status = self.session.jobStatus(self.job_id)
-            return DRMAAJob.DRMAA_STATE[status] 
+            try:
+                self.start_session()
+                status = self.session.jobStatus(self.job_id)
+                return status#DRMAAJob.DRMAA_STATE[status]
+            except drmaa.errors.InvalidJobException, e:
+                return DRMAAJob.INVALID
         else:
-            return "No job id yet available."
+            return DRMAAJob.INVALID
             
     #This is just for testing
     def wait(self):
@@ -251,7 +298,10 @@ class SGE(DRMAAJob):
         proxy = True
     def __init__(self, *args, **kwargs):
         super(SGE, self).__init__(*args, **kwargs)
-        self.native_specification = '-b n' #Submit job as script, not binary.  Makes SGE copy script over.
-        
+#         if self.config.has_key('native_specification'):
+#             self.config['native_specification'] += ' -b n'
+#         else:
+        self.config['native_specification'] = '-b n' #Submit job as script, not binary.  Makes SGE copy script over.
             
-            
+#SLURM
+#-d, --dependency=<dependency_list>            
