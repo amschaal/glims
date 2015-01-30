@@ -17,7 +17,7 @@
 						<!-- <thead remote-headers headers="headers"></thead> -->
 						<thead><th remote-header ng-repeat="header in headers"></th></thead>
 						<tr ng-repeat="row in rows">
-						<td><a href="{[ jobLink(row) ]}">{[ row.id ]}</a></td>
+						<td><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
 				        <td>{[ row.name ]}</td>
 				        <td>{[ row.description ]}</td>
 				      </tr>
