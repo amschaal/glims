@@ -1,0 +1,26 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Project{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'job_submissions' %}">Job Submissions</a> / {{submission.id}} {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            Job Submission {{submission.id}}
+          </div>
+          <div class="widget-body">
+              <table class="table">
+					<tr><th>Name</th><td>{{submission.name}}</td></tr>
+                	<tr><th>Description</th><td>{{submission.description}}</td></tr>
+              </table>
+              <h3>Jobs</h3>
+              <table class="table">
+              <tr><th>Created</th><th>Type</th><th>Name</th><th>Description</th><th>Status</th><th></th></tr>
+              {% for job in submission.jobs.all %}
+              	<tr><td>{{job.created}}</td><td>{{job.type}}</td><td>{{job.name}}</td><td>{{job.description}}</td><td>{{job.status}}</td><td>{{job.data}}</td></tr>
+              {% endfor %}
+              </table>
+          </div>
+        </div>
+      </div>
+{% endblock %}
