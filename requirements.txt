@@ -1,0 +1,17 @@
+Django
+MySQL-python
+PyYAML
+Unidecode
+argparse
+django-crispy-forms==1.4.0
+django-extensions==1.4.6
+django-filter==0.8
+django-guardian==1.2.4
+django-js-utils==0.0.5dev
+django-sendfile==0.3.6
+djangorestframework==2.3.13
+drmaa==0.7.6
+jsonfield==1.0.0
+psycopg2==2.5.4
+six==1.8.0
+wsgiref==0.1.2
