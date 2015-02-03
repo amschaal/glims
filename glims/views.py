@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
-from models import JobFactory, JobSubmission
+from jobs import JobFactory, JobSubmission
 from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
