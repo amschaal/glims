@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import jsonfield.fields
-import django_hstore.fields
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('auth', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -58,9 +59,23 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True, blank=True)),
                 ('status', models.CharField(max_length=50, null=True, blank=True)),
                 ('path', models.CharField(max_length=250)),
-                ('job_id', models.CharField(max_length=30, null=True, blank=True)),
-                ('_args', models.TextField(null=True, blank=True)),
-                ('_config', models.TextField(null=True, blank=True)),
+                ('job_id', models.CharField(max_length=75, null=True, blank=True)),
+                ('args', jsonfield.fields.JSONField(default=[], null=True, blank=True)),
+                ('config', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='JobSubmission',
+            fields=[
+                ('id', models.CharField(max_length=50, serialize=False, primary_key=True)),
+                ('job_name', models.CharField(max_length=100, null=True, blank=True)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -110,11 +125,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('refs', django_hstore.fields.ReferencesField()),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('created', models.DateField(auto_now=True)),
-                ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
+                ('sample_data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
             ],
             options={
                 'abstract': False,
@@ -126,7 +140,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('refs', django_hstore.fields.ReferencesField()),
                 ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
                 ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
             ],
@@ -140,7 +153,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('refs', django_hstore.fields.ReferencesField()),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('group', models.ForeignKey(to='auth.Group')),
@@ -156,12 +168,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('refs', django_hstore.fields.ReferencesField()),
-                ('sample_id', models.CharField(unique=True, max_length=30)),
+                ('sample_id', models.CharField(unique=True, max_length=60)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now=True)),
                 ('received', models.DateField(null=True, blank=True)),
-                ('project', models.ForeignKey(related_name='samples', to='glims.Project')),
+                ('project', models.ForeignKey(related_name='samples', blank=True, to='glims.Project', null=True)),
                 ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
             ],
             options={
@@ -174,7 +186,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('refs', django_hstore.fields.ReferencesField()),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('created', models.DateField(auto_now=True)),
@@ -257,6 +268,12 @@ class Migration(migrations.Migration):
             model_name='modeltype',
             name='plugins',
             field=models.ManyToManyField(to='glims.Plugin', null=True, through='glims.ModelTypePlugins', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='job',
+            name='submission',
+            field=models.ForeignKey(related_name='jobs', blank=True, to='glims.JobSubmission', null=True),
             preserve_default=True,
         ),
         migrations.CreateModel(
