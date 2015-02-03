@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from glims.lims import Project, Sample, ModelType, Pool, Workflow#, File, Note
-from glims.models import Job, JobSubmission
+from glims.jobs import Job, JobSubmission
 from django.contrib.auth.models import Group
 from rest_framework_hstore.serializers import HStoreSerializer
 

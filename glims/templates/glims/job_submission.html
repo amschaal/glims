@@ -15,9 +15,9 @@
               </table>
               <h3>Jobs</h3>
               <table class="table">
-              <tr><th>Created</th><th>Type</th><th>Name</th><th>Description</th><th>Status</th><th></th></tr>
+              <tr><th>ID</th><th>Job name</th><th>Hold on</th><th>Created</th><th>Type</th><th>Name</th><th>Description</th><th>Status</th><th></th></tr>
               {% for job in submission.jobs.all %}
-              	<tr><td>{{job.created}}</td><td>{{job.type}}</td><td>{{job.name}}</td><td>{{job.description}}</td><td>{{job.status}}</td><td>{{job.data}}</td></tr>
+              	<tr><td>{{job.job_id}}</td><td>{{job.config.job_name}}</td><td>{{job.config.hold}}</td><td>{{job.created}}</td><td>{{job.type}}</td><td>{{job.name}}</td><td>{{job.description}}</td><td>{{job.get_status}}, {{job.status}}</td><td>{{job.data}}</td></tr>
               {% endfor %}
               </table>
           </div>
