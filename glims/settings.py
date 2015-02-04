@@ -13,6 +13,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -44,9 +45,9 @@ INSTALLED_APPS = (
     'guardian',
     'djangular',
     'rest_framework',
+    'rest_framework.authtoken',
     'crispy_forms',
     'django_extensions',
-    'django_hstore',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,29 +83,6 @@ ROOT_URLCONF = 'glims.urls'
 
 WSGI_APPLICATION = 'glims.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-#     'default': {
-#         'ENGINE':'django.db.backends.mysql',
-#         'NAME': 'glims',
-#         'USER': 'dev',
-#         'PASSWORD': 'dev',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'glims',
-        'USER': 'glims',
-        'PASSWORD': 'glims',
-        'HOST': '127.0.0.1',
-        'PORT': '5433',
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -129,8 +107,6 @@ MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
 
-ADMIN_EMAIL = 'amschaal@ucdavis.edu'
-
 REST_FRAMEWORK = {
     # Use hyperlinked styles by default.
     # Only used if the `serializer_class` attribute is not set on a view.
@@ -142,12 +118,18 @@ REST_FRAMEWORK = {
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend','rest_framework.filters.OrderingFilter','rest_framework.filters.SearchFilter',),
     'PAGINATE_BY': 10,                 # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
     'MAX_PAGINATE_BY': 100             # Maximum limit allowed when using `?page_size=xxx`.
 }
-
 PERMISSIONS_APP = {
     'manage_template': 'glims/manage_permissions.html',
     'manage_user_template' : 'glims/manage_user_permissions.html',
@@ -156,8 +138,4 @@ PERMISSIONS_APP = {
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-SENDFILE_BACKEND = 'sendfile.backends.development'
-
-MENUS = (
-    'proteomics/menu.html',
-)
+from config import *
