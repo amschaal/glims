@@ -43,7 +43,6 @@ INSTALLED_APPS = (
     'attachments',
     'proteomics',
     'guardian',
-    'djangular',
     'rest_framework',
     'rest_framework.authtoken',
     'crispy_forms',
