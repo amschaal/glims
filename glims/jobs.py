@@ -218,6 +218,17 @@ class SGE(DRMAAJob):
             self.config['native_specification'].append('-hold_jid %s' % self.config['hold'])
         super(SGE, self).create_template()
         return self.jt
+
+class SLURM(DRMAAJob):
+    class Meta:
+        proxy = True
+    def __init__(self, *args, **kwargs):
+        super(SLURM, self).__init__(*args, **kwargs)
+    def create_template(self):
+        if self.config.has_key('hold'):
+            self.config['native_specification'].append('--dependency=%s' % self.config['hold'])
+        super(SLURM, self).create_template()
+        return self.jt
             
 #SLURM
 #-d, --dependency=<dependency_list>            
