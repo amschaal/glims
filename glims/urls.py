@@ -8,6 +8,7 @@ admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
+from django_json_forms import urls as json_form_urls
 
 urlpatterns = patterns('',)
 # if USE_CAS:
@@ -83,6 +84,7 @@ urlpatterns += patterns('',
     url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.add_pool_samples', name='add_pool_samples'),
 
     url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
+    url(r'^json_forms/', include(json_form_urls.urlpatterns)),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  

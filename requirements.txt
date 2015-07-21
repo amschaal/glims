@@ -1,6 +1,5 @@
 Django
 MySQL-python
-PyYAML
 Unidecode
 argparse
 django-crispy-forms==1.4.0

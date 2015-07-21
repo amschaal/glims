@@ -1,4 +1,5 @@
-export SGE_QMASTER_PORT=536
-export SGE_CELL=default
-export SGE_ROOT=/var/lib/gridengine
-export DRMAA_LIBRARY_PATH=/usr/lib/gridengine-drmaa/lib/libdrmaa.so.1.0
+#export SGE_QMASTER_PORT=536
+#export SGE_CELL=default
+#export SGE_ROOT=/var/lib/gridengine
+#export DRMAA_LIBRARY_PATH=/usr/lib/gridengine-drmaa/lib/libdrmaa.so.1.0
+export DRMAA_LIBRARY_PATH=/home/adam/git/slurm-drmaa/slurm_drmaa/.libs/libdrmaa.so.1.0.6
