@@ -1,6 +1,6 @@
 {% extends "glims/dashboard.html" %}
-{% block page %}Experiments {% endblock %}
-{% block breadcrumbs %} Experiments {% endblock %}
+{% block page %}Model Types {% endblock %}
+{% block breadcrumbs %} Model Types {% endblock %}
 {% block content %}
 
 
@@ -13,15 +13,14 @@
             Model Types
           </div>
           <div class="widget-body" ng-controller="ModelTypesController">
-          		{{content_types}}
 				<div remote-table url="/api/model_types/">
-					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
 					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
+					<div filter-tags></div>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->
 						<thead><th remote-header ng-repeat="header in headers"></th></thead>
 						<tr ng-repeat="row in rows">
-				        <td><a ng-click="params.content_type=row.content_type;load();">{[ row.content_type ]}</a></td>
+				        <td><div field-filter field="content_type" alias="Content Type" value="row.content_type"></div>{[ row.content_type ]}</td>
 				        <td>{[ row.name ]}</td>
 				        <td>{[ row.description ]}</td>
 				      </tr>

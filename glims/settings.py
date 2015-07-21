@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'crispy_forms',
     'django_extensions',
+    'django_json_forms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -102,6 +103,9 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+DJANGO_JSON_FORMS_UPLOAD_DIRECTORY = os.path.join(MEDIA_ROOT,'dynamic_uploads')
+
 MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
