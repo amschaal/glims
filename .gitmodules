@@ -10,3 +10,6 @@
 [submodule "glims/static/vendor/angular-remote-table"]
 	path = glims/static/vendor/angular-remote-table
 	url = git@github.com:amschaal/angular-remote-table.git
+[submodule "extensible"]
+	path = extensible
+	url = git@bitbucket.org:amschaal/django-extensible.git

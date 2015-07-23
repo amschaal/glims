@@ -1,7 +1,7 @@
 
 angular.module('mainapp')
-.controller('WorkflowController', ['$scope','$http','Workflow', WorkflowController]);
-
+.controller('WorkflowController', ['$scope','$http','Workflow', WorkflowController])
+.controller('ProcessController', ['$scope','$http', ProcessController]);
 function WorkflowController($scope,$http,$Workflow) {
 	$scope.errors={};
 	$scope.message = false;
@@ -31,7 +31,26 @@ function WorkflowController($scope,$http,$Workflow) {
 	}
 	
 }
-
+function ProcessController($scope,$http) {
+	$scope.submit = function(process_id,data){
+		var url = django_js_utils.urls.resolve('update_process', { pk: process_id});
+		$http.post(
+			url,
+			data
+		).success(function(data, status, headers, config) {
+			if (data.errors){
+				$scope.errors=data.errors;
+				$scope.message = false;
+			}
+			else{
+				$scope.errors = {}
+				$scope.message = "Saved successfully.";
+			}
+				
+		});
+	}
+	
+}
 
 angular.module('mainapp')
 .controller('SamplesController', ['$scope','Sample','Pool','$http','$modal', SamplesController]);

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from glims.settings import ADMIN_EMAIL
 from jsonfield import JSONField
 import string, random
+from extensible.models import ModelType
 
     
 class Plugin(models.Model):
@@ -12,6 +13,7 @@ class Plugin(models.Model):
     description = models.TextField()
     page = models.CharField(max_length=50) #choices= Project, Sample, Experiment
     template = models.CharField(max_length=250) #template to render
+    model_types = models.ManyToManyField(ModelType,null=True,blank=True, through='ModelTypePlugins',related_name='plugins')
     def __unicode__(self):
         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
 

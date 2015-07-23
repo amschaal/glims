@@ -9,7 +9,8 @@ from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
 from django_json_forms import urls as json_form_urls
-
+from extensible import urls as extensible_urls
+import glims
 urlpatterns = patterns('',)
 # if USE_CAS:
 #     admin.site.login = login_required(admin.site.login)
@@ -20,7 +21,7 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset, JobSubmissionViewset
+from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset, JobSubmissionViewset, FormView
 
 router = routers.DefaultRouter()
 router.register(r'model_types', ModelTypeSerializerViewSet)
@@ -63,12 +64,15 @@ urlpatterns += patterns('',
     url(r'^workflows/$', 'glims.views.workflows', name='workflows'),
     url(r'^workflows/(?P<pk>[\d]+)/$', 'glims.views.workflow', name='workflow'),
     url(r'^workflows/create/$', 'glims.views.create_workflow', name='create_workflow'),
+    url(r'^process/(?P<pk>[\d]+)/update/$', FormView.as_view(model=glims.lims.Process,form_class=glims.forms.ProcessForm), name='update_process'),
+    
     url(r'^job_submissions/$', 'glims.views.job_submissions', name='job_submissions'),
     url(r'^job_submissions/(?P<id>[\d_A-Za-z]+)/$', 'glims.views.job_submission', name='job_submission'),
     url(r'^jobs/(?P<job_id>\d+\.?\d*)/$', 'glims.views.job', name='job'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
+    url(r'^admin/model_types/(?P<id>\d+)/$', 'glims.views.model_type', name='model_type'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
@@ -85,6 +89,7 @@ urlpatterns += patterns('',
 
     url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
+    url(r'^extensible/', include(extensible_urls.urlpatterns)),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  

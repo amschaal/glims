@@ -8,23 +8,24 @@ from django.db.models import Q
 from models import Plugin
 from jsonfield import JSONField
 from django_json_forms.models import JSONFormModel
+from extensible.models import ModelType, ExtensibleModel
 import operator
 
 def generate_pk():
     return str(uuid4())[:15]
 
-class ModelType(models.Model):
-    content_type = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
-    schema = JSONField(null=True,blank=True)
-#     form_model = models.ForeignKey(JSONFormModel,null=True,blank=True)
-    def __unicode__(self):
-        return "%s: %s" % (self.content_type, self.name)
-#   *fields - A postgres json field
-#       Contains the field definitions for custom model attributes
-
+# class ModelType(models.Model):
+#     content_type = models.CharField(max_length=100)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField()
+#     plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
+#     schema = JSONField(null=True,blank=True)
+# #     form_model = models.ForeignKey(JSONFormModel,null=True,blank=True)
+#     def __unicode__(self):
+#         return "%s: %s" % (self.content_type, self.name)
+# #   *fields - A postgres json field
+# #       Contains the field definitions for custom model attributes
+# ModelType.plugins = models.ManyToManyField(Plugin,null=True,blank=True, through='ModelTypePlugins')
 
 class ModelTypePlugins(models.Model):
     INLINE_LAYOUT = 'inline'
@@ -36,18 +37,16 @@ class ModelTypePlugins(models.Model):
     layout = models.CharField(max_length=10,choices=LAYOUTS)
     header = models.CharField(max_length=30, null=True, blank=True)
 
-
-
-class ExtensibleModel(models.Model):
-#     id = models.CharField(max_length=30,primary_key=True,default=generate_pk)
-    type = models.ForeignKey(ModelType, null=True, blank=True)
-    data = JSONField(null=True,blank=True,default={})
-    #@deprecated: will use json, eventually will use native jsonb field with Django 1.9
-#     data = hstore.DictionaryField(null=True)#schema=get_schema
-#     refs = hstore.ReferencesField()
-#     objects = hstore.HStoreManager()
-    class Meta:
-        abstract = True
+# class ExtensibleModel(models.Model):
+# #     id = models.CharField(max_length=30,primary_key=True,default=generate_pk)
+#     type = models.ForeignKey(ModelType, null=True, blank=True)
+#     data = JSONField(null=True,blank=True,default={})
+#     #@deprecated: will use json, eventually will use native jsonb field with Django 1.9
+# #     data = hstore.DictionaryField(null=True)#schema=get_schema
+# #     refs = hstore.ReferencesField()
+# #     objects = hstore.HStoreManager()
+#     class Meta:
+#         abstract = True
 
 """
         

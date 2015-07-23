@@ -18,11 +18,12 @@
 					<div filter-tags></div>
 					<table class="table table-striped table-condensed">
 						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th></thead>
+						<thead><th remote-header ng-repeat="header in headers"></th><th></th></thead>
 						<tr ng-repeat="row in rows">
 				        <td><div field-filter field="content_type" alias="Content Type" value="row.content_type"></div>{[ row.content_type ]}</td>
 				        <td>{[ row.name ]}</td>
 				        <td>{[ row.description ]}</td>
+				        <td><a href="{[ link(row.id) ]}">edit</a></td>
 				      </tr>
 					</table>
 					<div remote-pagination></div>

@@ -18,18 +18,21 @@
 	          <button ng-click="submit()" class="btn btn-default">Submit</button>
           	</div>
 			<h2>Processes</h2>
+			<div ng-controller="ProcessController">
 			<accordion close-others="true">  
 			{% for process in processes %}
 				<accordion-group heading="{{process.process.type.name}}" is-open="{% if process.submitted%}true{%else%}false{%endif%}">
-				<form method="POST" action="#process_{{process.process.id}}" id="process_{{process.process.id}}">
+				<!-- <form method="POST" action="#process_{{process.process.id}}" id="process_{{process.process.id}}"> -->
 				{% csrf_token %}
 				<input type="hidden" name="process_id" value="{{process.process.id}}"/>
+				{[{{process.form.prefix}}]}
 	          	{{process.form|crispy}}
-	          	<button class="btn btn-default">Submit</button>
-	          	</form>
+	          	<button class="btn btn-default" ng-click="submit({{process.process.id}},{{process.form.prefix}})">Submit</button>
+	          	<!-- </form> -->
 	          	</accordion-group>
 	          	{% endfor %}
           	</accordion>
+          	</div>
           </div>
         </div>
       </div>

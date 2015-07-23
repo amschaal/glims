@@ -11,6 +11,7 @@ from permissions.manage import get_all_user_objects, has_all_permissions
 from django.core.exceptions import ObjectDoesNotExist
 from glims.serializers import *
 from rest_framework import filters, generics
+from django.views.generic.base import View
 
 
 class CustomPermission(permissions.BasePermission):
@@ -224,3 +225,106 @@ class GroupViewSet(viewsets.ModelViewSet):
     model = Group
     def get_queryset(self):
         return Group.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)
+
+# class TemplateResponseMixin(object):
+#     """
+#     A mixin that can be used to render a template.
+#     """
+#     template_name = None
+#     response_class = TemplateResponse
+#     content_type = None
+# 
+#     def render_to_response(self, context, **response_kwargs):
+#         """
+#         Returns a response, using the `response_class` for this
+#         view, with a template rendered with the given context.
+# 
+#         If any keyword arguments are provided, they will be
+#         passed to the constructor of the response class.
+#         """
+#         response_kwargs.setdefault('content_type', self.content_type)
+#         return self.response_class(
+#             request=self.request,
+#             template=self.get_template_names(),
+#             context=context,
+#             **response_kwargs
+#         )
+# 
+#     def get_template_names(self):
+#         """
+#         Returns a list of template names to be used for the request. Must return
+#         a list. May not be called if render_to_response is overridden.
+#         """
+#         if self.template_name is None:
+#             raise ImproperlyConfigured(
+#                 "TemplateResponseMixin requires either a definition of "
+#                 "'template_name' or an implementation of 'get_template_names()'")
+#         else:
+#             return [self.template_name]
+
+class FormMixin(object):
+    form_class = None
+    lookup_field = 'pk'
+    kwarg_field = 'pk'
+    model = None
+    def get_form_class(self,request,*args,**kwargs):
+        return self.form_class
+    def get_instance(self,request,*args,**kwargs):
+        if not self.model:
+            return None
+        return self.model.objects.get(**{self.lookup_field:kwargs[self.kwarg_field]})
+    
+from django.http import JsonResponse    
+class FormView(FormMixin,View):
+    """
+    A view that renders a template.  This view will also pass into the context
+    any keyword arguments passed by the url conf.
+    """
+    def post(self, request, *args, **kwargs):
+#         context = self.get_context_data(**kwargs)
+#         return self.render_to_response(context)
+        import json
+        form_class = self.get_form_class(request,*args,**kwargs)
+        instance = self.get_instance(request,*args,**kwargs)
+        if instance:
+            form = form_class(json.loads(request.body),instance=instance)
+        else:
+            form = form_class(json.loads(request.body))
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status':'ok'})
+        else:
+            return JsonResponse({'errors':form.errors})
+
+# class AjaxFormView(object):
+#     def __init__(self):
+#         pass
+#     def get_form_class(self,request,**kwargs):
+#         pass
+#     def get_instance(self,request,**kwargs):
+#         return None
+#     def view(self,request,**kwargs):
+#         import json
+#         form_class = self.get_form(request,**kwargs)
+#         instance = self.get_instance(request,**kwargs)
+#         if request.method == 'POST':
+#             if instance:
+#                 form = form_class(json.loads(request.body),instance=instance)
+#             else:
+#                 form = form_class(json.loads(request.body))
+#             if form.is_valid():
+#                 return Response({'status':'ok'})
+#             else:
+#                 return Response({'errors':form.errors}) 
+# class ProcessFormView(AjaxFormView):
+#     def get_form_class(self, request, **kwargs):
+#         from glims.forms import ProcessForm
+#         return ProcessForm
+#     def get_instance(self, request, **kwargs):
+#         from glims.lims import Process
+#         return Process.objects.get(pk=kwargs['pk'])
+#         
+#     
+# from django.views.generic import TemplateView        
+        
+        
