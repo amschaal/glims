@@ -12,6 +12,7 @@ from permissions.manage import get_all_user_objects
 from sendfile import sendfile
 from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm#, FileForm
 import json
+from extensible.forms import AngularFormDecorator
 
 @login_required
 def home(request):
@@ -73,6 +74,12 @@ def cart(request):
 def model_types(request):
     content_types = ContentType.objects.all()
     return render(request, 'glims/model_types.html', {'content_types':content_types} ,context_instance=RequestContext(request))
+@login_required
+def model_type(request,id):
+    model_type = ModelType.objects.get(id=id)
+    init = {'fields':model_type.fields,'name':model_type.name,'description':model_type.description,'id':model_type.id,'urls':{'update':reverse('update_model_type',kwargs={"pk":id})}}#{'update':reverse('update_model_type',kwargs={"pk":pk})}
+    return render(request, 'glims/model_type.html', {'init':json.dumps(init),'model_type':model_type},context_instance=RequestContext(request))
+    return render(request, 'glims/model_type.html', {'job':job} ,context_instance=RequestContext(request))
 @login_required
 def create_project(request):
     if request.method == 'GET':
@@ -143,7 +150,7 @@ def create_workflow(request):
 def workflow(request,pk):
     workflow = Workflow.objects.get(pk=pk)
 #     plugins = workflow.plugins.filter(page='workflow')
-    workflow_form = WorkflowForm(instance=workflow,prefix="workflow",angular_prefix='workflow',field_template='glims/crispy/field.html')
+    workflow_form = AngularFormDecorator(WorkflowForm)(instance=workflow,prefix="workflow",field_template='glims/crispy/field.html')
 #     if request.POST.get('workflow',False):
 #         workflow_form = WorkflowForm(request.POST,instance=workflow)
 #         if workflow_form.is_valid():
@@ -164,7 +171,7 @@ def workflow(request,pk):
 #                 print 'SAVING!!'
 #             processes.append({'process':process, 'form':form, 'valid':form.is_valid(),'submitted':True})
 #         else:
-        processes.append({'process':process, 'form':ProcessForm(instance=process,prefix="process_%d"%process.id,angular_prefix='process_%d'%process.id)})
+        processes.append({'process':process, 'form':AngularFormDecorator(ProcessForm)(instance=process,prefix="process_%d"%process.id)})
     return render(request, 'glims/workflow.html', {'workflow':workflow,'workflow_form':workflow_form,'processes':processes} ,context_instance=RequestContext(request))
 # @login_required
 # def update_process(request,pk):
