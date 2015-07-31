@@ -3,11 +3,26 @@
 {% block page %}Create/Update sample{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'samples' %}">Samples</a> / Create {% endblock %}
 {% block content %}
+<script src="/static/js/pages/sample_form.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget">
+        <div class="widget" ng-controller="SampleFormController">
         <div class="row">
       	<div class="col-lg-10">
+      			<p>Selected: {[project]}</p>
+				  
+				  <ui-select ng-model="project"
+				             theme="bootstrap"
+				             ng-disabled="disabled"
+				             reset-search-input="false"
+				             style="width: 300px;">
+				    <ui-select-match placeholder="Enter a project...">{[$select.selected.name]}</ui-select-match>
+				    <ui-select-choices repeat="project in projects track by $index"
+				             refresh="refreshProjects($select.search)"
+				             refresh-delay="0">
+				      <div ng-bind-html="project.name | highlight: $select.search"></div>
+				    </ui-select-choices>
+				  </ui-select>
         <form method="post" action="" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{next}}"/>

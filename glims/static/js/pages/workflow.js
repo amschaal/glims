@@ -1,55 +1,77 @@
 
+
 angular.module('mainapp')
-.controller('WorkflowController', ['$scope','$http','Workflow', WorkflowController])
-.controller('ProcessController', ['$scope','$http', ProcessController]);
-function WorkflowController($scope,$http,$Workflow) {
+.controller('WorkflowController', ['$scope','$http','Workflow','growl','AngularFormService', WorkflowController])
+.controller('ProcessController', ['$scope','$http','growl', ProcessController]);
+function WorkflowController($scope,$http,$Workflow,growl,AngularFormService) {
 	$scope.errors={};
-	$scope.message = false;
 	var workflow_id = null;
 	$scope.init = function(data){
 		workflow_id = data.workflow_id;
 	}
-	$scope.getErrors = function(name){
-		return $scope.errors[name] ? $scope.errors[name] : []; 
-	};
-	$scope.submit = function(){
-		var url = django_js_utils.urls.resolve('update_workflow', { pk: workflow_id});
-		$http.post(
-			url,
-			$scope.workflow
-		).success(function(data, status, headers, config) {
-			if (data.errors){
-				$scope.errors=data.errors;
-				$scope.message = false;
-			}
-			else{
-				$scope.errors = {}
-				$scope.message = "Saved successfully.";
-			}
-				
-		});
+//	$scope.getErrors = function(name){
+//		return AngularFormService.getErrors(name);
+////		return $scope.errors[name] ? $scope.errors[name] : []; 
+//	};
+//	$scope.submit = function(){
+//		var url = django_js_utils.urls.resolve('update_workflow', { pk: workflow_id});
+//		AngularFormService.post(url,$scope.workflow);
+////		$http.post(
+////			url,
+////			$scope.workflow
+////		).success(function(data, status, headers, config) {
+////			if (data.errors){
+////				$scope.errors=data.errors;
+////				growl.error('There were errors updating the workflow',{ttl: 4000});
+////			}
+////			else{
+////				$scope.errors = {}
+////				growl.success('Workflow updated',{ttl: 4000});
+////			}
+////				
+////		});
+//	}
+	$scope.onError = function(data,status,headers,config){
+		growl.error('There were errors updating the workflow',{ttl: 4000});
+	}
+	$scope.onSuccess = function(data,status,headers,config){
+		growl.success('Workflow updated',{ttl: 4000});
 	}
 	
 }
-function ProcessController($scope,$http) {
-	$scope.submit = function(process_id,data){
-		var url = django_js_utils.urls.resolve('update_process', { pk: process_id});
-		$http.post(
-			url,
-			data
-		).success(function(data, status, headers, config) {
-			if (data.errors){
-				$scope.errors=data.errors;
-				$scope.message = false;
-			}
-			else{
-				$scope.errors = {}
-				$scope.message = "Saved successfully.";
-			}
-				
-		});
+
+function ProcessController($scope,$http,growl) {
+	$scope.onError = function(data,status,headers,config){
+		growl.error('There were errors updating the process',{ttl: 4000});
 	}
-	
+	$scope.onSuccess = function(data,status,headers,config){
+		growl.success('Process updated',{ttl: 4000});
+	}
+//	$scope.errors={};
+//	$scope.getErrors = function(name,prefix){
+//		if (!$scope.errors[prefix])
+//			return [];
+//		return $scope.errors[prefix][name] ? $scope.errors[prefix][name] : []; 
+//	};
+//	$scope.submit = function(process_id,prefix,data){
+//		var url = django_js_utils.urls.resolve('update_process', { pk: process_id});
+//		console.log(prefix,data,$scope[prefix]);
+//		$http.post(
+//			url,
+//			data
+//		).success(function(data, status, headers, config) {
+//			if (data.errors){
+//				$scope.errors[prefix]=data.errors;
+//				growl.error('There were errors updating the process',{ttl: 4000});
+////				$scope.message = false;
+//			}
+//			else{
+//				$scope.errors[prefix] = [];
+//				growl.success('Process updated',{ttl: 4000});
+////				$scope.message = "Saved successfully.";
+//			}
+//		});
+//	}
 }
 
 angular.module('mainapp')
