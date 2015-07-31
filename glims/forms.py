@@ -187,6 +187,9 @@ class SampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
         exclude = ('data','refs')
+    def __init__(self,*args,**kwargs):
+        super(forms.ModelForm,self).__init__(*args, **kwargs)
+        self.fields['project'].widget = forms.TextInput()
 
 class PoolForm(ExtensibleModelForm):
     class Meta:

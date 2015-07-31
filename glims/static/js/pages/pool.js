@@ -1,36 +1,42 @@
 
 angular.module('mainapp')
-.controller('PoolController', ['$scope','$http','Pool', PoolController]);
+.controller('PoolController', ['$scope','$http','Pool','growl', PoolController]);
 
-function PoolController($scope,$http,$Pool) {
-	$scope.errors={};
-	$scope.message = false;
+function PoolController($scope,$http,$Pool,growl) {
+//	$scope.errors={};
+//	$scope.message = false;
 	var pool_id = null;
 	$scope.init = function(data){
 		pool_id = data.pool_id;
 //		$scope.pool = $Pool.get({'id':data.pool_id});
 	}
-	$scope.getErrors = function(name){
-		return $scope.errors[name] ? $scope.errors[name] : []; 
-	};
-	$scope.submit = function(){
-		var url = django_js_utils.urls.resolve('update_pool', { pk: pool_id});
-		$http.post(
-			url,
-			$scope.pool
-		).success(function(data, status, headers, config) {
-			if (data.errors){
-				$scope.errors=data.errors;
-				$scope.message = false;
-			}
-			else{
-				$scope.errors = {}
-				$scope.message = "Saved successfully.";
-			}
-				
-		});
-	}
 	
+//	$scope.getErrors = function(name){
+//		return $scope.errors[name] ? $scope.errors[name] : []; 
+//	};
+//	$scope.submit = function(){
+//		var url = django_js_utils.urls.resolve('update_pool', { pk: pool_id});
+//		$http.post(
+//			url,
+//			$scope.pool
+//		).success(function(data, status, headers, config) {
+//			if (data.errors){
+//				$scope.errors=data.errors;
+//				$scope.message = false;
+//			}
+//			else{
+//				$scope.errors = {}
+//				$scope.message = "Saved successfully.";
+//			}
+//				
+//		});
+//	}
+	$scope.onError = function(data,status,headers,config){
+		growl.error('There were errors updating the pool',{ttl: 4000});
+	}
+	$scope.onSuccess = function(data,status,headers,config){
+		growl.success('Pool updated',{ttl: 4000});
+	}
 }
 
 

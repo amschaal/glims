@@ -12,7 +12,7 @@ from permissions.manage import get_all_user_objects
 from sendfile import sendfile
 from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm#, FileForm
 import json
-from extensible.forms import AngularFormDecorator
+from angular_forms.decorators import AngularFormDecorator 
 
 @login_required
 def home(request):
@@ -34,8 +34,8 @@ def sample(request,pk):
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
 #     samples = SampleSerializer(pool.samples.all()).data
-    form = PoolForm(instance=pool,prefix="pool",angular_prefix='pool',field_template='glims/crispy/field.html')
-    sample_form = PoolForm(instance=pool,prefix="sample",angular_prefix='sample_data',field_template='glims/crispy/sample_field.html',ajax_only=True)
+    form = AngularFormDecorator(PoolForm)(instance=pool,prefix="pool")
+    sample_form = AngularFormDecorator(PoolForm)(instance=pool,prefix="sample",field_template='glims/crispy/sample_field.html')
     return render(request, 'glims/pool.html', {'pool':pool,'form':form,'sample_form':sample_form} ,context_instance=RequestContext(request))
 @login_required
 def pis(request):
@@ -150,7 +150,7 @@ def create_workflow(request):
 def workflow(request,pk):
     workflow = Workflow.objects.get(pk=pk)
 #     plugins = workflow.plugins.filter(page='workflow')
-    workflow_form = AngularFormDecorator(WorkflowForm)(instance=workflow,prefix="workflow",field_template='glims/crispy/field.html')
+    workflow_form = AngularFormDecorator(WorkflowForm)(instance=workflow,prefix="workflow")
 #     if request.POST.get('workflow',False):
 #         workflow_form = WorkflowForm(request.POST,instance=workflow)
 #         if workflow_form.is_valid():

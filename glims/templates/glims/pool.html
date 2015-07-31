@@ -13,9 +13,10 @@
           </div>
           <div class="widget-body">
           <div ng-controller="PoolController" ng-init="init({pool_id:{{pool.id}}})">
-          {% crispy form form.helper %}
-          <alert ng-show="message" type="success" close="message=false;">{[message]}</alert>
-          <button ng-click="submit()" class="btn btn-default">Submit</button>
+		  <div angular-ajax-form url="{% url 'update_pool' pk=pool.id %}" prefix="pool" on-error="onError" on-success="onSuccess">
+	          {% crispy form form.helper %}
+	          <button ng-click="submit()" class="btn btn-default">Submit</button>
+          </div>
           </div>
           
               <!-- 

@@ -14,13 +14,14 @@
           <div class="widget-body">
               <table class="table">
               	<tbody>
+              		<tr><th>Type</th><td>{{sample.type}}</td></tr>
               		<tr><th>Created</th><td>{{sample.created}}</td></tr>
               		{% if sample.project %}
               		<tr><th>Project</th><td><a href="{% url 'project' pk=sample.project.id %}">{{sample.project}}</a></td></tr>
               		{% endif %}
                 	<tr><th>Description</th><td>{{sample.description}}</td></tr>
-                	{% for k,v in sample.data.items %}
-                	<tr><th>{{k}}</th><td>{{v}}</td></tr>
+                	{% for field in sample.data_fields %}
+                	<tr><th>{{field.label}}</th><td>{{field.value}}</td></tr>
                 	{% endfor %}
                 </tbody>
               </table>
