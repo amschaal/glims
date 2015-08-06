@@ -18,6 +18,7 @@ class Plugin(models.Model):
         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
 
 
+
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=100)
     subject = models.CharField(max_length=250)

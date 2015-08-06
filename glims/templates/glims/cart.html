@@ -15,7 +15,7 @@
 						<thead><th><input type="checkbox" ng-model="check_all" ng-change="checkAll()"/> Sample</th><th>Project</th><th>Description</th><th></th></thead>
 						<tr ng-repeat="row in samples">
 				        <td><input type="checkbox" ng-model="selectHash[row.id]"/> <a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
-				        <td><a href="{[ projectLink(row) ]}">{[ row.project ]}</a></td>
+				        <td><a href="{[ projectLink(row) ]}">{[ row.project__name ]}</a></td>
 				        <td>{[ row.description ]}</td>
 				        <td><a ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
 				      	</tr>

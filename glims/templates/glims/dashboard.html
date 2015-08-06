@@ -17,6 +17,7 @@
 
   <!-- SCRIPTS -->
   <script src="/static/vendor/jquery.min.js"></script>
+  {% include 'autocomplete_light/static.html' %}
   <!--  <script src="/static/responsive/lib/angular/angular.js"></script>-->
   <script src="{{ STATIC_URL }}django_js_utils.js"></script>
   <script src="{% url 'jsurls' %}"></script>
@@ -186,6 +187,21 @@ angular.module('Dashboard').config(['$resourceProvider', function($resourceProvi
                   </li>
                 </ul>
               </div>
+              {% if user.is_superuser %}
+              <div class="item dropdown">
+               <a href="#" class="dropdown-toggle" title="Manage">
+                  <i class="fa fa-cogs"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="dropdown-header">
+                    Manage
+                  </li>
+                  <li class="divider"></li>
+           			
+           				<li><a href="{% url 'model_types' %}">Model Types</a></li>
+                </ul>
+              </div>
+   			  {% endif %}
               <div class="item dropdown">
                <a href="#" class="dropdown-toggle">
                   <i class="fa fa-bell-o"></i>
