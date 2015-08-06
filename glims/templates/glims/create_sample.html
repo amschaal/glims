@@ -6,23 +6,27 @@
 <script src="/static/js/pages/sample_form.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget" ng-controller="SampleFormController">
+        <div class="widget" >
         <div class="row">
       	<div class="col-lg-10">
       			<p>Selected: {[project]}</p>
-				  
-				  <ui-select ng-model="project"
+				<!-- 
+				  <ui-select ng-model="project.selected"
 				             theme="bootstrap"
 				             ng-disabled="disabled"
 				             reset-search-input="false"
+				             on-select="selectProject($item, $model)"
 				             style="width: 300px;">
 				    <ui-select-match placeholder="Enter a project...">{[$select.selected.name]}</ui-select-match>
-				    <ui-select-choices repeat="project in projects track by $index"
-				             refresh="refreshProjects($select.search)"
+				    <ui-select-choices repeat="project in choices track by $index"
+				             refresh="refreshChoices($select.search)"
 				             refresh-delay="0">
 				      <div ng-bind-html="project.name | highlight: $select.search"></div>
 				    </ui-select-choices>
+				    
 				  </ui-select>
+				  <input ng-model="project.selected.id"/>
+				   -->  
         <form method="post" action="" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{next}}"/>

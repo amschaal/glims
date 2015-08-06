@@ -21,7 +21,7 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, GroupViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset, JobSubmissionViewset, FormView
+from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset, JobSubmissionViewset, FormView
 
 router = routers.DefaultRouter()
 router.register(r'model_types', ModelTypeSerializerViewSet)
@@ -31,7 +31,7 @@ router.register(r'pools', PoolViewSet)
 router.register(r'workflows', WorkflowViewSet)
 router.register(r'jobs', JobViewset)
 router.register(r'submissions', JobSubmissionViewset)
-router.register(r'groups', GroupViewSet)
+router.register(r'labs', LabViewSet)
 
 
 
@@ -49,10 +49,12 @@ urlpatterns += patterns('',
     url(r'^samples/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.SampleUpdate.as_view()), name='update_sample'),
 #     url(r'^file/(?P<pk>\d+)/get/$', 'glims.views.get_file', name='get_file'),
 #     url(r'^files/(?P<model>\w+)/(?P<pk>[\-\w]+)/attach/$', 'glims.views.attach_file', name='attach_file'),
-    url(r'^pis/$', 'glims.views.pis', name='pis'),
+    url(r'^labs/$', 'glims.views.labs', name='labs'),
+    url(r'^labs/create$', 'glims.views.create_lab', name='create_lab'),
+    url(r'^labs/(?P<pk>\d+)/$', 'glims.views.lab', name='lab'),
     url(r'^projects/$', 'glims.views.projects', name='projects'),
     url(r'^projects/create$', 'glims.views.create_project', name='create_project'),
-    url(r'^projects/(?P<pk>[\-\w]+)/update/$', login_required(glims_views.ProjectUpdate.as_view()), name='update_project'),
+    url(r'^projects/(?P<pk>[\-\w]+)/update/$', 'glims.views.create_project', name='update_project'),
     url(r'^samples/$', 'glims.views.samples', name='samples'),
     url(r'^samples/create$', 'glims.views.create_sample', name='create_sample'),
     url(r'^pools/$', 'glims.views.pools', name='pools'),
@@ -72,7 +74,7 @@ urlpatterns += patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
-    url(r'^admin/model_types/(?P<id>\d+)/$', 'glims.views.model_type', name='model_type'),
+    url(r'^admin/model_types/(?P<pk>\d+)/$', 'glims.views.model_type', name='model_type'),
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
@@ -90,6 +92,7 @@ urlpatterns += patterns('',
     url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
  

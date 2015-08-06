@@ -3,14 +3,21 @@ angular.module('mainapp')
 .controller('SampleFormController', ['$scope','$http', SampleFormController]);
 
 function SampleFormController($scope,$http) {
-	$scope.project = 'blah';
-	$scope.projects = [];
-	$scope.refreshProjects= function(search) {
+	$scope.choice = {};
+//	$scope.project = {};
+	$scope.choices = [];
+	$scope.refreshChoices= function(search) {
 	    var params = {search: search};
+	    if (search.length < 2)
+	    	return [];
 	    return $http.get('/api/projects/', {params: params})
 	      .then(function(response) {
-	        $scope.projects = response.data.results;
+	        $scope.choices = response.data.results;
 	      });
 	};
+	$scope.selectChoice = function ($item,$model){
+		//set hidden input here!
+		console.log($item,$model);
+	}
 }
 

@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from glims.lims import Project, Sample, ModelType, Pool, Workflow#, File, Note
 from glims.jobs import Job, JobSubmission
-from django.contrib.auth.models import Group
 
 from jsonfield import JSONField
 from rest_framework.fields import WritableField
+from glims.lims import Lab
 
 class JSONWritableField(WritableField):
     """
@@ -26,25 +26,28 @@ class JSONWritableField(WritableField):
         return value
 
 class ProjectSerializer(serializers.ModelSerializer):
-    group = serializers.RelatedField(many=False)
+    lab__name = serializers.Field(source='lab.name')
     type = serializers.RelatedField(many=False)
     data = JSONWritableField()
     class Meta:
         model = Project
-        fields = ('id','name','type','description','group','data')
+        fields = ('id','name','type','description','lab','lab__name','data')
 #         read_only_fields = ('',)
 
 class SampleSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
+    type = serializers.RelatedField(many=False)
+    project__name = serializers.Field(source='project.name')
     data = JSONWritableField()
     class Meta:
         model = Sample
-#         fields = ('id','sample_id','project_id','name','description')
+#         fields = ('id','sample_id','project_id','name','description','project__name')
 
 class PoolSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
+    type = serializers.RelatedField(many=False)
     data = JSONWritableField()
     sample_data = JSONWritableField()
     class Meta:
@@ -66,6 +69,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         model = Workflow
 
 class ModelTypeSerializer(serializers.ModelSerializer):
+    content_type__name = serializers.Field(source='content_type.name')
     class Meta:
         model = ModelType
         
@@ -77,6 +81,6 @@ class ModelTypeSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Note
         
-class GroupSerializer(serializers.ModelSerializer):
+class LabSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
+        model = Lab

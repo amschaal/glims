@@ -82,11 +82,18 @@ class MyModelExtended(MyModel):
 #     header = models.CharField(max_length=30, null=True, blank=True)
 #     class Meta:
 #         app_label = 'glims'
-    
+
+class Lab(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+#     def get_absolute_url(self):
+#         return reverse('lab', args=[str(self.id)])
+    def __unicode__(self):
+        return self.name
+
 class Project(ExtensibleModel):
-    
-#     type = models.ForeignKey(ProjectType)
-    group = models.ForeignKey(Group)
+    created = models.DateTimeField(auto_now=True)
+    lab = models.ForeignKey(Lab)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     def __unicode__(self):

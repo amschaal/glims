@@ -9,7 +9,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0001_initial'),
+        ('extensible', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -82,13 +82,11 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='ModelType',
+            name='Lab',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('content_type', models.CharField(max_length=100)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField()),
-                ('schema', jsonfield.fields.JSONField(null=True, blank=True)),
             ],
             options={
             },
@@ -115,6 +113,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('page', models.CharField(max_length=50)),
                 ('template', models.CharField(max_length=250)),
+                ('model_types', models.ManyToManyField(related_name='plugins', null=True, through='glims.ModelTypePlugins', to='extensible.ModelType', blank=True)),
             ],
             options={
             },
@@ -141,7 +140,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
-                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
             ],
             options={
                 'abstract': False,
@@ -153,10 +152,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
-                ('group', models.ForeignKey(to='auth.Group')),
-                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+                ('lab', models.ForeignKey(to='glims.Lab')),
+                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
             ],
             options={
                 'permissions': (('view', 'View Project'), ('admin', 'Administer Project'), ('pi', 'Can PI a Project')),
@@ -174,7 +174,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now=True)),
                 ('received', models.DateField(null=True, blank=True)),
                 ('project', models.ForeignKey(related_name='samples', blank=True, to='glims.Project', null=True)),
-                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
             ],
             options={
                 'permissions': (('view', 'View Sample'), ('admin', 'Administer Sample')),
@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateField(auto_now=True)),
                 ('pool', models.ForeignKey(blank=True, to='glims.Pool', null=True)),
                 ('samples', models.ManyToManyField(to='glims.Sample')),
-                ('type', models.ForeignKey(blank=True, to='glims.ModelType', null=True)),
+                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
             ],
             options={
                 'abstract': False,
@@ -203,7 +203,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('order', models.IntegerField()),
-                ('process', models.ForeignKey(related_name='+', to='glims.ModelType')),
+                ('process', models.ForeignKey(related_name='+', to='extensible.ModelType')),
             ],
             options={
             },
@@ -215,8 +215,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
-                ('processes', models.ManyToManyField(related_name='+', through='glims.WorkflowProcess', to='glims.ModelType')),
-                ('type', models.ForeignKey(related_name='+', to='glims.ModelType')),
+                ('processes', models.ManyToManyField(related_name='+', through='glims.WorkflowProcess', to='extensible.ModelType')),
+                ('type', models.ForeignKey(related_name='+', to='extensible.ModelType')),
             ],
             options={
             },
@@ -249,7 +249,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pool',
             name='type',
-            field=models.ForeignKey(blank=True, to='glims.ModelType', null=True),
+            field=models.ForeignKey(blank=True, to='extensible.ModelType', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -261,13 +261,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='modeltypeplugins',
             name='type',
-            field=models.ForeignKey(to='glims.ModelType'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='modeltype',
-            name='plugins',
-            field=models.ManyToManyField(to='glims.Plugin', null=True, through='glims.ModelTypePlugins', blank=True),
+            field=models.ForeignKey(to='extensible.ModelType'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -296,6 +290,15 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='SGE',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('glims.drmaajob',),
+        ),
+        migrations.CreateModel(
+            name='SLURM',
             fields=[
             ],
             options={

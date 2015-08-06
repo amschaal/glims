@@ -1,10 +1,13 @@
 from django import forms
-from glims.lims import Project, Sample, WorkflowTemplate, Workflow, Process, Pool
+from glims.lims import Project, Sample, WorkflowTemplate, Workflow, Process, Pool,\
+    Lab
 from extensible.models import ModelType
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Field, Div, HTML
 import json
 from extensible.forms import ExtensibleModelForm
+from angular_forms.forms.widgets import AngularSelectWidget
+import autocomplete_light
 # class FileForm(ModelForm):
 #     class Meta:
 #         model = File
@@ -179,17 +182,39 @@ from extensible.forms import ExtensibleModelForm
 #         return instance
 
 class ProjectForm(ExtensibleModelForm):
+    samples = forms.ModelMultipleChoiceField(Sample.objects.all(),required=False, widget=autocomplete_light.MultipleChoiceWidget("SampleAutocomplete"))
     class Meta:
         model = Project
-        exclude = ('data','refs')
+#         exclude = ('data','refs')
+        fields = ('type','lab','name','description','samples',)
+        autocomplete_fields = ("samples")
+        widgets = {
+           "lab":autocomplete_light.ChoiceWidget("LabAutocomplete"),
+        }
+#         widgets = {
+#            "samples":autocomplete_light.MultipleChoiceWidget("SampleAutocomplete"),
+#         }
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.initial['samples'] = [s.pk for s in self.instance.samples.all()]
+    def save(self, *args, **kwargs):
+        print self.cleaned_data.get('samples')
+        for sample in self.cleaned_data.get('samples'):
+            sample.project = self.instance
+            sample.save()
+        return super(ProjectForm, self).save(*args, **kwargs)
 
 class SampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
         exclude = ('data','refs')
-    def __init__(self,*args,**kwargs):
-        super(forms.ModelForm,self).__init__(*args, **kwargs)
-        self.fields['project'].widget = forms.TextInput()
+        autocomplete_fields = ("project")
+        widgets = {
+           "project":autocomplete_light.ChoiceWidget("ProjectAutocomplete"),
+        }
+#     def __init__(self,*args,**kwargs):
+#         super(forms.ModelForm,self).__init__(*args, **kwargs)
+#         self.fields['project'].widget = AngularSelectWidget(attrs={'field':'name'})
 
 class PoolForm(ExtensibleModelForm):
     class Meta:
@@ -201,14 +226,14 @@ class WorkflowTemplateForm(forms.ModelForm):
         model = WorkflowTemplate
     def __init__(self,*args,**kwargs):
         super(forms.ModelForm,self).__init__(*args, **kwargs)
-        self.fields['type'].queryset = ModelType.objects.filter(content_type='workflow')
+        self.fields['type'].queryset = ModelType.objects.filter(content_type__model='workflow')
 
 class WorkflowProcessForm(forms.ModelForm):
     class Meta:
         model = WorkflowTemplate
     def __init__(self,*args,**kwargs):
         super(forms.ModelForm,self).__init__(*args, **kwargs)
-        self.fields['process'].queryset = ModelType.objects.filter(content_type='process')
+        self.fields['process'].queryset = ModelType.objects.filter(content_type__model='process')
 
 class CreateWorkflowForm(forms.ModelForm):
     class Meta:
@@ -224,6 +249,11 @@ class ProcessForm(ExtensibleModelForm):
     class Meta:
         model = Process
         exclude =  ('type','data','refs','workflow','sample_data')
+        
+class LabForm(forms.ModelForm):
+    class Meta:
+        model = Lab
+        fields = ('name','description')
 
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)

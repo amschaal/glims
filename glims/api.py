@@ -38,24 +38,35 @@ def update_job(request, job_id):
     job.update_status(status)
     return Response({})
 
-@api_view(['POST'])
+def get_cart(cart):
+#     cart = request.session['sample_cart']
+    
+    return dict((s.id,SampleSerializer(s).data) for s in Sample.objects.filter(pk__in=cart).select_related('project__name'))
+    
+@api_view(['POST','GET'])
 def add_samples_to_cart(request):
     sample_ids = request.DATA.get('sample_ids',[])
-    cart = request.session.get('sample_cart', {})
-    samples = Sample.objects.filter(pk__in=sample_ids)
-    for sample in samples:
-        cart[str(sample.id)] = SampleSerializer(sample).data
-    request.session['sample_cart'] = cart
-    return Response(cart)
+    cart = request.session.get('sample_cart', [])
+#     samples = 
+    cart+=Sample.objects.filter(pk__in=sample_ids).values_list('id',flat=True)
+    request.session['sample_cart'] = cart   
+#     for sample in samples:
+#         print SampleSerializer(sample).data
+#         cart[str(sample.id)] = SampleSerializer(sample).data
+    
+    
+    return Response(get_cart(cart))
 
 @api_view(['POST'])
 def remove_samples_from_cart(request):
     sample_ids = request.DATA.get('sample_ids',[])
     cart = request.session.get('sample_cart', {})
     for sample_id in sample_ids:
-        cart.pop(str(sample_id),None)
+        if sample_id in cart:
+            cart.remove(sample_id)
+#         cart.pop(str(sample_id),None)
     request.session['sample_cart'] = cart
-    return Response(cart)
+    return Response(get_cart(cart))
 
 @api_view(['POST'])
 def remove_pool_samples(request,pk):
@@ -135,7 +146,7 @@ class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
     filter_fields = ('content_type',)
-    search_fields = ('content_type', 'name','description')
+    search_fields = ('content_type__name', 'name','description')
     model = ModelType
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Experiment)
@@ -144,17 +155,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [CustomPermission]
     model = Project
-    filter_fields = ('name', 'description','group','group__name')
-    search_fields = ('name', 'description','group__name','type__name')
+    filter_fields = ('name', 'description','lab','lab__name')
+    search_fields = ('name', 'description','lab__name','type__name')
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Project)
     
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = ('name', 'project', 'description','project__group__name')
+    filter_fields = ('name', 'project', 'description','project__lab__name')
     ordering_fields = ('name', 'project__name','received')
-    search_fields = ('name', 'description')
+    search_fields = ('name', 'description','project__name')
     model = Sample
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Sample)
@@ -217,14 +228,14 @@ class NoteViewSet(viewsets.ModelViewSet):
         return Note.objects.all()#get_all_user_objects(self.request.user, ['view'], Experiment)
 """
 
-class GroupViewSet(viewsets.ModelViewSet):
-    serializer_class = GroupSerializer
+class LabViewSet(viewsets.ModelViewSet):
+    serializer_class = LabSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = ('permissions__codename','name') #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
-    search_fields=['name']
-    model = Group
+    filter_fields = ('name',) #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
+    search_fields=('name','description')
+    model = Lab
     def get_queryset(self):
-        return Group.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)
+        return Lab.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)
 
 # class TemplateResponseMixin(object):
 #     """

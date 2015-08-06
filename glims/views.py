@@ -10,7 +10,7 @@ from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm#, FileForm
+from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm, LabForm#, FileForm
 import json
 from angular_forms.decorators import AngularFormDecorator 
 
@@ -38,8 +38,14 @@ def pool(request,pk):
     sample_form = AngularFormDecorator(PoolForm)(instance=pool,prefix="sample",field_template='glims/crispy/sample_field.html')
     return render(request, 'glims/pool.html', {'pool':pool,'form':form,'sample_form':sample_form} ,context_instance=RequestContext(request))
 @login_required
-def pis(request):
-    return render(request, 'glims/pis.html', {} ,context_instance=RequestContext(request))
+def labs(request):
+    return render(request, 'glims/labs.html', {} ,context_instance=RequestContext(request))
+@login_required
+def lab(request, pk):
+    lab = Lab.objects.get(pk=pk)
+#     inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
+#     tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
+    return render(request, 'glims/lab.html', {'lab':lab} ,context_instance=RequestContext(request))
 @login_required
 def projects(request):
 #     projects = get_all_user_objects(request.user, ['view'], Project)#Project.objects.all()
@@ -75,17 +81,30 @@ def model_types(request):
     content_types = ContentType.objects.all()
     return render(request, 'glims/model_types.html', {'content_types':content_types} ,context_instance=RequestContext(request))
 @login_required
-def model_type(request,id):
-    model_type = ModelType.objects.get(id=id)
-    init = {'fields':model_type.fields,'name':model_type.name,'description':model_type.description,'id':model_type.id,'urls':{'update':reverse('update_model_type',kwargs={"pk":id})}}#{'update':reverse('update_model_type',kwargs={"pk":pk})}
+def model_type(request,pk):
+    model_type = ModelType.objects.get(pk=pk)
+    init = {'fields':model_type.fields,'name':model_type.name,'description':model_type.description,'content_type':model_type.content_type.id,'id':model_type.id,'urls':{'update':reverse('update_model_type',kwargs={"pk":pk})}}#{'update':reverse('update_model_type',kwargs={"pk":pk})}
     return render(request, 'glims/model_type.html', {'init':json.dumps(init),'model_type':model_type},context_instance=RequestContext(request))
-    return render(request, 'glims/model_type.html', {'job':job} ,context_instance=RequestContext(request))
+#     return render(request, 'glims/model_type.html', {'job':job} ,context_instance=RequestContext(request))
+
 @login_required
-def create_project(request):
+def create_lab(request):
     if request.method == 'GET':
-        form = ProjectForm()
+        form = LabForm()
     elif request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = LabForm(request.POST)
+        if form.is_valid():
+            lab = form.save()
+            return redirect(reverse('lab',kwargs={'pk':lab.pk})) 
+    return render(request, 'glims/create_lab.html', {'form':form} ,context_instance=RequestContext(request))
+@login_required
+def create_project(request,pk=None):
+    instance = None if not pk else Project.objects.get(pk=pk)
+    initial = None if pk else {'lab':request.GET.get('lab',None)}
+    if request.method == 'GET':
+        form = ProjectForm(instance=instance,initial=initial)
+    elif request.method == 'POST':
+        form = ProjectForm(request.POST,instance=instance,initial=initial)
         if form.is_valid():
             project = form.save()
             return redirect(project.get_absolute_url()) 
@@ -109,7 +128,7 @@ def create_pool(request):
         form = PoolForm(request.POST)
         if form.is_valid():
             pool = form.save()
-            sample_ids = request.session.get('sample_cart', {}).keys()
+            sample_ids = request.session.get('sample_cart', [])
             pool.samples = Sample.objects.filter(pk__in=sample_ids)
             pool.save()
             return redirect(pool.get_absolute_url()) 

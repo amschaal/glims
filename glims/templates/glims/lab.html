@@ -1,0 +1,54 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Labs{% endblock %}
+{% block breadcrumbs %} {{lab}} {% endblock %}
+{% block content %}
+<script src="/static/js/pages/lab.js"></script>
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            <i class="fa fa-suitcase"></i> {{lab}}
+            <a href="{% url 'create_project' %}" class="pull-right btn btn-sm btn-success">Create</a>
+          </div>
+          <div class="widget-body" >
+				<tabset>
+					<tab heading="Projects" ng-controller="ProjectController">
+						<div remote-table url="/api/projects/" ng-init="params={lab__name:'{{lab.name}}'}">
+							<input ng-model="params.search" ng-change="load()" placeholder="Search"/> <a href="{% url 'create_project' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
+							<table class="table table-striped table-condensed">
+								<!-- <thead remote-headers headers="headers"></thead> -->
+								<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
+								<tr ng-repeat="row in rows">
+						        <td><a href="{[ projectLink(row) ]}">{[ row.name ]}</a></td>
+						        <td>{[ row.type ]}</td>
+						        <td>{[ row.description ]}</td>
+						        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
+						      </tr>
+							</table>
+							<div remote-pagination></div>
+						</div>
+					</tab>
+					<tab heading="Samples" ng-controller="SampleController">
+						<div remote-table url="{% url 'sample-list' %}" ng-init="params={project__lab__name:'{{lab.name}}'}">
+							<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
+							<table class="table table-striped table-condensed">
+								<!-- <thead remote-headers headers="headers"></thead> -->
+								<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th><th></th></thead>
+								<tr ng-repeat="row in rows">
+						        <td>{[ row.created ]}</td>
+						        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
+						        <td><a href="{[ projectLink(row) ]}">{[ row.project__name ]}</a></td>
+						        <td>{[ row.description ]}</td>
+						        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
+						        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
+						      </tr>
+							</table>
+							<div remote-pagination></div>
+						</div>
+					</tab>
+				
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

@@ -48,6 +48,9 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_json_forms',
+    'extensible',
+    'angular_forms',
+    'autocomplete_light',
 )
 
 MIDDLEWARE_CLASSES = (

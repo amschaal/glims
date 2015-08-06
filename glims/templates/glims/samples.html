@@ -20,7 +20,8 @@
 						<tr ng-repeat="row in rows">
 				        <td>{[ row.created ]}</td>
 				        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
-				        <td><a href="{[ projectLink(row) ]}">{[ row.project ]}</a></td>
+				        <td>{[ row.type ]}</td>
+				        <td><a href="{[ projectLink(row) ]}">{[ row.project__name ]}</a></td>
 				        <td>{[ row.description ]}</td>
 				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
 				        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
