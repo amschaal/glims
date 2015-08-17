@@ -96,6 +96,10 @@ class Project(ExtensibleModel):
     lab = models.ForeignKey(Lab)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
+    sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
+#     def limit_sample_type_choices(self):
+#         return {'content_type_id': 16}
+    
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):

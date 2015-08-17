@@ -90,6 +90,7 @@ urlpatterns += patterns('',
     url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.add_pool_samples', name='add_pool_samples'),
 
     url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
+    url(r'^samples/', include('glims.samples.urls')),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),

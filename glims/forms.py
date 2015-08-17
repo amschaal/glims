@@ -182,27 +182,27 @@ import autocomplete_light
 #         return instance
 
 class ProjectForm(ExtensibleModelForm):
-    samples = forms.ModelMultipleChoiceField(Sample.objects.all(),required=False, widget=autocomplete_light.MultipleChoiceWidget("SampleAutocomplete"))
+#     samples = forms.ModelMultipleChoiceField(Sample.objects.all(),required=False, widget=autocomplete_light.MultipleChoiceWidget("SampleAutocomplete"))
     class Meta:
         model = Project
 #         exclude = ('data','refs')
-        fields = ('type','lab','name','description','samples',)
-        autocomplete_fields = ("samples")
+        fields = ('type','sample_type','lab','name','description',)
+#         autocomplete_fields = ("samples")
         widgets = {
            "lab":autocomplete_light.ChoiceWidget("LabAutocomplete"),
         }
 #         widgets = {
 #            "samples":autocomplete_light.MultipleChoiceWidget("SampleAutocomplete"),
 #         }
-    def __init__(self, *args, **kwargs):
-        super(ProjectForm, self).__init__(*args, **kwargs)
-        self.initial['samples'] = [s.pk for s in self.instance.samples.all()]
-    def save(self, *args, **kwargs):
-        print self.cleaned_data.get('samples')
-        for sample in self.cleaned_data.get('samples'):
-            sample.project = self.instance
-            sample.save()
-        return super(ProjectForm, self).save(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         super(ProjectForm, self).__init__(*args, **kwargs)
+#         self.initial['samples'] = [s.pk for s in self.instance.samples.all()]
+#     def save(self, *args, **kwargs):
+#         print self.cleaned_data.get('samples')
+#         for sample in self.cleaned_data.get('samples'):
+#             sample.project = self.instance
+#             sample.save()
+#         return super(ProjectForm, self).save(*args, **kwargs)
 
 class SampleForm(ExtensibleModelForm):
     class Meta:
