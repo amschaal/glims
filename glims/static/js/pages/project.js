@@ -1,9 +1,25 @@
 
 angular.module('mainapp')
-.controller('SamplesController', ['$scope','Sample', SamplesController]);
+.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}])
+.controller('SamplesController', ['$scope','$http','Sample', SamplesController]);
 
-function SamplesController($scope,$Sample) {
+function SamplesController($scope,$http,$Sample) {
 	var sampleDefaults;
+	$scope.errors = false;
 	$scope.setSampleDefaults = function(defaults){
 		sampleDefaults = defaults;
 		
@@ -32,6 +48,32 @@ function SamplesController($scope,$Sample) {
 		sample.$remove(function(){$scope.samples.splice(index,1);});
 	};
 	$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
+	$scope.uploadFile = function(url){
+        var file = $scope.myFile;
+        console.log('file is ' );
+        console.dir(file);
+        
+        var fd = new FormData();
+        fd.append('tsv', file);
+
+        $http.post(url, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(data){
+        	$scope.errors = false;
+        	for (var i in data){
+        	var sample = new $Sample(data[i]);
+	    		sample.editing=true;
+	    		$scope.samples.push(sample);	
+        	}
+        })
+        .error(function(data){
+        	console.log('errors',data)
+        	$scope.errors = data.errors;
+        });
+        
+    };
 	$scope.init = function(){
 		$scope.samples = $Sample.query(sampleDefaults,function() {
 			angular.forEach($scope.samples,function(sample){
