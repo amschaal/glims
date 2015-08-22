@@ -41,8 +41,6 @@ def import_tsv_samples(request, project_id):
         reader = csv.reader(request.FILES['tsv'],delimiter='\t')
         tsv = list(reader)
         headers = tsv[1]
-    #     for row in tsv[2:]:
-    #         print row
         values = [dict(zip(headers,sample)) for sample in tsv[2:]]
         errors = {}
         samples = []
@@ -69,12 +67,17 @@ def import_tsv_samples(request, project_id):
             return Response([SampleSerializer(s).data for s in samples])
     except Exception, e:
         return Response({'errors':[]},status=status.HTTP_400_BAD_REQUEST)
-#         sample = Sample.objects.create(**row)
-#         print sample.id
-#     field_names = [field.name for field in opts.fields]
-#     # Write a first row with header information
-#     writer.writerow(field_names)
-#     # Write data rows
-#     for obj in queryset:
-#         writer.writerow([getattr(obj, field) for field in field_names])
-    return Response({'foo':'bar'})
+    
+@api_view(['POST'])
+def create_update_sample(request):
+    id = request.DATA.get('id',False)
+    if id:
+        instance = Sample.objects.get(id=id)
+        form = SampleForm(request.DATA,instance=instance)
+    else:
+        form = SampleForm(request.DATA)
+    if form.is_valid():
+        sample = form.save()
+        return Response(SampleSerializer(sample).data)
+    else:
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -7,7 +7,7 @@
 
 
 angular.module('mainapp').controller('DesignerController', function($scope,$http) {
-    $scope.field_types = ['text','textarea','file','radio','integer','select','checkbox'];
+    $scope.field_types = ['text','textarea','file','radio','float','integer','select','checkbox'];
     $scope.fields=[];
     $scope.initialize = function(init){
     	if (init.fields)

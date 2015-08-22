@@ -204,6 +204,14 @@ class ProjectForm(ExtensibleModelForm):
 #             sample.save()
 #         return super(ProjectForm, self).save(*args, **kwargs)
 
+class ProjectTypeForm(forms.ModelForm):
+    type = forms.ModelChoiceField(queryset=ModelType.objects.filter(content_type__model='project'))
+    class Meta:
+        model = Project
+        fields = ('type','lab',)
+        widgets = {
+           "lab":forms.HiddenInput()
+        }
 class SampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
@@ -215,6 +223,11 @@ class SampleForm(ExtensibleModelForm):
 #     def __init__(self,*args,**kwargs):
 #         super(forms.ModelForm,self).__init__(*args, **kwargs)
 #         self.fields['project'].widget = AngularSelectWidget(attrs={'field':'name'})
+
+class SampleTypeForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ('type',)
 
 class PoolForm(ExtensibleModelForm):
     class Meta:
