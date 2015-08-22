@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONPRenderer, JSONRenderer
-from glims.jobs import JobFactory
+# from glims.jobs import JobFactory
 from glims.lims import Project, Sample, ModelType
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from glims.serializers import *
 from rest_framework import filters, generics
 from django.views.generic.base import View
+from django.http import JsonResponse    
 
 
 class CustomPermission(permissions.BasePermission):
@@ -28,15 +29,15 @@ class CustomPermission(permissions.BasePermission):
         # Instance must have an attribute named `owner`.
         return has_all_permissions(request.user, obj, ['admin'])
 
-@api_view(['POST'])
-# @permission_classes((ServerAuth, ))  
-def update_job(request, job_id):
-    status = request.DATA.get('status')
-    data = request.DATA.get('data',{})
-    job = JobFactory.get_job(job_id)
-    job.data.update(data)
-    job.update_status(status)
-    return Response({})
+# @api_view(['POST'])
+# # @permission_classes((ServerAuth, ))  
+# def update_job(request, job_id):
+#     status = request.DATA.get('status')
+#     data = request.DATA.get('data',{})
+#     job = JobFactory.get_job(job_id)
+#     job.data.update(data)
+#     job.update_status(status)
+#     return Response({})
 
 def get_cart(cart):
 #     cart = request.session['sample_cart']
@@ -53,8 +54,6 @@ def add_samples_to_cart(request):
 #     for sample in samples:
 #         print SampleSerializer(sample).data
 #         cart[str(sample.id)] = SampleSerializer(sample).data
-    
-    
     return Response(get_cart(cart))
 
 @api_view(['POST'])
@@ -179,7 +178,7 @@ class SampleViewSet(viewsets.ModelViewSet):
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
         return queryset
-    
+
 class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer
     permission_classes = [CustomPermission]
@@ -197,19 +196,20 @@ class WorkflowViewSet(viewsets.ModelViewSet):
     search_fields = ('name', 'description','type__name')
     model = Workflow
 
-class JobSubmissionViewset(viewsets.ReadOnlyModelViewSet):
-    model = JobSubmission
-    serializer_class = JobSubmissionSerializer
-    search_fields = ('name', 'description','type','status','id')
-    ordering_fields = ('name')
-#     filter_fields = ('type','status')
+# class JobSubmissionViewset(viewsets.ReadOnlyModelViewSet):
+#     model = JobSubmission
+#     serializer_class = JobSubmissionSerializer
+#     search_fields = ('name', 'description','type','status','id')
+#     ordering_fields = ('name')
+# #     filter_fields = ('type','status')
     
 class JobViewset(viewsets.ReadOnlyModelViewSet):
     model = Job
     serializer_class = JobSerializer
-    search_fields = ('name', 'description','type','status','job_id')
-    ordering_fields = ('name','type','status','job_id')
-    filter_fields = ('type','status')
+    search_fields = ('id', 'job_id','script_path','status')
+    ordering_fields = ('created','run','status')
+    filter_fields = ('template','status')
+    order_by= ('-created')
 """
 class FileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer
@@ -285,7 +285,7 @@ class FormMixin(object):
             return None
         return self.model.objects.get(**{self.lookup_field:kwargs[self.kwarg_field]})
     
-from django.http import JsonResponse    
+
 class FormView(FormMixin,View):
     """
     A view that renders a template.  This view will also pass into the context

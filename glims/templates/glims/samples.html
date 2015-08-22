@@ -20,7 +20,7 @@
 						<tr ng-repeat="row in rows">
 				        <td>{[ row.created ]}</td>
 				        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
-				        <td>{[ row.type ]}</td>
+				        <td>{[ row.type__name ]}</td>
 				        <td><a href="{[ projectLink(row) ]}">{[ row.project__name ]}</a></td>
 				        <td>{[ row.description ]}</td>
 				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>

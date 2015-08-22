@@ -13,6 +13,8 @@ from sendfile import sendfile
 from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm, LabForm#, FileForm
 import json
 from angular_forms.decorators import AngularFormDecorator 
+from glims.forms import ProjectTypeForm
+from django_compute.models import Job
 
 @login_required
 def home(request):
@@ -63,11 +65,11 @@ def pools(request):
 def workflows(request):
     return render(request, 'glims/workflows.html', {} ,context_instance=RequestContext(request))
 @login_required
-def job_submissions(request):
-    return render(request, 'glims/job_submissions.html', {} ,context_instance=RequestContext(request))
+def jobs(request):
+    return render(request, 'glims/jobs.html', {} ,context_instance=RequestContext(request))
 @login_required
-def job(request,job_id):
-    job = JobFactory.get_job(job_id)
+def job(request,id):
+    job = Job.objects.get(id=id)
     return render(request, 'glims/job.html', {'job':job} ,context_instance=RequestContext(request))
 @login_required
 def job_submission(request,id):
@@ -98,9 +100,13 @@ def create_lab(request):
             return redirect(reverse('lab',kwargs={'pk':lab.pk})) 
     return render(request, 'glims/create_lab.html', {'form':form} ,context_instance=RequestContext(request))
 @login_required
+def choose_project_type(request):
+    form = ProjectTypeForm(initial={'lab':request.GET.get('lab',None)})
+    return render(request, 'glims/choose_project_type.html', {'form':form} ,context_instance=RequestContext(request))
+@login_required
 def create_project(request,pk=None):
     instance = None if not pk else Project.objects.get(pk=pk)
-    initial = None if pk else {'lab':request.GET.get('lab',None)}
+    initial = None if pk else {'lab':request.GET.get('lab',None),'type':request.GET.get('type',None)}
     if request.method == 'GET':
         form = ProjectForm(instance=instance,initial=initial)
     elif request.method == 'POST':

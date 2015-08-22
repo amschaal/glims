@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from glims.lims import Project, Sample, ModelType, Pool, Workflow#, File, Note
-from glims.jobs import Job, JobSubmission
+# from glims.jobs import Job, JobSubmission
+from django_compute.models import Job
 
 from jsonfield import JSONField
 from rest_framework.fields import WritableField
@@ -37,11 +38,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 class SampleSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
-    type = serializers.RelatedField(many=False)
+#     type = serializers.RelatedField(many=False)
+    type__name = serializers.Field(source='type.name')
     project__name = serializers.Field(source='project.name')
     data = JSONWritableField()
     class Meta:
         model = Sample
+#         fields = ('id','sample_id','project_id','name','description','project'lab','lab__name','data')
 #         fields = ('id','sample_id','project_id','name','description','project__name')
 
 class PoolSerializer(serializers.ModelSerializer):
@@ -53,15 +56,15 @@ class PoolSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pool
 
-class JobSubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JobSubmission
+# class JobSubmissionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = JobSubmission
 
-class JobSerializer(serializers.ModelSerializer):
-    config = JSONWritableField()
-    args = JSONWritableField()
-    class Meta:
-        model = Job
+# class JobSerializer(serializers.ModelSerializer):
+#     config = JSONWritableField()
+#     args = JSONWritableField()
+#     class Meta:
+#         model = Job
         
 class WorkflowSerializer(serializers.ModelSerializer):
     data = JSONWritableField()
@@ -84,3 +87,14 @@ class ModelTypeSerializer(serializers.ModelSerializer):
 class LabSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lab
+        
+class JobSerializer(serializers.ModelSerializer):
+    data = JSONWritableField()
+    params = JSONWritableField()
+    args = JSONWritableField()
+#     urls = serializers.SerializerMethodField()
+#     def get_urls(self,obj):
+#         return {'update'}
+    class Meta:
+        model = Job
+        fields = ('id','job_id','template','params','created','run_at','args','status','data')

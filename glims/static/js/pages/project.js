@@ -26,10 +26,12 @@ function SamplesController($scope,$http,$Sample) {
 	};
 	$scope.save = function(sample){
 		console.log('save',sample);
+		var onSuccess = function(response){delete sample.errors;};
+		var onError = function(response){sample.errors = response.data;console.log(response.data);};
 		if(sample.id)
-			sample.$save();
+			sample.$save(onSuccess,onError);
 		else
-			sample.$create();
+			sample.$create(onSuccess,onError);
 	};
 	$scope.addSample = function(){
 		var sample = new $Sample(sampleDefaults);

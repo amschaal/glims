@@ -13,7 +13,7 @@
 				<tabset>
 					<tab heading="Projects" ng-controller="ProjectController">
 						<div remote-table url="/api/projects/" ng-init="params={lab__name:'{{lab.name}}'}">
-							<input ng-model="params.search" ng-change="load()" placeholder="Search"/> <a href="{% url 'create_project' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
+							<input ng-model="params.search" ng-change="load()" placeholder="Search"/> <a href="{% url 'choose_project_type' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
 							<table class="table table-striped table-condensed">
 								<!-- <thead remote-headers headers="headers"></thead> -->
 								<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
