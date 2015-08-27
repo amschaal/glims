@@ -208,8 +208,11 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = JobSerializer
     search_fields = ('id', 'job_id','script_path','status')
     ordering_fields = ('created','run','status')
+    ordering = ('-created',)
     filter_fields = ('template','status')
-    order_by= ('-created')
+#     def get_queryset(self):
+#         return Job.objects.all().order_by('-created')
+    
 """
 class FileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer

@@ -18,6 +18,7 @@
 						<thead><th remote-header ng-repeat="header in headers"></th></thead>
 						<tr ng-repeat="row in rows">
 						<td><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
+				        <td><div field-filter field="template" alias="template" value="row.template"></div>{[ row.template ]}</td>
 				        <td>
 				        	<div field-filter field="status" alias="status" value="row.status"></div>{[ row.status ]}
 				        	<button ng-if="['STARTED','QUEUED'].indexOf(row.status) >= 0" ng-click="terminate(row)" class="btn btn-xs btn-danger">Terminate</button>

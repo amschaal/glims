@@ -72,6 +72,10 @@ def job(request,id):
     job = Job.objects.get(id=id)
     return render(request, 'glims/job.html', {'job':job} ,context_instance=RequestContext(request))
 @login_required
+def job_files(request,id):
+    job = Job.objects.get(id=id)
+    return render(request, 'glims/job_files.html', {'job':job} ,context_instance=RequestContext(request))
+@login_required
 def job_submission(request,id):
     submission = JobSubmission.objects.get(id=id)
     return render(request, 'glims/job_submission.html', {'submission':submission} ,context_instance=RequestContext(request))
