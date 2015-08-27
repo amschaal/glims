@@ -49,13 +49,13 @@ background-color: pink;
 				<table class="table" ng-show="samples.length">
               	<thead><tr><th>ID</th><td>Name</td><td>Description</td><td>Received</td>{%for field in project.sample_type.fields%}<td>{{field.label}}</td>{%endfor%}<td></td></tr></thead>
               	<tbody>
-                	<tr ng-repeat="s in samples">
+                	<tr ng-repeat="s in samples track by $index">
                 		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.sample_id}" title="{[s.errors.sample_id]}" ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
                 		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.name}" title="{[s.errors.name]}" ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
                 		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
                 		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.received}" title="{[s.errors.received]}" ng-model="s.received" value="{[s.received]}" placeholder="(Optional) YYYY-MM-DD"/></td><td ng-if="!s.editing">{[s.received]}</td>
                 		{%for field in project.sample_type.fields%}
-                		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors['data.{{field.name}}']}" title="{[s.errors['data.{{field.name}}']]}" ng-model="s.data.{{field.name}}" value="{[s.data.{{field.name}}]}" /></td><td ng-if="!s.editing">{[s.data.{{field.name}}]}</td>
+                		<td ng-if="s.editing"><input ng-class="{'input-error':samples[$index].errors['data.{{field.name}}']}" title="{[samples[$index].errors['data.{{field.name}}']]}" ng-model="samples[$index].data{{field.name}}" /></td><td ng-if="!s.editing">{[samples[$index].data.{{field.name}}]}</td>
                 		{%endfor%}
                 		<td ng-if="s.editing"><button class="btn btn-warning btn-sm" ng-click="cancel(s,$index)">Cancel</button><button class="btn btn-danger btn-sm" ng-click="deleteSample(s,$index)">Delete</button><button class="btn btn-success btn-sm" ng-click="save(s);">Save</button></td><td ng-if="!s.editing"><i style="margin-left:5px" class="glyphicon glyphicon-pencil pull-right" ng-click="s.editing=true"></i></td>
                 	</tr>

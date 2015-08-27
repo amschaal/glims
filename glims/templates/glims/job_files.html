@@ -1,0 +1,27 @@
+{% extends "glims/dashboard.html" %}
+{% block page %}Project{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'jobs' %}">Jobs</a> / <a href="{% url 'job' id=job.id %}">{{job.id}}</a> / Output files {% endblock %}
+{% block content %}
+<script src="/static/js/pages/job_files.js"></script>
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+          <div class="widget-header">
+            Job {{job.id}} output files
+          </div>
+          <div class="widget-body" ng-controller="JobFilesController" ng-init="init('{% url 'job_output' job_id=job.id path='' %}')">
+          		<span ng-if="pathArray.length > 0"><span class="menu-icon fa fa-folder"></span> {[pathArray.join('/')]}</span>
+          		<table class="table">
+          			<tr><th>Name</th><th>Size</th></tr>
+					<tr ng-if="pathArray.length > 0"><td><a class="menu-icon fa fa-folder" ng-click="goUp()"> ..</a></td></tr>
+          			<tr ng-repeat="dir in data.directories">
+          				<td><a ng-click="listDir(dir)"><span class="menu-icon fa fa-folder"></span> {[dir]}</a></td><td></td>
+          			</tr>
+          			<tr ng-repeat="file in data.files">
+          				<td>{[file.name]}</td><td>{[file.size]}</td>
+          			</tr>
+          		</table>
+          </div>
+        </div>
+      </div>
+{% endblock %}

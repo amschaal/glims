@@ -10,7 +10,7 @@ from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
 from django_json_forms import urls as json_form_urls
 from extensible import urls as extensible_urls
-from django_compute import urls as extensible_urls
+from django_compute import urls as compute_urls
 import glims
 urlpatterns = patterns('',)
 # if USE_CAS:
@@ -73,6 +73,7 @@ urlpatterns += patterns('',
     url(r'^jobs/$', 'glims.views.jobs', name='jobs'),
 #     url(r'^job_submissions/(?P<id>[\d_A-Za-z]+)/$', 'glims.views.job_submission', name='job_submission'),
     url(r'^jobs/(?P<id>[A-Z0-9]{10})/$', 'glims.views.job', name='job'),
+    url(r'^jobs/(?P<id>[A-Z0-9]{10})/files/$', 'glims.views.job_files', name='job_files'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}, name='login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/model_types/$', 'glims.views.model_types', name='model_types'),
@@ -95,7 +96,7 @@ urlpatterns += patterns('',
     url(r'^samples/', include('glims.samples.urls')),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
-    url(r'^compute/', include(extensible_urls.urlpatterns)),
+    url(r'^compute/', include(compute_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

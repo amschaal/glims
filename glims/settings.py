@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django_json_forms',
     'extensible',
     'angular_forms',
+    'django_compute',
     'autocomplete_light',
 )
 
@@ -143,5 +144,7 @@ PERMISSIONS_APP = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+COMPUTE_JOB_CALLBACKS = ['glims.callbacks.JOB_CALLBACKS']
 
 from config import *
