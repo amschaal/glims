@@ -1,13 +1,12 @@
 from rest_framework import serializers
-from glims.lims import Project, Sample, ModelType, Pool, Workflow#, File, Note
+from glims.lims import Project, Sample, ModelType, Pool, Workflow, Lab#, File, Note
 # from glims.jobs import Job, JobSubmission
 from django_compute.models import Job
 
 from jsonfield import JSONField
-from rest_framework.fields import WritableField
-from glims.lims import Lab
+# from rest_framework.fields import WritableField
 
-class JSONWritableField(WritableField):
+class JSONWritableField(serializers.Field):
     """
     DRF JSON Field
     """
@@ -19,28 +18,38 @@ class JSONWritableField(WritableField):
 #         else:
 #             return None
 # 
-    def to_native(self, value):
+    def to_internal_value(self,value):
         import json
         if not isinstance(value, str) or value is None:
             return value
         value = json.loads(value)#JSONField(value)
         return value
+    def to_representation(self, value):
+        return value
+        import json
+        return json.dumps(value)
+#     def to_native(self, value):
+#         import json
+#         if not isinstance(value, str) or value is None:
+#             return value
+#         value = json.loads(value)#JSONField(value)
+#         return value
 
 class ProjectSerializer(serializers.ModelSerializer):
-    lab__name = serializers.Field(source='lab.name')
-    type = serializers.RelatedField(many=False)
+    lab__name = serializers.CharField(source='lab.name')
+    type = serializers.StringRelatedField(many=False,read_only=True)
     data = JSONWritableField()
     class Meta:
         model = Project
-        fields = ('id','name','type','description','lab','lab__name','data')
+        fields = ('id','name','type','description','lab','lab__name','data','created')
 #         read_only_fields = ('',)
 
 class SampleSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
 #     type = serializers.RelatedField(many=False)
-    type__name = serializers.Field(source='type.name')
-    project__name = serializers.Field(source='project.name')
+    type__name = serializers.StringRelatedField(source='type.name')
+    project__name = serializers.CharField(source='project.name')
     data = JSONWritableField()
     class Meta:
         model = Sample
@@ -50,7 +59,7 @@ class SampleSerializer(serializers.ModelSerializer):
 class PoolSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
-    type = serializers.RelatedField(many=False)
+    type = serializers.StringRelatedField(many=False,read_only=True)
     data = JSONWritableField()
     sample_data = JSONWritableField()
     class Meta:
@@ -72,7 +81,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         model = Workflow
 
 class ModelTypeSerializer(serializers.ModelSerializer):
-    content_type__name = serializers.Field(source='content_type.name')
+    content_type__name = serializers.CharField(source='content_type.name')
     class Meta:
         model = ModelType
         

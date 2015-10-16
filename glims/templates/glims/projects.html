@@ -11,23 +11,17 @@
             <a href="{% url 'choose_project_type' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body" ng-controller="ProjectController">
-				<div remote-table url="/api/projects/" ng-init="params={{query}}">
-					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
-					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
-					<table class="table table-striped table-condensed">
-						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
-						<tr ng-repeat="row in rows">
-				        <td><a href="{[ projectLink(row) ]}">{[ row.name ]}</a></td>
-				        <td>{[ row.type ]}</td>
-				        <td><a href="{[ labLink(row) ]}">{[ row.lab__name ]}</a></td>
-				        <td>{[ row.description ]}</td>
-				        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
-				      </tr>
-					</table>
-					<div remote-pagination></div>
-				</div>
-            </div>
+            <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+		      <tr ng-repeat="row in $data track by row.id">
+		        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
+		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
+		        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type]}</td>
+		        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
+		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+		      </tr>
+		    </table>
+       	  </div>
+            
           </div>
         </div>
       </div>

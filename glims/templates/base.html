@@ -34,10 +34,11 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.min.js"></script>
 <script src="/static/angular/bootstrap-ui.js"></script>
 <script src="/static/angular/angular-file-upload.min.js"></script>
+<script src="/static/vendor/ng-table/ng-table.js"></script>
 <!-- <script type="text/javascript" src="url 'jsurls' "></script> -->
 
 <script>
-main = angular.module('main', ['ui.bootstrap','ngResource','angularFileUpload']);
+main = angular.module('main', ['ui.bootstrap','ngResource','angularFileUpload','ngTable']);
 main.config(function($interpolateProvider) {
 	  $interpolateProvider.startSymbol('{[');
 	  $interpolateProvider.endSymbol(']}');

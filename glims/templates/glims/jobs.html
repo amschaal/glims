@@ -10,26 +10,19 @@
             Jobs
           </div>
           <div class="widget-body" ng-controller="JobController">
-				<div remote-table url="/api/jobs/" ng-init="">
-					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
-					<div filter-tags></div>
-					<table class="table table-striped table-condensed">
-						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th></thead>
-						<tr ng-repeat="row in rows">
-						<td><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
-				        <td><div field-filter field="template" alias="template" value="row.template"></div>{[ row.template ]}</td>
-				        <td>
-				        	<div field-filter field="status" alias="status" value="row.status"></div>{[ row.status ]}
+				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+			      <tr ng-repeat="row in $data track by row.id">
+					<td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
+			        <td data-title="'Name'" sortable="'id'"" filter="{id__icontains: 'text'}"><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
+			        <td data-title="'Template'" sortable="'template'" filter="{template__id__icontains: 'text'}">{[row.template]}</td>
+			        <td data-title="'Status'" sortable="'status'" filter="{status__icontains: 'text'}">
+			        		{[ row.status ]}
 				        	<button ng-if="['STARTED','QUEUED'].indexOf(row.status) >= 0" ng-click="terminate(row)" class="btn btn-xs btn-danger">Terminate</button>
 				        	<button ng-if="!row.status" ng-click="run(row)" class="btn btn-xs btn-success">Run</button>
-				        </td>
-				        <td>{[ row.created ]}</td>
-				        <td>{[ row.description ]}</td>
-				      </tr>
-					</table>
-					<div remote-pagination></div>
-				</div>
+			        </td>
+			      </tr>
+		    	</table>
+				
             </div>
           </div>
         </div>
