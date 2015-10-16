@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.response import Response
-from rest_framework.renderers import JSONPRenderer, JSONRenderer
+from rest_framework.renderers import JSONRenderer
 # from glims.jobs import JobFactory
 from glims.lims import Project, Sample, ModelType
 from django.contrib.auth.models import User
@@ -32,8 +32,8 @@ class CustomPermission(permissions.BasePermission):
 # @api_view(['POST'])
 # # @permission_classes((ServerAuth, ))  
 # def update_job(request, job_id):
-#     status = request.DATA.get('status')
-#     data = request.DATA.get('data',{})
+#     status = request.data.get('status')
+#     data = request.data.get('data',{})
 #     job = JobFactory.get_job(job_id)
 #     job.data.update(data)
 #     job.update_status(status)
@@ -46,7 +46,7 @@ def get_cart(cart):
     
 @api_view(['POST','GET'])
 def add_samples_to_cart(request):
-    sample_ids = request.DATA.get('sample_ids',[])
+    sample_ids = request.data.get('sample_ids',[])
     cart = request.session.get('sample_cart', [])
 #     samples = 
     cart+=Sample.objects.filter(pk__in=sample_ids).values_list('id',flat=True)
@@ -58,7 +58,7 @@ def add_samples_to_cart(request):
 
 @api_view(['POST'])
 def remove_samples_from_cart(request):
-    sample_ids = request.DATA.get('sample_ids',[])
+    sample_ids = request.data.get('sample_ids',[])
     cart = request.session.get('sample_cart', {})
     for sample_id in sample_ids:
         if sample_id in cart:
@@ -69,7 +69,7 @@ def remove_samples_from_cart(request):
 
 @api_view(['POST'])
 def remove_pool_samples(request,pk):
-    sample_ids = request.DATA.get('sample_ids',[])
+    sample_ids = request.data.get('sample_ids',[])
     pool = Pool.objects.get(pk=pk)
     for s in Sample.objects.filter(id__in=sample_ids):
         pool.samples.remove(s)
@@ -79,7 +79,7 @@ def remove_pool_samples(request,pk):
 
 @api_view(['POST'])
 def add_pool_samples(request,pk):
-    sample_ids = request.DATA.get('sample_ids',[])
+    sample_ids = request.data.get('sample_ids',[])
     pool = Pool.objects.get(pk=pk)
     for s in Sample.objects.filter(id__in=sample_ids):
         pool.samples.add(s)
@@ -90,7 +90,7 @@ def update_pool(request,pk):
     from glims.forms import PoolForm
     pool = Pool.objects.get(pk=pk)
 #     plugins = workflow.plugins.filter(page='workflow')
-    form = PoolForm(request.DATA,instance=pool)
+    form = PoolForm(request.data,instance=pool)
     if form.is_valid():
         form.save()
         return Response({'status':'ok','data':PoolSerializer(pool).data})
@@ -101,9 +101,9 @@ def update_pool_sample(request,pool_id,sample_id):
     from glims.forms import PoolForm
     pool = Pool.objects.get(pk=pool_id)
     pool_data = PoolSerializer(pool).data
-    original_data = request.DATA.copy()
-    data = request.DATA.pop('data')
-    pool_data.update(request.DATA)
+    original_data = request.data.copy()
+    data = request.data.pop('data')
+    pool_data.update(request.data)
     pool_data['data'].update(data)
     
 #     plugins = workflow.plugins.filter(page='workflow')
@@ -121,7 +121,7 @@ def update_workflow(request,pk):
     from glims.forms import WorkflowForm
     workflow = Workflow.objects.get(pk=pk)
 #     plugins = workflow.plugins.filter(page='workflow')
-    form = WorkflowForm(request.DATA,instance=workflow)
+    form = WorkflowForm(request.data,instance=workflow)
     if form.is_valid():
         form.save()
         return Response({'status':'ok','data':WorkflowSerializer(workflow).data})
@@ -144,7 +144,7 @@ def update_workflow(request,pk):
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
-    filter_fields = ('content_type',)
+    filter_fields = {'content_type':['exact'],'content_type__name':['exact', 'icontains']}
     search_fields = ('content_type__name', 'name','description')
     model = ModelType
 #     def get_queryset(self):
@@ -154,7 +154,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [CustomPermission]
     model = Project
-    filter_fields = ('name', 'description','lab','lab__name')
+    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     search_fields = ('name', 'description','lab__name','type__name')
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Project)
@@ -162,8 +162,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = ('name', 'project', 'description','project__lab__name')
-    ordering_fields = ('name', 'project__name','received')
+    filter_fields = {'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    ordering_fields = ('name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
     model = Sample
 #     def get_queryset(self):
@@ -174,7 +174,7 @@ class SampleViewSet(viewsets.ModelViewSet):
         by filtering against a `username` query parameter in the URL.
         """
         queryset = Sample.objects.all()
-        pool = self.request.QUERY_PARAMS.get('pool', None)
+        pool = self.request.query_params.get('pool', None)
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
         return queryset
@@ -207,11 +207,11 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
     model = Job
     serializer_class = JobSerializer
     search_fields = ('id', 'job_id','script_path','status')
-    ordering_fields = ('created','run','status')
-    ordering = ('-created',)
-    filter_fields = ('template','status')
-#     def get_queryset(self):
-#         return Job.objects.all().order_by('-created')
+    ordering_fields = ('created','run','status','id')
+    ordering = ('-created')
+    filter_fields = {'template__id':['exact', 'icontains'],'status':['exact', 'icontains'],'id':['exact', 'icontains']}
+    def get_queryset(self):
+        return Job.objects.all().order_by('-created')
     
 """
 class FileViewSet(viewsets.ModelViewSet):
@@ -234,7 +234,7 @@ class NoteViewSet(viewsets.ModelViewSet):
 class LabViewSet(viewsets.ModelViewSet):
     serializer_class = LabSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = ('name',) #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
+    filter_fields = {'name':['exact', 'icontains'],'description':['icontains']} #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
     search_fields=('name','description')
     model = Lab
     def get_queryset(self):

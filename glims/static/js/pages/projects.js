@@ -1,11 +1,10 @@
 
 angular.module('mainapp')
-.controller('ProjectController', ['$scope', ProjectController]);
+.controller('ProjectController', ['$scope','$http','DRFNgTableParams', ProjectController]);
 
-function ProjectController($scope) {
-	$scope.headers=[{'name':'name','label':'Name'},{'name':'type','label':'Type'},{'name':'lab','label':'Lab'},{'name':'description','label':'Description'}];
-	$scope.permissionLink = function(project){return django_js_utils.urls.resolve('permissions', { model: 'project', pk: project.id })};
+function ProjectController($scope,$http,DRFNgTableParams) {
+	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab })};
+	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" }});
 }
-

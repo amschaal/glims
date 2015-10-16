@@ -70,12 +70,12 @@ def import_tsv_samples(request, project_id):
     
 @api_view(['POST'])
 def create_update_sample(request):
-    id = request.DATA.get('id',False)
+    id = request.data.get('id',False)
     if id:
         instance = Sample.objects.get(id=id)
-        form = SampleForm(request.DATA,instance=instance)
+        form = SampleForm(request.data,instance=instance)
     else:
-        form = SampleForm(request.DATA)
+        form = SampleForm(request.data)
     if form.is_valid():
         sample = form.save()
         return Response(SampleSerializer(sample).data)

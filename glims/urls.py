@@ -25,14 +25,14 @@ from rest_framework import routers
 from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset,  FormView
 
 router = routers.DefaultRouter()
-router.register(r'model_types', ModelTypeSerializerViewSet)
-router.register(r'projects', ProjectViewSet)
-router.register(r'samples', SampleViewSet)
-router.register(r'pools', PoolViewSet)
-router.register(r'workflows', WorkflowViewSet)
-router.register(r'jobs', JobViewset)
+router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
+router.register(r'projects', ProjectViewSet,'Project')
+router.register(r'samples', SampleViewSet,'Sample')
+router.register(r'pools', PoolViewSet,'Pool')
+router.register(r'workflows', WorkflowViewSet,'Workflow')
+router.register(r'jobs', JobViewset,'Job')
 # router.register(r'submissions', JobSubmissionViewset)
-router.register(r'labs', LabViewSet)
+router.register(r'labs', LabViewSet,'Lab')
 
 
 
