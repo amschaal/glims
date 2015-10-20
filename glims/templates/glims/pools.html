@@ -11,21 +11,14 @@
             <a href="{% url 'create_pool' %}" class="pull-right btn btn-sm btn-success">Create</a>
           </div>
           <div class="widget-body" ng-controller="PoolController">
-				<div remote-table url="/api/pools/" ng-init="">
-					<span ng-repeat="(k,v) in params"><a href="#" ng-click="removeParameter(k)">x</a> {[k]}={[v]}</span><br>
-					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
-					<table class="table table-striped table-condensed">
-						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th></thead>
-						<tr ng-repeat="row in rows">
-						<td>{[ row.created ]}</td>
-				        <td><a href="{[ poolLink(row) ]}">{[ row.name ]}</a></td>
-				        <td>{[ row.type ]}</td>
-				        <td>{[ row.description ]}</td>
-				      </tr>
-					</table>
-					<div remote-pagination></div>
-				</div>
+	            <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+			      <tr ng-repeat="row in $data track by row.id">
+			        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
+			        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ poolLink(row) ]}">{[row.name]}</a></td>
+			        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
+			        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+			      </tr>
+			    </table>
             </div>
           </div>
         </div>

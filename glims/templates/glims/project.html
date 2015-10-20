@@ -55,7 +55,7 @@ background-color: pink;
                 		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
                 		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.received}" title="{[s.errors.received]}" ng-model="s.received" value="{[s.received]}" placeholder="(Optional) YYYY-MM-DD"/></td><td ng-if="!s.editing">{[s.received]}</td>
                 		{%for field in project.sample_type.fields%}
-                		<td ng-if="s.editing"><input ng-class="{'input-error':samples[$index].errors['data.{{field.name}}']}" title="{[samples[$index].errors['data.{{field.name}}']]}" ng-model="samples[$index].data{{field.name}}" /></td><td ng-if="!s.editing">{[samples[$index].data.{{field.name}}]}</td>
+                		<td ng-if="s.editing"><input ng-class="{'input-error':samples[$index].errors['data.{{field.name}}']}" title="{[samples[$index].errors['data.{{field.name}}']]}" ng-model="samples[$index].data.{{field.name}}" /></td><td ng-if="!s.editing">{[samples[$index].data.{{field.name}}]}</td>
                 		{%endfor%}
                 		<td ng-if="s.editing"><button class="btn btn-warning btn-sm" ng-click="cancel(s,$index)">Cancel</button><button class="btn btn-danger btn-sm" ng-click="deleteSample(s,$index)">Delete</button><button class="btn btn-success btn-sm" ng-click="save(s);">Save</button></td><td ng-if="!s.editing"><i style="margin-left:5px" class="glyphicon glyphicon-pencil pull-right" ng-click="s.editing=true"></i></td>
                 	</tr>

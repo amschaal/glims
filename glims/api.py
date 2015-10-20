@@ -144,9 +144,11 @@ def update_workflow(request,pk):
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
-    filter_fields = {'content_type':['exact'],'content_type__name':['exact', 'icontains']}
+    filter_fields = {'content_type':['exact'],'content_type__name':['exact', 'icontains'],'description':['exact', 'icontains'],'name':['exact', 'icontains']}
     search_fields = ('content_type__name', 'name','description')
+    ordering_fields = ('content_type__name', 'name')
     model = ModelType
+    queryset = ModelType.objects.all()
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Experiment)
 
@@ -182,7 +184,7 @@ class SampleViewSet(viewsets.ModelViewSet):
 class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer
     permission_classes = [CustomPermission]
-    filter_fields = ('name','type__name')
+    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     ordering_fields = ('name', 'created','type__name')
     search_fields = ('name', 'description','type__name')
     model = Pool
