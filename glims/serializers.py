@@ -60,6 +60,7 @@ class PoolSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
     type = serializers.StringRelatedField(many=False,read_only=True)
+    type__name = serializers.StringRelatedField(source='type.name')
     data = JSONWritableField()
     sample_data = JSONWritableField()
     class Meta:

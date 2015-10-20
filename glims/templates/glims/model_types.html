@@ -13,21 +13,16 @@
             Model Types <a class="btn btn-success pull-right" href="{% url 'create_modeltype' %}">Add</a>
           </div>
           <div class="widget-body" ng-controller="ModelTypesController">
-				<div remote-table url="/api/model_types/">
-					<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
-					<div filter-tags></div>
-					<table class="table table-striped table-condensed">
-						<!-- <thead remote-headers headers="headers"></thead> -->
-						<thead><th remote-header ng-repeat="header in headers"></th><th></th></thead>
-						<tr ng-repeat="row in rows">
-				        <td><div field-filter field="content_type" alias="Content Type" value="row.content_type"></div>{[ row.content_type__name ]}</td>
-				        <td>{[ row.name ]}</td>
-				        <td>{[ row.description ]}</td>
-				        <td><a href="{[ link(row.id) ]}">edit</a></td>
-				      </tr>
-					</table>
-					<div remote-pagination></div>
-				</div>
+				
+				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+			      <tr ng-repeat="row in $data track by row.id">
+			        <td data-title="'Type'" sortable="'content_type__name'"" filter="{content_type__name__icontains: 'text'}">{[ row.content_type__name ]}</a></td>
+			        <td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}">{[row.name]}</a></td>
+			        <td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+			        <td><a href="{[ link(row.id) ]}">edit</a></td>
+			      </tr>
+		    	</table>
+				
             </div>
         </div>
 	</div>

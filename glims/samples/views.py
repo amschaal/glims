@@ -8,6 +8,7 @@ from glims.forms import SampleForm
 from glims.serializers import SampleSerializer
 from rest_framework import status
 from django.db import transaction 
+from django.views.generic.edit import UpdateView
 
 def sample_template_tsv(request):
     type_id = request.GET.get('type_id',False)
@@ -81,3 +82,8 @@ def create_update_sample(request):
         return Response(SampleSerializer(sample).data)
     else:
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class SampleUpdate(UpdateView):
+    template_name = 'glims/create_sample.html'
+    model = Sample
+    form_class = SampleForm
