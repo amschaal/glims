@@ -215,7 +215,7 @@ class ProjectTypeForm(forms.ModelForm):
 class SampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
-        exclude = ('data','refs')
+        exclude = ('refs',)
         autocomplete_fields = ("project")
         widgets = {
            "project":autocomplete_light.ChoiceWidget("ProjectAutocomplete"),
