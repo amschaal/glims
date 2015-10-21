@@ -74,10 +74,12 @@ def create_update_sample(request):
     id = request.data.get('id',False)
     if id:
         instance = Sample.objects.get(id=id)
+        print instance
         form = SampleForm(request.data,instance=instance)
     else:
         form = SampleForm(request.data)
     if form.is_valid():
+        print 
         sample = form.save()
         return Response(SampleSerializer(sample).data)
     else:
