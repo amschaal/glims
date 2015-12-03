@@ -13,6 +13,9 @@ from glims.serializers import *
 from rest_framework import filters, generics
 from django.views.generic.base import View
 from django.http import JsonResponse    
+from django.contrib.auth.decorators import login_required
+import os
+from django_compute.utils import sizeof_fmt
 
 
 class CustomPermission(permissions.BasePermission):
@@ -164,8 +167,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = {'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
-    ordering_fields = ('name', 'description','project__name','received','created','type__name')
+    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    ordering_fields = ('sample_id','name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
     model = Sample
 #     def get_queryset(self):
@@ -211,7 +214,7 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
     search_fields = ('id', 'job_id','script_path','status')
     ordering_fields = ('created','run','status','id')
     ordering = ('-created')
-    filter_fields = {'template__id':['exact', 'icontains'],'status':['exact', 'icontains'],'id':['exact', 'icontains']}
+    filter_fields = {'template__id':['exact', 'icontains'],'status':['exact', 'icontains'],'id':['exact', 'icontains'],'parent':['exact']}
     def get_queryset(self):
         return Job.objects.all().order_by('-created')
     
@@ -342,5 +345,25 @@ class FormView(FormMixin,View):
 #         
 #     
 # from django.views.generic import TemplateView        
-        
+
+@login_required
+def project_files(request,project_id,path):
+    path = path if path else ''
+    project = Project.objects.get(id=project_id)
+    if not project.directory:
+        raise Exception("This project does not have a directory specified.")
+    if path.count('..') != 0:
+        raise Exception("Path may not contain '..'")
+    if path.startswith('/'):
+        raise Exception("Path may not start with '/'")
+    full_path = os.path.join(project.directory,path)
+    filenames=[]
+    directories=[]
+    for (dirpath, dirnames, filenames) in os.walk(full_path):
+        fileinfo = [{'name':file,'stats':os.stat(os.path.join(full_path,file))} for file in filenames]
+        directories=dirnames
+        break
+#     {'name':file['name'],'size':sizeof_fmt(file['stats'].st_size),'bytes':file['stats'].st_size,'modified':datetime.datetime.fromtimestamp(file['stats'].st_mtime).strftime("%m/%d/%Y %I:%M %p")
+    files = [{'name':file['name'], 'size':sizeof_fmt(file['stats'].st_size)} for file in fileinfo]
+    return JsonResponse({'project_id':project_id,'path':path,'files':files,'directories':directories})
         

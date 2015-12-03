@@ -29,6 +29,7 @@ DATABASES = {
     }
 }
 
+LAB_DATA_DIRECTORY = os.path.join(BASE_DIR,'data','labs')
 
 ADMIN_EMAIL = 'admin@site.com'
 

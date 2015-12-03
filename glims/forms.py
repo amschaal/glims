@@ -212,10 +212,10 @@ class ProjectTypeForm(forms.ModelForm):
         widgets = {
            "lab":forms.HiddenInput()
         }
-class SampleForm(ExtensibleModelForm):
+class FullSampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
-        exclude = ('refs',)
+        exclude = ('data','sample_id')
         autocomplete_fields = ("project")
         widgets = {
            "project":autocomplete_light.ChoiceWidget("ProjectAutocomplete"),
@@ -223,6 +223,11 @@ class SampleForm(ExtensibleModelForm):
 #     def __init__(self,*args,**kwargs):
 #         super(forms.ModelForm,self).__init__(*args, **kwargs)
 #         self.fields['project'].widget = AngularSelectWidget(attrs={'field':'name'})
+
+class SampleForm(ExtensibleModelForm):
+    class Meta:
+        model = Sample
+        exclude = ('refs','data','type','project','sample_id')
 
 class SampleTypeForm(forms.ModelForm):
     class Meta:
@@ -266,7 +271,7 @@ class ProcessForm(ExtensibleModelForm):
 class LabForm(forms.ModelForm):
     class Meta:
         model = Lab
-        fields = ('name','description')
+        fields = ('name','description','slug')
 
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)

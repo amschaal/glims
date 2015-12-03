@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'angular_forms',
     'django_compute',
     'autocomplete_light',
+    'django_cloudstore'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -135,7 +136,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend','rest_framework.filters.OrderingFilter','rest_framework.filters.SearchFilter',),
     'PAGINATE_BY': 10,                 # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
-    'MAX_PAGINATE_BY': 100             # Maximum limit allowed when using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 1000             # Maximum limit allowed when using `?page_size=xxx`.
 }
 PERMISSIONS_APP = {
     'manage_template': 'glims/manage_permissions.html',

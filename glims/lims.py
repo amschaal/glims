@@ -9,10 +9,35 @@ from models import Plugin
 from jsonfield import JSONField
 from django_json_forms.models import JSONFormModel
 from extensible.models import ModelType, ExtensibleModel
-import operator
+import operator, os
+from django.conf import settings
+from math import floor
+import string
+import random
+from django.db.models.signals import pre_save
+from django.dispatch.dispatcher import receiver
+
+from django.db import transaction
+from django_cloudstore.models import CloudStore
+from django_cloudstore.engines.bioshare import BioshareStorageEngine
 
 def generate_pk():
     return str(uuid4())[:15]
+def generate_project_id(size=3, chars=string.ascii_uppercase + string.digits):
+    for _ in range (10):
+        id = ''.join(random.choice(chars) for _ in range(size))
+        if not Project.objects.filter(project_id=id).exists():
+            return id
+
+#A01-A99,B01-B99, etc
+def generate_sample_id(project):#last_id='A00'
+    last = Sample.objects.filter(project=project,sample_id__regex=r'^[A-Z0-9]{3}[A-Z]\d{2}').last()
+    last_id = 'A00' if not last else last.sample_id[-3:]
+    alphanumeric = map(chr,range(65,91))#range(48,57)+
+    value = alphanumeric.index(last_id[0])*99 + int(last_id[1:3]) + 1
+    prefix =  string.ascii_uppercase[int(value / 100)]
+    suffix = str((value%99)).zfill(2)
+    return "%s%s" % (project.project_id,prefix+suffix)
 
 # class ModelType(models.Model):
 #     content_type = models.CharField(max_length=100)
@@ -82,24 +107,54 @@ class MyModelExtended(MyModel):
 #     header = models.CharField(max_length=30, null=True, blank=True)
 #     class Meta:
 #         app_label = 'glims'
-
+# class Filesystem(models.Model):
+#     name = models.CharField(max_length=50)
+#     description = models.TextField()
+#     path = models.CharField(max_length=200)
+#     archive_path = models.CharField(max_length=200)
+#     users = models.ManyToManyField(User, related_name='filesystems')
+#     def __unicode__(self):
+#         return '%s: %s' %(self.name, self.path)
 class Lab(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    slug = models.SlugField(max_length=20,unique=True,null=True)
+    cloudstore = models.ForeignKey(CloudStore,null=True,blank=True,on_delete=models.SET_NULL)
+    def create_cloudstore(self):
+        if not self.cloudstore:
+            self.cloudstore = BioshareStorageEngine.create(self.name, self.description, {'link_to_path':self.directory})
+            self.save()
 #     def get_absolute_url(self):
 #         return reverse('lab', args=[str(self.id)])
+    @property
+    def directory(self):
+        return os.path.join(settings.LAB_DATA_DIRECTORY,self.slug)
+    def create_directory(self):
+        if self.slug:
+            if not os.path.exists(self.directory):
+                os.makedirs(self.directory, mode=0774)
     def __unicode__(self):
         return self.name
 
 class Project(ExtensibleModel):
+    project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
     created = models.DateTimeField(auto_now=True)
     lab = models.ForeignKey(Lab)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
+#     sub_directory = models.CharField(max_length=50,null=True,blank=True)
+    @property
+    def directory(self):
+        return os.path.join(self.lab.directory,self.project_id)
+    def create_directory(self):
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory, mode=0774)
+    def save(self, *args, **kwargs):
+        super(Project, self).save(*args, **kwargs) # Call the "real" save() method.
+        self.create_directory()
 #     def limit_sample_type_choices(self):
 #         return {'content_type_id': 16}
-    
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
@@ -132,6 +187,14 @@ class Sample(ExtensibleModel):
     def inherit_from(self):
         return [self.project]
     inherited_classes = [Project]
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.id:
+#             if not self.sample_id and self.project:
+#             last = Sample.objects.filter(project=self.project,sample_id__regex=r'^[A-Z]\d{2}').last()
+            sample_id = generate_sample_id(self.project)
+            self.sample_id = sample_id
+        super(Sample, self).save(*args, **kwargs)
     @staticmethod
     def get_all_objects(model_pks={}):
         queries = []
@@ -142,6 +205,7 @@ class Sample(ExtensibleModel):
                 queries.append(Q(project__pk__in = pks))
         return Sample.objects.filter(reduce(operator.or_, queries))
 
+    
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)
 #     name = models.CharField(max_length=100)

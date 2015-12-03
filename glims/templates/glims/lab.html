@@ -7,45 +7,45 @@
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-suitcase"></i> {{lab}}
+            <i class="fa fa-suitcase"></i> {{lab}} ({{lab.slug}}}
           </div>
           <div class="widget-body" >
+          {% if lab.cloudstore.url %}
+          	<a href="{{lab.cloudstore.url}}">View data</a>
+          {% endif %}
+          	{{lab.cloudstore}}
+          	{{lab.cloudstore.attributes}}
 				<tabset>
-					<tab heading="Projects" ng-controller="ProjectController">
-						<div remote-table url="/api/projects/" ng-init="params={lab__name:'{{lab.name}}'}">
-							<input ng-model="params.search" ng-change="load()" placeholder="Search"/> <a href="{% url 'choose_project_type' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
-							<table class="table table-striped table-condensed">
-								<!-- <thead remote-headers headers="headers"></thead> -->
-								<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th></thead>
-								<tr ng-repeat="row in rows">
-						        <td><a href="{[ projectLink(row) ]}">{[ row.name ]}</a></td>
-						        <td>{[ row.type ]}</td>
-						        <td>{[ row.description ]}</td>
-						        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
-						      </tr>
-							</table>
-							<div remote-pagination></div>
-						</div>
+					<tab heading="Projects">
+					<a href="{% url 'choose_project_type' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
+						<div ng-controller="ProjectController" ng-init="init({lab__name:'{{lab.name}}'});">
+						<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+					      <tr ng-repeat="row in $data track by row.id">
+					        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
+					        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
+					        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type]}</td>
+					        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
+					        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+					      </tr>
+					    </table>
+					    </div>
 					</tab>
-					<tab heading="Samples" ng-controller="SampleController">
-						<div remote-table url="{% url 'sample-list' %}" ng-init="params={project__lab__name:'{{lab.name}}'}">
-							<input ng-model="params.search" ng-change="load()" placeholder="Search"/>
-							<table class="table table-striped table-condensed">
-								<!-- <thead remote-headers headers="headers"></thead> -->
-								<thead><th remote-header ng-repeat="header in headers"></th><th>Permissions</th><th></th></thead>
-								<tr ng-repeat="row in rows">
-						        <td>{[ row.created ]}</td>
-						        <td><a href="{[ sampleLink(row) ]}">{[ row.name ]}</a></td>
-						        <td><a href="{[ projectLink(row) ]}">{[ row.project__name ]}</a></td>
-						        <td>{[ row.description ]}</td>
-						        <td><a href="{[ permissionLink(row) ]}">Permissions</a></td>
-						        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
-						      </tr>
-							</table>
-							<div remote-pagination></div>
-						</div>
+					<tab heading="Samples">
+						<div ng-controller="SampleController" ng-init="init({project__lab__name:'{{lab.name}}'});">
+						<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+					      <tr ng-repeat="row in $data track by row.id">
+					        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
+					        <td data-title="'ID'" sortable="'sample_id'" filter="{sample_id__icontains: 'text'}"><a href="{[ sampleLink(row) ]}">{[row.sample_id]}</a></td>
+					        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}">{[row.name]}</td>
+					        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
+					        <td data-title="'Project'" sortable="'project__name'" filter="{project__name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.project__name]}</a></td>
+					        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+					        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
+					      </tr>
+					    </table>
+					    </div>
 					</tab>
-				
+				</tabset>
             </div>
           </div>
         </div>
