@@ -10,10 +10,9 @@ from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm, LabForm#, FileForm
+from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm, LabForm, ProjectTypeForm, FullSampleForm
 import json
 from angular_forms.decorators import AngularFormDecorator 
-from glims.forms import ProjectTypeForm
 from django_compute.models import Job
 
 @login_required
@@ -24,7 +23,13 @@ def project(request, pk):
     project = Project.objects.get(pk=pk)
     inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
-    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
+    sample_fields = json.dumps(project.sample_type.fields)
+    sample_form = AngularFormDecorator(SampleForm)(prefix="sample",initial={'type':project.sample_type_id})
+    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs,'sample_fields':sample_fields,'sample_form':sample_form} ,context_instance=RequestContext(request))
+@login_required
+def project_files(request,pk):
+    project = Project.objects.get(pk=pk)
+    return render(request, 'glims/project_files.html', {'project':project} ,context_instance=RequestContext(request))
 @login_required
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
@@ -119,16 +124,7 @@ def create_project(request,pk=None):
             project = form.save()
             return redirect(project.get_absolute_url()) 
     return render(request, 'glims/create_project.html', {'form':form} ,context_instance=RequestContext(request))
-@login_required
-def create_sample(request):
-    if request.method == 'GET':
-        form = SampleForm()
-    elif request.method == 'POST':
-        form = SampleForm(request.POST)
-        if form.is_valid():
-            sample = form.save()
-            return redirect(sample.get_absolute_url()) 
-    return render(request, 'glims/create_sample.html', {'form':form} ,context_instance=RequestContext(request))
+
 
 @login_required
 def create_pool(request):

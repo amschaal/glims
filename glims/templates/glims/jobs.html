@@ -13,7 +13,8 @@
 				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
 					<td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
-			        <td data-title="'Name'" sortable="'id'"" filter="{id__icontains: 'text'}"><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
+			        <td data-title="'ID'" sortable="'id'"" filter="{id__icontains: 'text'}"><a href="{[ link(row) ]}">{[ row.id ]}</a></td>
+			        <td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}"><a href="{[ link(row) ]}">{[ row.name ]}</a></td>
 			        <td data-title="'Template'" sortable="'template'" filter="{template__id__icontains: 'text'}">{[row.template]}</td>
 			        <td data-title="'Status'" sortable="'status'" filter="{status__icontains: 'text'}">
 			        		{[ row.status ]}

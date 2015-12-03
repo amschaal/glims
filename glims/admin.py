@@ -4,6 +4,7 @@ from lims import Project, Sample, ModelType, WorkflowTemplate,  WorkflowProcess#
 from forms import WorkflowTemplateForm, WorkflowProcessForm
 from guardian.admin import GuardedModelAdmin
 from  django.contrib.contenttypes.generic import GenericInlineModelAdmin, GenericStackedInline
+from glims.lims import Lab
 
 
 class PostAdmin(GuardedModelAdmin):
@@ -20,6 +21,8 @@ class EmailTemplateAdmin(admin.ModelAdmin):
 # class PluginsInline(admin.TabularInline):
 #     model = ProjectTypePlugins
 #     extra = 1
+class LabAdmin(GuardedModelAdmin):
+    model = Lab
 class ProjectAdmin(GuardedModelAdmin):
     model = Project
 #     inlines = [
@@ -52,6 +55,7 @@ class WorkflowTemplateAdmin(admin.ModelAdmin):
 #     ]
 
 admin.site.register(EmailTemplate, EmailTemplateAdmin)
+admin.site.register(Lab, LabAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(ModelType, ModelTypeAdmin)

@@ -168,8 +168,8 @@ angular.module('Dashboard').config(['$resourceProvider', function($resourceProvi
           <div class="col-xs-12">
           {% if user.is_authenticated %}
             <div class="user pull-right">
-              <div class="item dropdown">
-                <a href="#" class="dropdown-toggle">
+              <div class="item dropdown" uib-dropdown>
+                <a href="#" class="dropdown-toggle" uib-dropdown-toggle>
                   <img src="/static/responsive/img/avatar.jpg">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
@@ -191,8 +191,8 @@ angular.module('Dashboard').config(['$resourceProvider', function($resourceProvi
                 </ul>
               </div>
               {% if user.is_superuser %}
-              <div class="item dropdown">
-               <a href="#" class="dropdown-toggle" title="Manage">
+              <div class="item dropdown" uib-dropdown>
+               <a href="#" class="dropdown-toggle" title="Manage" uib-dropdown-toggle>
                   <i class="fa fa-cogs"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">

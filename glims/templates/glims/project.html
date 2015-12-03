@@ -1,4 +1,5 @@
 {% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
 {% block page %}Project{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'projects' %}">Projects</a> / <a href="{% url 'lab' pk=project.lab.id %}">{{project.lab}}</a> / {{project.name}} {% endblock %}
 {% block content %}
@@ -7,7 +8,10 @@
 background-color: pink;
 }
 </style>
+<link rel="stylesheet" type="text/css" href="/static/vendor/ui-grid/ui-grid.min.css">
+<script src="/static/vendor/ui-grid/ui-grid.min.js"></script>
 <script src="/static/js/pages/project.js"></script>
+
 <div class="row">
       <div class="col-lg-12">
         <div class="widget">
@@ -21,18 +25,22 @@ background-color: pink;
               <table class="table">
               	<tbody>
 					<tr><th>Type</th><td>{{project.type}}</td></tr>
+					<tr><th>ID</th><td>{{project.project_id}}</td></tr>
 					<tr><th>Sample Type</th><td>{{project.sample_type}}</td></tr>
                 	<tr><th>Description</th><td>{{project.description}}</td></tr>
                 	{% for field in project.data_fields %}
                 	<tr><th>{{field.label}}</th><td>{{field.value}}</td></tr>
                 	{% endfor %}
+                	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
                 </tbody>
               </table>
-             <div ng-controller="SamplesController" ng-init="setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
+             
+             <div ng-controller="SamplesController" ng-init="setFields({{sample_fields|escape}});setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
 				<h3>Samples</h3>
 				<p>
-				<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_tsv_samples' project_id=project.id %}')" class="btn btn-success">Import samples</button>
-				<br><a href="{% url 'sample_template_tsv'%}{% if project.sample_type%}?type_id={{project.sample_type_id}}{%endif%}">Download</a> template
+					<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
+					<br><a href="{% url 'sample_template_tsv'%}{% if project.sample_type%}?type_id={{project.sample_type_id}}{%endif%}">Download</a> template
+					<a href="{% url 'download_samplesheet_tsv' project_id=project.id%}">Download</a> samplesheet
 				</p>
 				
 				<div class="alert alert-danger" role="alert" ng-show="errors">
@@ -40,11 +48,12 @@ background-color: pink;
 					<div ng-repeat="(id, sample_errors) in errors">
 						<b>{[id]}:</b>
 						<ul>
-							<li ng-repeat="error in sample_errors">{[error.join(', ')]}</li>
+							<li ng-repeat="(id,errors) in sample_errors">{[id]}: {[errors.join(', ')]}</li>
 						</ul>
 					</div>
 					<div ng-show="errors.length==0">There was an error processing the sample file.</div>				
 				</div>
+				<!-- 
 				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
 				<table class="table" ng-show="samples.length">
               	<thead><tr><th>ID</th><td>Name</td><td>Description</td><td>Received</td>{%for field in project.sample_type.fields%}<td>{{field.label}}</td>{%endfor%}<td></td></tr></thead>
@@ -61,10 +70,26 @@ background-color: pink;
                 	</tr>
                 </tbody>
               </table>
+               -->
+              <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>
+              
 				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
 			</div>
 			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
         </div>
       </div>
+      <script type="text/ng-template" id="SampleEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Sample {[sample.sample_id]}</h3>
+        </div>
+        <div class="modal-body">
+		
+			{% crispy sample_form %}
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 {% endblock %}

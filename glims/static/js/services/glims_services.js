@@ -3,6 +3,7 @@ angular.module('glimsServices',['ngTable'])
 	   return function(url,ngparams) {
 		   var params = {
 //				    page: 1, // show first page
+//				    filter:{foo:'bar'}, //filter stuff
 				    count: 10 // count per page
 				  }
 		   angular.merge(params,ngparams);
