@@ -24,11 +24,13 @@ from django_cloudstore.engines.bioshare import BioshareStorageEngine
 def generate_pk():
     return str(uuid4())[:15]
 def generate_project_id(size=3, chars=string.ascii_uppercase + string.digits):
-    for _ in range (10):
-        id = ''.join(random.choice(chars) for _ in range(size))
-        if not Project.objects.filter(project_id=id).exists():
-            return id
-
+    try:
+        for _ in range (10):
+            id = ''.join(random.choice(chars) for _ in range(size))
+            if not Project.objects.filter(project_id=id).exists():
+                return id
+    except:
+        return None    
 #A01-A99,B01-B99, etc
 def generate_sample_id(project):#last_id='A00'
     last = Sample.objects.filter(project=project,sample_id__regex=r'^[A-Z0-9]{3}[A-Z]\d{2}').last()
