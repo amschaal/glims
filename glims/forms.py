@@ -1,5 +1,5 @@
 from django import forms
-from glims.lims import Project, Sample, WorkflowTemplate, Workflow, Process, Pool,\
+from glims.lims import Project, Sample, Pool,\
     Lab
 from extensible.models import ModelType
 from crispy_forms.helper import FormHelper
@@ -215,7 +215,7 @@ class ProjectTypeForm(forms.ModelForm):
 class FullSampleForm(ExtensibleModelForm):
     class Meta:
         model = Sample
-        exclude = ('data','sample_id')
+        exclude = ('data','sample_id','type')
         autocomplete_fields = ("project")
         widgets = {
            "project":autocomplete_light.ChoiceWidget("ProjectAutocomplete"),
@@ -239,35 +239,6 @@ class PoolForm(ExtensibleModelForm):
         model = Pool
         exclude = ('data','refs','samples','sample_data')
 
-class WorkflowTemplateForm(forms.ModelForm):
-    class Meta:
-        model = WorkflowTemplate
-    def __init__(self,*args,**kwargs):
-        super(forms.ModelForm,self).__init__(*args, **kwargs)
-        self.fields['type'].queryset = ModelType.objects.filter(content_type__model='workflow')
-
-class WorkflowProcessForm(forms.ModelForm):
-    class Meta:
-        model = WorkflowTemplate
-    def __init__(self,*args,**kwargs):
-        super(forms.ModelForm,self).__init__(*args, **kwargs)
-        self.fields['process'].queryset = ModelType.objects.filter(content_type__model='process')
-
-class CreateWorkflowForm(forms.ModelForm):
-    class Meta:
-        model = Workflow
-        fields = ('workflow_template','name','description')
-
-class WorkflowForm(ExtensibleModelForm):
-    class Meta:
-        model = Workflow
-        exclude = exclude = ('type','data','refs','workflow_template','samples')
-        
-class ProcessForm(ExtensibleModelForm):
-    class Meta:
-        model = Process
-        exclude =  ('type','data','refs','workflow','sample_data')
-        
 class LabForm(forms.ModelForm):
     class Meta:
         model = Lab

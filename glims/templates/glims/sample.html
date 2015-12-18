@@ -25,24 +25,6 @@
                 	{% endfor %}
                 </tbody>
               </table>
-              <h3>Pools</h3>
-              <table class="table">
-              	<tbody>
-              		<tr><th>Created</th><th>Name</th><th>Description</th></tr>
-                	{% for pool in sample.pools.all %}
-                	<tr><td>{{pool.created}}<td><a href="{% url 'pool' pk=pool.id %}">{{pool.name}}</a></td><td>{{pool.description}}</td></tr>
-                	{% endfor %}
-                </tbody>
-              </table>
-              <h3>Workflows</h3>
-              <table class="table">
-              	<tbody>
-              		<tr><th>Created</th><th>Name</th><th>Description</th><th>Pool</th></tr>
-                	{% for workflow in pool_workflows %}
-                	<tr><td>{{workflow.created}}<td><a href="{% url 'workflow' pk=workflow.id %}">{{workflow.name}}</a></td><td>{{workflow.description}}</td><td><a href="{% url 'pool' pk=workflow.pool.id %}">{{workflow.pool}}</a></td></tr>
-                	{% endfor %}
-                </tbody>
-              </table>
 			  {% include 'glims/partials/plugins.html' with object=sample model='sample' pk=sample.id %}
           </div>
         </div>

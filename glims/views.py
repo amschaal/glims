@@ -10,7 +10,7 @@ from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import ProjectForm, SampleForm, CreateWorkflowForm, WorkflowForm, ProcessForm, PoolForm, LabForm, ProjectTypeForm, FullSampleForm
+from forms import ProjectForm, SampleForm, PoolForm, LabForm, ProjectTypeForm, FullSampleForm
 import json
 from angular_forms.decorators import AngularFormDecorator 
 from django_compute.models import Job
@@ -35,8 +35,7 @@ def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
     inlines = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
-    pool_workflows = Workflow.objects.filter(pool__id__in=[pool['id'] for pool in sample.pools.all().values('id')])
-    return render(request, 'glims/sample.html', {'sample':sample,'pool_workflows':pool_workflows,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
+    return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 @login_required
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
@@ -155,88 +154,8 @@ def delete_project(request,pk):
     project.delete()
     return redirect('projects')
 
-
-@login_required
-def create_workflow(request):
-    if request.method == 'GET':
-        form = CreateWorkflowForm()
-    elif request.method == 'POST':
-        form = CreateWorkflowForm(request.POST)
-        if form.is_valid():
-            workflow = form.save()
-            template = workflow.workflow_template
-            workflow.type = template.type
-            for process in template.processes.all():
-                process = Process.objects.create(type=process,workflow=workflow)
-            workflow.save()
-            return redirect(workflow.get_absolute_url()) 
-    return render(request, 'glims/create_workflow.html', {'form':form} ,context_instance=RequestContext(request))
-@login_required
-def workflow(request,pk):
-    workflow = Workflow.objects.get(pk=pk)
-#     plugins = workflow.plugins.filter(page='workflow')
-    workflow_form = AngularFormDecorator(WorkflowForm)(instance=workflow,prefix="workflow")
-#     if request.POST.get('workflow',False):
-#         workflow_form = WorkflowForm(request.POST,instance=workflow)
-#         if workflow_form.is_valid():
-#             workflow_form.save()
-#     else:
-#         workflow_form = WorkflowForm(instance=workflow)
-    processes = []
-    
-    for process in workflow.processes.all():
-#         print "%s:%s"%(request.POST.get('process_id'),process.id)
-#         if request.POST and request.POST.get('process_id','') == str(process.id):
-#             print "POST!!!!(%s)" %  str(process.id)
-#             form = ProcessForm(request.POST,instance=process)
-#             form.is_valid()
-#             print form.cleaned_data
-#             if form.is_valid():
-#                 form.save(commit=True)
-#                 print 'SAVING!!'
-#             processes.append({'process':process, 'form':form, 'valid':form.is_valid(),'submitted':True})
-#         else:
-        processes.append({'process':process, 'form':AngularFormDecorator(ProcessForm)(instance=process,prefix="process_%d"%process.id)})
-    return render(request, 'glims/workflow.html', {'workflow':workflow,'workflow_form':workflow_form,'processes':processes} ,context_instance=RequestContext(request))
-# @login_required
-# def update_process(request,pk):
-#     process = Process.objects.get(pk=pk)
-# #     plugins = workflow.plugins.filter(page='workflow')
-#     process_form = WorkflowForm(instance=workflow)
-#     processes = []
-#     for process in workflow.processes.all():
-#         processes.append({'process':process, 'form':ProcessForm(instance=process)})
-#     return render(request, 'glims/workflow.html', {'workflow':workflow,'workflow_form':workflow_form,'processes':processes} ,context_instance=RequestContext(request))
-
-
-
-
 class ProjectUpdate(UpdateView):
     template_name = 'glims/create_project.html'
     model = Project
     form_class = ProjectForm
 
-
-"""
-def get_file(request,pk):
-    file = File.objects.get(id=pk)
-    return sendfile(request, file.file.path)
-def attach_file(request,model,pk):
-    ct = ContentType.objects.get(model=model)
-    klass = ct.model_class()
-    obj = klass.objects.get(pk=pk)
-    next = request.REQUEST.get('next',request.META['HTTP_REFERER'])
-    if request.method == 'GET':
-        form = FileForm()
-    elif request.method == 'POST':
-        form = FileForm(request.POST,request.FILES)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.uploaded_by=request.user
-            obj.object_id = pk
-            obj.content_type = ct
-            obj.save()
-            return redirect(next)
-    return render(request, 'glims/attach_file.html', {'form':form, 'obj': obj, 'next':next} ,context_instance=RequestContext(request))
-"""            
-            

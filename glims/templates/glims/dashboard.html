@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="/static/css/famfamfam/css/fam-icons.css"/>
 
   <link rel="stylesheet" href="/static/responsive/css/dashboard/dashboard.css"/>
-  <link rel="stylesheet" href="/static/vendor/angular-remote-table/angular-remote-table.css"/>
   <link href="/static/vendor/ng-table/ng-table.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/main.css"/>
   <!-- SCRIPTS -->
@@ -30,7 +29,6 @@
   <script src="/static/responsive/lib/angular-ui-router/angular-ui-router.js"></script>
   <script src="/static/js/resources/models.js"></script>
   <script src="/static/js/services/glims_services.js"></script>
-  <script src="/static/vendor/angular-remote-table/angular-remote-table.js"></script>
   <script src="/static/js/directives/tasty-angular.js"></script>
   <!-- <script src="//cdn.jsdelivr.net/angular.initial-value/latest/angular-initial-value.min.js"></script> -->
   <link href="/static/vendor/angular-growl/angular-growl.min.css" rel="stylesheet">
@@ -80,7 +78,7 @@ angular.module('Dashboard').config(['$resourceProvider', function($resourceProvi
 		});
   }
   {% block angular_dependencies %}
-  var dependencies =['ui.bootstrap', 'ui.router', 'ngCookies', 'ngResource', 'glimsModels','glimsServices','remoteTable','tastyAngular','angular-growl','angular-forms','ui.select', 'ngSanitize','ngTable'];
+  var dependencies =['ui.bootstrap', 'ui.router', 'ngCookies', 'ngResource', 'glimsModels','glimsServices','tastyAngular','angular-growl','angular-forms','ui.select', 'ngSanitize','ngTable'];
   {% endblock %}
   var mainapp = angular.module('mainapp', dependencies);
   //angular.module('mainapp').requires.push('angular-growl');

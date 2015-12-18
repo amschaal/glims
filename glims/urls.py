@@ -22,14 +22,13 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet,WorkflowViewSet, JobViewset,  FormView
+from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset,  FormView
 
 router = routers.DefaultRouter()
 router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
 router.register(r'projects', ProjectViewSet,'Project')
 router.register(r'samples', SampleViewSet,'Sample')
 router.register(r'pools', PoolViewSet,'Pool')
-router.register(r'workflows', WorkflowViewSet,'Workflow')
 router.register(r'jobs', JobViewset,'Job')
 # router.register(r'submissions', JobSubmissionViewset)
 router.register(r'labs', LabViewSet,'Lab')
@@ -65,10 +64,6 @@ urlpatterns += patterns('',
     url(r'^pools/(?P<pk>[\-\w]+)/delete/$', 'glims.views.delete_pool', name='delete_pool'),
     url(r'^cart/$', 'glims.views.cart', name='cart'),
 #     url(r'^workflow/$', 'glims.views.workflow', name='workflow'),
-    url(r'^workflows/$', 'glims.views.workflows', name='workflows'),
-    url(r'^workflows/(?P<pk>[\d]+)/$', 'glims.views.workflow', name='workflow'),
-    url(r'^workflows/create/$', 'glims.views.create_workflow', name='create_workflow'),
-    url(r'^process/(?P<pk>[\d]+)/update/$', FormView.as_view(model=glims.lims.Process,form_class=glims.forms.ProcessForm), name='update_process'),
     
     url(r'^jobs/$', 'glims.views.jobs', name='jobs'),
 #     url(r'^job_submissions/(?P<id>[\d_A-Za-z]+)/$', 'glims.views.job_submission', name='job_submission'),
@@ -91,7 +86,6 @@ urlpatterns += patterns('',
     url(r'^api/pool/(?P<pool_id>\d+)/sample/(?P<sample_id>\d+)/update/$', 'glims.api.update_pool_sample', name='update_pool_sample'),
     url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.remove_pool_samples', name='remove_pool_samples'),
     url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.add_pool_samples', name='add_pool_samples'),
-    url(r'^api/workflow/(?P<pk>\d+)/update/$', 'glims.api.update_workflow', name='update_workflow'),
     url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.project_files', name='get_project_files'),
     url(r'^samples/', include('glims.samples.urls')),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
