@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
-from jobs import JobFactory, JobSubmission
 from glims.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
 from permissions.manage import get_all_user_objects
@@ -79,10 +78,6 @@ def job(request,id):
 def job_files(request,id):
     job = Job.objects.get(id=id)
     return render(request, 'glims/job_files.html', {'job':job} ,context_instance=RequestContext(request))
-@login_required
-def job_submission(request,id):
-    submission = JobSubmission.objects.get(id=id)
-    return render(request, 'glims/job_submission.html', {'submission':submission} ,context_instance=RequestContext(request))
 @login_required
 def cart(request):
     return render(request, 'glims/cart.html', {} ,context_instance=RequestContext(request))
