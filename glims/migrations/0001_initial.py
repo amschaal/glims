@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import jsonfield.fields
+import glims.lims
+import django.db.models.deletion
 from django.conf import settings
 
 
@@ -11,6 +13,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('extensible', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('django_cloudstore', '0002_cloudstore_url'),
     ]
 
     operations = [
@@ -87,6 +90,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField()),
+                ('slug', models.SlugField(max_length=20, unique=True, null=True)),
+                ('cloudstore', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='django_cloudstore.CloudStore', null=True)),
             ],
             options={
             },
@@ -135,27 +140,16 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Process',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('sample_data', jsonfield.fields.JSONField(null=True, blank=True)),
-                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Project',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('project_id', models.CharField(default=glims.lims.generate_project_id, max_length=4, unique=True, null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('lab', models.ForeignKey(to='glims.Lab')),
+                ('sample_type', models.ForeignKey(related_name='+', blank=True, to='extensible.ModelType', null=True)),
                 ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
             ],
             options={
@@ -180,65 +174,6 @@ class Migration(migrations.Migration):
                 'permissions': (('view', 'View Sample'), ('admin', 'Administer Sample')),
             },
             bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Workflow',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('data', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField(null=True, blank=True)),
-                ('created', models.DateField(auto_now=True)),
-                ('pool', models.ForeignKey(blank=True, to='glims.Pool', null=True)),
-                ('samples', models.ManyToManyField(to='glims.Sample')),
-                ('type', models.ForeignKey(blank=True, to='extensible.ModelType', null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='WorkflowProcess',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('order', models.IntegerField()),
-                ('process', models.ForeignKey(related_name='+', to='extensible.ModelType')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='WorkflowTemplate',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField(null=True, blank=True)),
-                ('processes', models.ManyToManyField(related_name='+', through='glims.WorkflowProcess', to='extensible.ModelType')),
-                ('type', models.ForeignKey(related_name='+', to='extensible.ModelType')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.AddField(
-            model_name='workflowprocess',
-            name='workflow',
-            field=models.ForeignKey(to='glims.WorkflowTemplate'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='workflow',
-            name='workflow_template',
-            field=models.ForeignKey(to='glims.WorkflowTemplate'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='process',
-            name='workflow',
-            field=models.ForeignKey(related_name='processes', to='glims.Workflow'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='pool',
