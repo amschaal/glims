@@ -70,5 +70,3 @@ class EmailRecipient(models.Model):
     address = models.CharField(max_length=75)
     sent = models.DateTimeField(auto_now=False, null=True, blank=True)
 #     def generate_email(self):
-
-
