@@ -30,7 +30,7 @@ def generate_project_id(size=3, chars=string.ascii_uppercase + string.digits):
             if not Project.objects.filter(project_id=id).exists():
                 return id
     except:
-        return None    
+        return id
 #A01-A99,B01-B99, etc
 def generate_sample_id(project):#last_id='A00'
     last = Sample.objects.filter(project=project,sample_id__regex=r'^[A-Z0-9]{3}[A-Z]\d{2}').last()
