@@ -119,31 +119,6 @@ def update_pool_sample(request,pool_id,sample_id):
         return Response({'errors':form.errors})
     
     
-@api_view(['POST'])
-def update_workflow(request,pk):
-    from glims.forms import WorkflowForm
-    workflow = Workflow.objects.get(pk=pk)
-#     plugins = workflow.plugins.filter(page='workflow')
-    form = WorkflowForm(request.data,instance=workflow)
-    if form.is_valid():
-        form.save()
-        return Response({'status':'ok','data':WorkflowSerializer(workflow).data})
-    else:
-        return Response({'errors':form.errors})    
-# class ProjectViewset(viewsets.ViewSet):
-#     queryset = Project.objects.all()
-#     """
-#     A simple ViewSet that for listing or retrieving projects.
-#     """
-#     def list(self, request):
-#         queryset = get_all_user_objects(request.user, ['view'], Project)
-#         serializer = ProjectSerializer(queryset, many=True)
-#         return Response(serializer.data)
-#     def retrieve(self, request, pk=None):
-#         queryset = get_all_user_objects(request.user, ['view'], Project)
-#         project = get_object_or_404(queryset, pk=pk)
-#         serializer = ProjectSerializer(project)
-#         return Response(serializer.data)
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
@@ -194,13 +169,6 @@ class PoolViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return get_all_user_objects(self.request.user, ['view'], Pool)
     
-class WorkflowViewSet(viewsets.ModelViewSet):
-    serializer_class = WorkflowSerializer
-    filter_fields = ('name','type__name')
-    ordering_fields = ('name', 'created','type__name')
-    search_fields = ('name', 'description','type__name')
-    model = Workflow
-
 # class JobSubmissionViewset(viewsets.ReadOnlyModelViewSet):
 #     model = JobSubmission
 #     serializer_class = JobSubmissionSerializer

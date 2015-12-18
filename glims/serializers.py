@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from glims.lims import Project, Sample, ModelType, Pool, Workflow, Lab#, File, Note
+from glims.lims import Project, Sample, ModelType, Pool, Lab#, File, Note
 # from glims.jobs import Job, JobSubmission
 from django_compute.models import Job
 
@@ -76,10 +76,6 @@ class PoolSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Job
         
-class WorkflowSerializer(serializers.ModelSerializer):
-    data = JSONWritableField()
-    class Meta:
-        model = Workflow
 
 class ModelTypeSerializer(serializers.ModelSerializer):
     content_type__name = serializers.CharField(source='content_type.name')
