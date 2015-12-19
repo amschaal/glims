@@ -122,9 +122,9 @@ def update_pool_sample(request,pool_id,sample_id):
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
-    filter_fields = {'content_type':['exact'],'content_type__name':['exact', 'icontains'],'description':['exact', 'icontains'],'name':['exact', 'icontains']}
-    search_fields = ('content_type__name', 'name','description')
-    ordering_fields = ('content_type__name', 'name')
+    filter_fields = {'content_type':['exact'],'description':['exact', 'icontains'],'name':['exact', 'icontains'],'content_type__model':['exact', 'icontains']}
+    search_fields = ('content_type__model', 'name','description')
+    ordering_fields = ('content_type__model', 'name')
     model = ModelType
     queryset = ModelType.objects.all()
 #     def get_queryset(self):

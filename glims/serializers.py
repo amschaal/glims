@@ -78,9 +78,10 @@ class PoolSerializer(serializers.ModelSerializer):
         
 
 class ModelTypeSerializer(serializers.ModelSerializer):
-    content_type__name = serializers.CharField(source='content_type.name')
+    content_type__model = serializers.CharField(source='content_type.model')
     class Meta:
         model = ModelType
+        field=('name','description','fields','content_type__model')
         
 # class FileSerializer(serializers.ModelSerializer):
 #     class Meta:

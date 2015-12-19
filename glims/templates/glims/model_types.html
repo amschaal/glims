@@ -16,7 +16,7 @@
 				
 				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
-			        <td data-title="'Type'" sortable="'content_type__name'"" filter="{content_type__name__icontains: 'text'}">{[ row.content_type__name ]}</a></td>
+			        <td data-title="'Type'" sortable="'content_type__model'"" filter="{content_type__model__icontains: 'text'}">{[ row.content_type__model ]}</a></td>
 			        <td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}">{[row.name]}</a></td>
 			        <td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
 			        <td><a href="{[ link(row.id) ]}">edit</a></td>
