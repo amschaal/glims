@@ -20,6 +20,8 @@ from django.dispatch.dispatcher import receiver
 from django.db import transaction
 from django_cloudstore.models import CloudStore
 from django_cloudstore.engines.bioshare import BioshareStorageEngine
+from glims.models import Status, StatusOption
+from datetime import datetime
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -93,6 +95,8 @@ class Project(ExtensibleModel):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
+    status = models.ForeignKey(Status,null=True,blank=True)
+    history = JSONField(null=True,blank=True,default={})
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
     @property
     def directory(self):
@@ -105,6 +109,8 @@ class Project(ExtensibleModel):
         self.create_directory()
 #     def limit_sample_type_choices(self):
 #         return {'content_type_id': 16}
+    def status_options(self):
+        return StatusOption.objects.filter(model_type=self.model_type).order_by('order')
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
@@ -116,6 +122,12 @@ class Project(ExtensibleModel):
             ('admin', 'Administer Project'),
             ('pi', 'Can PI a Project'),
         )
+
+# class ProjectStatus(models.Model):
+#     project = models.ForeignKey(Project,related_name="statuses")
+#     status = models.ForeignKey(Status)
+#     set_by = models.ForeignKey(User)
+#     timestamp = models.DateTimeField(auto_now=True)
 
 class Sample(ExtensibleModel):
     sample_id = models.CharField(max_length=60,unique=True)
@@ -165,3 +177,14 @@ class Pool(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('pool', args=[str(self.id)])
+
+@receiver(pre_save,sender=Project)
+def handle_status(sender,instance,**kwargs):
+    if not hasattr(instance, 'id'):
+        return
+    old = Project.objects.get(id=instance.id)
+    if old.status != instance.status:
+        if not instance.history.has_key('statuses'):
+            instance.history['statuses'] = []
+        instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
+        

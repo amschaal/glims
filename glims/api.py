@@ -16,6 +16,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import os
 from django_compute.utils import sizeof_fmt
+from glims.models import StatusOption
+from django.db.models.query import Prefetch
 
 
 class CustomPermission(permissions.BasePermission):
@@ -137,7 +139,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     search_fields = ('name', 'description','lab__name','type__name')
     def get_queryset(self):
-        return get_all_user_objects(self.request.user, ['view'], Project)
+        return get_all_user_objects(self.request.user, ['view'], Project).prefetch_related(
+#             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
+            Prefetch('type__status_options', queryset=StatusOption.objects.select_related('status').order_by('order')))
     
 class SampleViewSet(viewsets.ModelViewSet):
     serializer_class = SampleSerializer

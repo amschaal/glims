@@ -4,6 +4,7 @@ from lims import Project, Sample, ModelType
 from guardian.admin import GuardedModelAdmin
 from  django.contrib.contenttypes.generic import GenericInlineModelAdmin, GenericStackedInline
 from glims.lims import Lab
+from glims.models import Status, StatusOption
 
 
 class PostAdmin(GuardedModelAdmin):
@@ -29,8 +30,26 @@ class ProjectAdmin(GuardedModelAdmin):
 #     ]
 class SampleAdmin(GuardedModelAdmin):
     model = Sample
+
+
+class StatusAdmin(admin.ModelAdmin):
+    model = Status
+
+class StatusOptionsInline(admin.TabularInline):
+    model = StatusOption
+    extra = 1
+
 class ModelTypeAdmin(GuardedModelAdmin):
     model = ModelType
+    inlines = [
+        StatusOptionsInline,
+    ]
+# 
+# class StatusOptionsInline(GuardedModelAdmin):
+#     model = ProjectType
+#     inlines = [
+#         PluginsInline,
+#     ]
 
 # class ProjectTypeAdmin(GuardedModelAdmin):
 #     model = ProjectType
@@ -49,4 +68,5 @@ admin.site.register(Lab, LabAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(ModelType, ModelTypeAdmin)
+admin.site.register(Status, StatusAdmin)
 
