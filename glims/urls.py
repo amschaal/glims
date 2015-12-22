@@ -8,6 +8,7 @@ admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
+from bioinformatics import urls as bioinformatics_urls
 from django_json_forms import urls as json_form_urls
 from extensible import urls as extensible_urls
 from django_compute import urls as compute_urls
@@ -76,6 +77,7 @@ urlpatterns += patterns('',
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
+    url(r'^bioinformatics/', include(bioinformatics_urls.urlpatterns)),
     url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
     url(r'^api/add_samples_to_cart/$', 'glims.api.add_samples_to_cart', name='add_samples_to_cart'),
     url(r'^api/remove_samples_from_cart/$', 'glims.api.remove_samples_from_cart', name='remove_samples_from_cart'),

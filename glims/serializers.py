@@ -4,6 +4,7 @@ from glims.lims import Project, Sample, ModelType, Pool, Lab#, File, Note
 from django_compute.models import Job
 
 from jsonfield import JSONField
+from glims.models import Status, StatusOption
 # from rest_framework.fields import WritableField
 
 class JSONWritableField(serializers.Field):
@@ -35,13 +36,32 @@ class JSONWritableField(serializers.Field):
 #         value = json.loads(value)#JSONField(value)
 #         return value
 
+# class StatusSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProjectStatus
+#         fields = ('status','set_by','timestamp')
+
+class StatusOptionSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(source="status.id")
+    name = serializers.CharField(source="status.name")
+    class Meta:
+        model = StatusOption
+        fields = ('id','name','order')   
+
 class ProjectSerializer(serializers.ModelSerializer):
     lab__name = serializers.CharField(source='lab.name')
     type = serializers.StringRelatedField(many=False,read_only=True)
+    status_options = StatusOptionSerializer(many=True,read_only=True,source='type.status_options')
     data = JSONWritableField()
+    history = JSONWritableField(read_only=True)
+#     history = JSONWritableField()
+#     def __init__(self,*args,**kwargs):
+#         super(ProjectSerializer,self).__init__(*args,**kwargs)
+#         print self.instance.type.status_options
     class Meta:
         model = Project
-        fields = ('id','name','type','description','lab','lab__name','data','created')
+        fields = ('id','name','type','description','lab','lab__name','data','created','status','history','status_options')
+#         depth = 4
 #         read_only_fields = ('',)
 
 class SampleSerializer(serializers.ModelSerializer):

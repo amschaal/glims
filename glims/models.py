@@ -17,7 +17,17 @@ class Plugin(models.Model):
     def __unicode__(self):
         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
 
+class Status(models.Model):
+    id = models.CharField(max_length=20,primary_key=True)
+    name = models.CharField(max_length=30)
+    description = models.TextField(null=True,blank=True)
+    def __unicode__(self):
+        return self.name
 
+class StatusOption(models.Model):
+    model_type = models.ForeignKey(ModelType,related_name="status_options")
+    status = models.ForeignKey(Status)
+    order = models.PositiveSmallIntegerField()
 
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=100)
