@@ -15,5 +15,6 @@ class BioinfoProject(models.Model):
 def create_bioinfo_project(sender,instance,**kwargs):
 #     @todo: replace with non magic string
     print 'Create bioinfo project!!!!'
-    if instance.status.id == 'BIOINFORMATICS':
-        BioinfoProject.objects.get_or_create(project=instance)
+    if instance.status:
+        if instance.status.id == 'BIOINFORMATICS':
+            BioinfoProject.objects.get_or_create(project=instance)
