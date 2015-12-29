@@ -182,9 +182,12 @@ class Pool(ExtensibleModel):
 def handle_status(sender,instance,**kwargs):
     if not hasattr(instance, 'id'):
         return
-    old = Project.objects.get(id=instance.id)
-    if old.status != instance.status:
-        if not instance.history.has_key('statuses'):
-            instance.history['statuses'] = []
-        instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-        
+    if not instance.history.has_key('statuses'):
+        instance.history['statuses'] = []
+    try:
+        old = Project.objects.get(id=instance.id)
+        if old.status != instance.status:
+            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
+    except Project.DoesNotExist, e:
+        if instance.status:
+            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
