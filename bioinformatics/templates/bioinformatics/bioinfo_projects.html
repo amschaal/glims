@@ -8,17 +8,18 @@
 
 <div class="row">
 	<div class="col-lg-12">
-      	<div class="widget" ng-controller="BioinfoProjectsController">
+      	<div class="widget" ng-controller="BioinfoProjectsController" ng-init="init({group_id:{{group_id}}})">
           <div class="widget-header">
             Bioinformatics Projects
           </div>
           <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
-			      	<td data-title="'Created'" sortable="'created'"" >{[ row.created|date ]}</td>
+			      	<td data-title="'Created'" sortable="'created'"" ><a href="{[biocoreProjectLink(row.project)]}">{[ row.created|date ]}</a></td>
 			      	<td data-title="'Project'" sortable="'created'"" ><a href="{[projectLink(row.project)]}">{[ row.project.name ]}</a></td>
 			      	<td data-title="'Lab'" sortable="'project__lab__name'"" filter="{project__lab__name__icontains: 'text'}"><a href="{[labLink(row.project)]}">{[ row.project.lab__name ]}</a></td>
-			      	<td data-title="'Assigned to'" sortable="'assigned_to'"" filter="{assigned_to__username__icontains: 'text'}">{[ row.assigned_to ]}</td>
+			      	<td data-title="'Assigned to'" sortable="'assigned_to__first_name,assigned_to__last_name'" filter="{assigned_to: 'select'}" filter-data="users">{[ row.assigned_to.first_name ]} {[ row.assigned_to.last_name ]}</td>
 			        <td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description|date]}</td>
+			        <td data-title="'Status'" filter="{project__status__id__icontains: 'text'}" sortable="'project__status'">{[row.project.status]}</td>
 			      </tr>
     	  </table>
           

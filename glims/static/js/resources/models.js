@@ -10,6 +10,11 @@ var transformDjangoRestResponse = function(data, headers){
 }
 
 angular.module('glimsModels', ['ngResource'])
+.factory('User', ['$resource', function ($resource) {
+  return $resource('/api/users/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
+  });
+}])
 .factory('Sample', ['$resource', function ($resource) {
   return $resource('/api/samples/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },

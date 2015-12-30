@@ -37,4 +37,6 @@ SENDFILE_BACKEND = 'sendfile.backends.development'
 
 MENUS = (
     'proteomics/menu.html',
+    'bioinformatics/menu.html',
 )
+BIOCORE_ID = 1

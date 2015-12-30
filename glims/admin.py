@@ -2,7 +2,6 @@ from django.contrib import admin
 from models import EmailTemplate
 from lims import Project, Sample, ModelType
 from guardian.admin import GuardedModelAdmin
-from  django.contrib.contenttypes.generic import GenericInlineModelAdmin, GenericStackedInline
 from glims.lims import Lab
 from glims.models import Status, StatusOption
 

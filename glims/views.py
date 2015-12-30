@@ -13,6 +13,7 @@ from forms import ProjectForm, SampleForm, PoolForm, LabForm, ProjectTypeForm, F
 import json
 from angular_forms.decorators import AngularFormDecorator 
 from django_compute.models import Job
+from glims.models import ModelTypePlugins
 
 @login_required
 def home(request):
@@ -22,7 +23,7 @@ def project(request, pk):
     project = Project.objects.get(pk=pk)
     inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
-    sample_fields = json.dumps(project.sample_type.fields)
+    sample_fields = json.dumps(project.sample_type.fields) if project.sample_type else []
     sample_form = AngularFormDecorator(SampleForm)(prefix="sample",initial={'type':project.sample_type_id})
     return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs,'sample_fields':sample_fields,'sample_form':sample_form} ,context_instance=RequestContext(request))
 @login_required

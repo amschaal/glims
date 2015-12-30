@@ -4,6 +4,7 @@ from glims.settings import ADMIN_EMAIL
 from jsonfield import JSONField
 import string, random
 from extensible.models import ModelType
+# from glims.lims import Lab, Sample, Pool, Project
 
     
 class Plugin(models.Model):
@@ -16,6 +17,16 @@ class Plugin(models.Model):
     model_types = models.ManyToManyField(ModelType,null=True,blank=True, through='ModelTypePlugins',related_name='plugins')
     def __unicode__(self):
         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
+
+class ModelTypePlugins(models.Model):
+    INLINE_LAYOUT = 'inline'
+    TABBED_LAYOUT = 'tabbed'
+    LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
+    type = models.ForeignKey(ModelType)
+    plugin = models.ForeignKey(Plugin)
+    weight = models.IntegerField(default=0)
+    layout = models.CharField(max_length=10,choices=LAYOUTS)
+    header = models.CharField(max_length=30, null=True, blank=True)
 
 class Status(models.Model):
     id = models.CharField(max_length=20,primary_key=True)

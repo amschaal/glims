@@ -1,0 +1,23 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Bioinformatics {% endblock %}
+{% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.project.project_id}}{% endblock %}
+{% block content %}
+
+<script src="/static/bioinformatics/js/resources/models.js"></script>
+
+<div class="row">
+	<div class="col-lg-12">
+      	<div class="widget" >
+          <div class="widget-header">
+            Bioinformatics Project
+          </div>
+          <form action="." method="POST">
+          {% csrf_token %} 
+          {{form|crispy}}
+          <button class="btn btn-default">Save</button>
+          </form>
+        </div>
+	</div>
+</div>
+{% endblock %}

@@ -119,7 +119,15 @@ def update_pool_sample(request,pool_id,sample_id):
         return Response({'status':'ok','data':original_data})
     else:
         return Response({'errors':form.errors})
-    
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserSerializer
+    filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact']} 
+    search_fields=('first_name','last_name','email')
+    model = User
+    def get_queryset(self):
+        return User.objects.all().order_by('id')
     
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
