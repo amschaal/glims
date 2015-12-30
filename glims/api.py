@@ -194,7 +194,7 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
     search_fields = ('id', 'job_id','script_path','status')
     ordering_fields = ('created','run','status','id')
     ordering = ('-created')
-    filter_fields = {'template__id':['exact', 'icontains'],'status':['exact', 'icontains'],'id':['exact', 'icontains'],'parent':['exact']}
+    filter_fields = {'template__id':['exact', 'icontains'],'status':['exact', 'icontains'],'id':['exact', 'icontains']}
     def get_queryset(self):
         return Job.objects.all().order_by('-created')
     

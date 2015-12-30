@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from glims.lims import Project
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
-
+from django.conf import settings
 
 class BioinfoProject(models.Model):
     project = models.OneToOneField(Project)
