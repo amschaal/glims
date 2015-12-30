@@ -5,6 +5,7 @@ from django_compute.models import Job
 
 from jsonfield import JSONField
 from glims.models import Status, StatusOption
+from django.contrib.auth.models import User
 # from rest_framework.fields import WritableField
 
 class JSONWritableField(serializers.Field):
@@ -40,6 +41,15 @@ class JSONWritableField(serializers.Field):
 #     class Meta:
 #         model = ProjectStatus
 #         fields = ('status','set_by','timestamp')
+
+class UserSerializer(serializers.ModelSerializer):
+#     type = serializers.StringRelatedField(many=False,read_only=True)
+#     type__name = serializers.StringRelatedField(source='type.name')
+#     data = JSONWritableField()
+#     sample_data = JSONWritableField()
+    class Meta:
+        model = User
+        fields = ('id','last_login','first_name','last_name','email','groups')
 
 class StatusOptionSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source="status.id")

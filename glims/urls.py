@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from glims import views as glims_views
 from django.contrib import admin
+from glims.api import UserViewSet
 admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
@@ -26,6 +27,7 @@ from rest_framework import routers
 from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset,  FormView
 
 router = routers.DefaultRouter()
+router.register(r'users', UserViewSet,'User')
 router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
 router.register(r'projects', ProjectViewSet,'Project')
 router.register(r'samples', SampleViewSet,'Sample')

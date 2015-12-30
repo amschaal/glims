@@ -1,5 +1,5 @@
 from lims import Project, Sample, Lab
-import autocomplete_light
-autocomplete_light.register(Project)
-autocomplete_light.register(Sample)
-autocomplete_light.register(Lab)
+from autocomplete_light import registry
+registry.register(Project)
+registry.register(Sample)
+registry.register(Lab)

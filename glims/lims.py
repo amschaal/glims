@@ -1,17 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import Group, User
 from uuid import uuid4
-from django.contrib.contenttypes.generic import GenericForeignKey, GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from models import Plugin
 from jsonfield import JSONField
-from django_json_forms.models import JSONFormModel
 from extensible.models import ModelType, ExtensibleModel
 import operator, os
 from django.conf import settings
-from math import floor
 import string
 import random
 from django.db.models.signals import pre_save
@@ -43,15 +37,7 @@ def generate_sample_id(project):#last_id='A00'
     suffix = str((value%99)).zfill(2)
     return "%s%s" % (project.project_id,prefix+suffix)
 
-class ModelTypePlugins(models.Model):
-    INLINE_LAYOUT = 'inline'
-    TABBED_LAYOUT = 'tabbed'
-    LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
-    type = models.ForeignKey(ModelType)
-    plugin = models.ForeignKey(Plugin)
-    weight = models.IntegerField(default=0)
-    layout = models.CharField(max_length=10,choices=LAYOUTS)
-    header = models.CharField(max_length=30, null=True, blank=True)
+
 
 
 """

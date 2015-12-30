@@ -2,12 +2,8 @@ from django import forms
 from glims.lims import Project, Sample, Pool,\
     Lab
 from extensible.models import ModelType
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Field, Div, HTML
-import json
 from extensible.forms import ExtensibleModelForm
-from angular_forms.forms.widgets import AngularSelectWidget
-import autocomplete_light
+from autocomplete_light.widgets import ChoiceWidget
 # class FileForm(ModelForm):
 #     class Meta:
 #         model = File
@@ -189,7 +185,7 @@ class ProjectForm(ExtensibleModelForm):
         fields = ('type','status','sample_type','lab','name','description',)
 #         autocomplete_fields = ("samples")
         widgets = {
-           "lab":autocomplete_light.ChoiceWidget("LabAutocomplete"),
+           "lab":ChoiceWidget("LabAutocomplete"),
            "type":forms.HiddenInput()
         }
 #         widgets = {
@@ -219,7 +215,7 @@ class FullSampleForm(ExtensibleModelForm):
         exclude = ('data','sample_id','type')
         autocomplete_fields = ("project")
         widgets = {
-           "project":autocomplete_light.ChoiceWidget("ProjectAutocomplete"),
+           "project":ChoiceWidget("ProjectAutocomplete"),
         }
 #     def __init__(self,*args,**kwargs):
 #         super(forms.ModelForm,self).__init__(*args, **kwargs)

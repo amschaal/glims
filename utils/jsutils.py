@@ -1,12 +1,12 @@
 import re
 import sys
 import types
-from django.utils.datastructures import SortedDict
 from django.conf import settings
 from django.http import HttpResponse
 # import django.utils.simplejson as json
 import json
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
+from collections import OrderedDict
 
 def jsurls(request):
 
@@ -51,7 +51,7 @@ def jsurls(request):
                 if pattern.urlconf_name:
                     handle_url_module(js_patterns, pattern.urlconf_name, prefix=pattern.regex.pattern)
 
-    js_patterns = SortedDict()
+    js_patterns = OrderedDict()
     handle_url_module(js_patterns, settings.ROOT_URLCONF)
 
     from django.template.loader import get_template
