@@ -2,6 +2,8 @@
 {% block page %}Bioinformatics {% endblock %}
 {% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.project.project_id}}{% endblock %}
 {% block content %}
+<script src="/static/bioinformatics/js/resources/models.js"></script>
+<script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
 <div class="row">
       <div class="col-lg-12">
         <div class="widget">
@@ -10,7 +12,7 @@
             <a href="{% url 'modify_bioinformatics__project' pk=instance.project.id %}" class="btn btn-sm btn-success">Edit</a>
             
           </div>
-          <div class="widget-body">
+          <div class="widget-body" ng-controller="BioinfoProjectController">
               <table class="table">
               	<tbody>
               		<tr><th>Created</th><td>{{instance.created}}</td></tr>
@@ -19,6 +21,14 @@
                 	<tr><th>Description</th><td>{{instance.description}}</td></tr>
                 </tbody>
               </table>
+              <form ng-submit="onSubmit()" name="form" novalidate>
+		        <formly-form model="model" fields="fields" options="options" form="form">
+		          <button type="submit" class="btn btn-primary submit-button" ng-disabled="form.$invalid">Submit</button>
+		          <button type="button" class="btn btn-default" ng-click="options.resetModel()">Reset</button>
+		        </formly-form>
+		      </form>
+		      <h2>Form Data</h2>
+		      <pre>{[model | json]}</pre>
           </div>
         </div>
       </div>
