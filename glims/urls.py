@@ -13,6 +13,7 @@ from bioinformatics import urls as bioinformatics_urls
 from django_json_forms import urls as json_form_urls
 from extensible import urls as extensible_urls
 from django_compute import urls as compute_urls
+from django_formly import urls as formly_urls
 import glims
 urlpatterns = patterns('',)
 # if USE_CAS:
@@ -95,6 +96,7 @@ urlpatterns += patterns('',
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
     url(r'^compute/', include(compute_urls.urlpatterns)),
+    url(r'^formly_forms/', include(formly_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

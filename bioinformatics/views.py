@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from bioinformatics.models import BioinfoProject
 from bioinformatics.forms import BioinfoProjectForm
+from django_formly.utils import generate_formly_fields
 
 @login_required
 def bioinfo_projects(request):
@@ -12,7 +13,8 @@ def bioinfo_projects(request):
 @login_required
 def bioinfo_project(request,pk):
     instance = get_object_or_404(BioinfoProject,project=pk)
-    return render(request, 'bioinformatics/bioinfo_project.html', {'instance':instance} ,context_instance=RequestContext(request))
+    formly_fields = generate_formly_fields(BioinfoProjectForm())
+    return render(request, 'bioinformatics/bioinfo_project.html', {'instance':instance,'formly_fields':formly_fields} ,context_instance=RequestContext(request))
 
 @login_required
 def modify_bioinfo_project(request,pk):

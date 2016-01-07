@@ -4,6 +4,7 @@
 {% block content %}
 <script src="/static/bioinformatics/js/resources/models.js"></script>
 <script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
+{% include 'glims/partials/formly_modal.html' %}
 <div class="row">
       <div class="col-lg-12">
         <div class="widget">
@@ -12,23 +13,19 @@
             <a href="{% url 'modify_bioinformatics__project' pk=instance.project.id %}" class="btn btn-sm btn-success">Edit</a>
             
           </div>
-          <div class="widget-body" ng-controller="BioinfoProjectController">
-              <table class="table">
+          <div class="widget-body" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
+          {[project]}
+              <table class="table" ng-if="project">
               	<tbody>
-              		<tr><th>Created</th><td>{{instance.created}}</td></tr>
-              		<tr><th>Project</th><td><a href="{% url 'project' pk=instance.project.id %}">{{instance.project}}</a></td></tr>
-					<tr><th>Assigned to</th><td>{{instance.assigned_to}}</td></tr>
-                	<tr><th>Description</th><td>{{instance.description}}</td></tr>
+              		<tr><th>Created</th><td>{[project.created | date]}</td></tr>
+              		<tr><th>Project</th><td><a href="{[projectLink(project.project)]}">{[ project.project.name ]}</a></td></tr>
+              		<tr><th>Lab</th><td><a href="{[labLink(project.project)]}">{[ project.project.lab__name ]}</a></td></tr>
+					<tr><th>Assigned to</th><td>{[ project.assigned_to.first_name ]} {[ project.assigned_to.last_name ]}</td></tr>
+                	<tr><th>Description</th><td>{[project.description]}</td></tr>
+                	<tr><th>Status</th><td>{[project.project.status]}</td></tr>
                 </tbody>
               </table>
-              <form ng-submit="onSubmit()" name="form" novalidate>
-		        <formly-form model="model" fields="fields" options="options" form="form">
-		          <button type="submit" class="btn btn-primary submit-button" ng-disabled="form.$invalid">Submit</button>
-		          <button type="button" class="btn btn-default" ng-click="options.resetModel()">Reset</button>
-		        </formly-form>
-		      </form>
-		      <h2>Form Data</h2>
-		      <pre>{[model | json]}</pre>
+		      <button ng-click="openFormlyModal()">Open Modal</button>
           </div>
         </div>
       </div>

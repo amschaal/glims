@@ -39,7 +39,6 @@ function PoolController($scope,$http,$Pool,growl) {
 	}
 }
 
-
 angular.module('mainapp')
 .controller('SamplesController', ['$scope','Sample','Pool','$http','$modal', SamplesController]);
 
