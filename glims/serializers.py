@@ -135,3 +135,11 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ('id','job_id','template','params','created','run_at','args','status','data')
+
+class UserField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        if data.get('id',None):
+            return User.objects.get(id=data['id'])
+        return None
+    def to_representation(self, value):
+        return UserSerializer(value).data

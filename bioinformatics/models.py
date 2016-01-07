@@ -8,8 +8,8 @@ from django.conf import settings
 class BioinfoProject(models.Model):
     project = models.OneToOneField(Project)
     created = models.DateTimeField(auto_now=True)
-    assigned_to = models.ForeignKey(User,null=True,blank=True)
-    description = models.TextField(null=True,blank=True)
+    assigned_to = models.ForeignKey(User)
+    description = models.TextField()
 
 @receiver(post_save,sender=Project)
 def create_bioinfo_project(sender,instance,**kwargs):
