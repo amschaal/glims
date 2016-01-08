@@ -16,8 +16,8 @@
 {[model]}
 {[errors]}
 			<form ng-submit="onSubmit()" name="form" novalidate>
-		        <formly-form model="model" fields="fields" options="options" form="form">
-		          <button type="submit" class="btn btn-primary submit-button" ng-disabled="form.$invalid">Submit</button>
+		        <formly-form model="model" ng-model-options="{ allowInvalid: true }" fields="fields" options="options" form="form">
+		          <button type="submit" class="btn btn-primary submit-button">Submit</button>
 		          <button type="button" class="btn btn-default" ng-click="options.resetModel()">Reset</button>
 		        </formly-form>
 		      </form>

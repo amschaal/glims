@@ -43,12 +43,13 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,$modal) {
 		          return $scope.fields;
 		      },
 		      model: function () {
-		          return $scope.project;
+		          return angular.copy($scope.project);
 		      }
 	      }
 	    });
 
-	    modalInstance.result.then(function (data) {
+	    modalInstance.result.then(function (project) {
+	    	$scope.project = project;
 	    }, function () {
 	    });
 	  };
