@@ -12,16 +12,12 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,$modal) {
 //			//{"fields": [{"templateOptions": {"required": false, "options": [{"name": "---------", "value": ""}, {"name": "mtbritton", "value": 2}, {"name": "jfass", "value": 3}], "description": "", "label": "Assigned to"}, "type": "select", "key": "assigned_to"}, {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"}]}
 //		});
 		$scope.fields = [
+						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
+						}, 
 		                {"templateOptions": {"required": false, "options": [{"name": "---------", "value": ""}, {"name": "mtbritton", "value": 2}, {"name": "jfass", "value": 3}], "description": "", "label": "Assigned to"}
-							, "type": "select", "key": "assigned_to.id"
-							, expressionProperties: {
-							      'data.assigned_to': 'model.assigned_to.id'
-						    }
+							, "type": "select", "key": "assigned_to.id", data:{"error_key":"assigned_to"}
 						}, 
 		                 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"
-		                	 , expressionProperties: {
-							      'data.description': 'model.description'
-							    }
 		                 }
 						];
 		

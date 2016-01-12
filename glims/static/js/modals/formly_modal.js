@@ -3,7 +3,7 @@ angular.module('mainapp')
 
     formlyConfigProvider.setWrapper({
       name: 'validation',
-      types: ['input','textarea'],
+      types: ['input','textarea','select'],
       templateUrl: 'error-messages.html'
     });
 
@@ -11,7 +11,18 @@ angular.module('mainapp')
 .controller('FormlyModalController', function FormlyModalController($scope, $http, formlyValidationMessages,formlyConfig, $modalInstance, fields, model) {
 	formlyConfig.extras.errorExistsAndShouldBeVisibleExpression = 'fc.$touched || form.$submitted';
 
-	formlyValidationMessages.addStringMessage('required', 'This field is required!');
+//	formlyValidationMessages.addStringMessage('required', 'This field is required!');
+//	formlyValidationMessages.messages.server= getServerMessage;
+//
+//	function getServerMessage($viewValue, $modelValue, scope) {
+//		console.log('server message');
+//		return 'wtf';
+//	  if (scope.data.useGenericMessage) {
+//	    return 'This field is required';
+//	  } else {  
+//	    return scope.to.label + ' is required';
+//	  }
+//	}
 //	
 //	function getDRFMessage($viewValue, $modelValue, scope) {
 //		return 'there was an error';
@@ -41,26 +52,53 @@ angular.module('mainapp')
 //		};
 //		
 //	});
-	
-	   formlyConfig.extras.fieldTransform.push(fieldTransform);
-	   function fieldTransform(fields, model) {
-		      return fields.map(function(field) {
-		    	  if (!field.validators)
-		    		  field.validators = {};
-		    	  field.validators['server'] = {
-		    			  expression: function(viewValue, modelValue, scope) {
-		    				  if (!$scope.errors)
-			            	  	return true;
-		    				  
-			            	  console.log('WTF????',$scope.errors[field.key] == null,viewValue,modelValue)
-			            	  return $scope.errors[field.key] == null;
-			              },
-						  message: function(){console.log('get message',$scope.errors[field.key].join(', '));return $scope.errors[field.key].join(', ');}
-		    	  };
-		        return field;
-		      });
-		    }
-		        
+	   fields = angular.copy(fields);
+//	   formlyConfig.extras.fieldTransform.push(fieldTransform);
+//	   function fieldTransform(fields, model) {
+//		      return fields.map(function(field) {
+//		    	  if (!field.validators)
+//		    		  field.validators = {};
+//		    	  var error_key = field.key;
+//		    	  if (field.data)
+//		    		  error_key = field.data.error_key ? field.data.error_key : field.key;
+//		    	  
+//		    	  field.validators['server'] = {
+//		    			  expression: function(viewValue, modelValue, scope) {
+//		    				  console.log('error key',error_key,$scope.errors[error_key] == null,$scope.errors[error_key]);
+//		    				  if (!$scope.errors)
+//			            	  	return true;
+//			            	  return $scope.errors[error_key] == null;
+//			              },
+//						  message: function()
+//						  {		
+//							  	console.log('get message',$scope.errors[error_key].join(', '));
+//						  		return $scope.errors[error_key].join(', ');
+//						  }
+//		    	  };
+//		        return field;
+//		      });
+//		    }
+	   angular.forEach(fields,function(field,index){
+	   if (!field.validators)
+    		  field.validators = {};
+    	  var error_key = field.key;
+    	  if (field.data)
+    		  error_key = field.data.error_key ? field.data.error_key : field.key;
+    	  
+    	  field.validators['server'] = {
+    			  expression: function(viewValue, modelValue, scope) {
+    				  if (!$scope.errors)
+	            	  	return true;
+    				  console.log('error key',error_key,$scope.errors[error_key] == null,$scope.errors[error_key]);
+	            	  return $scope.errors[error_key] == null;
+	              },
+				  message: function()
+				  {		
+					  	console.log('get message',$scope.errors[error_key].join(', '));
+				  		return $scope.errors[error_key].join(', ');
+				  }
+    	  };
+   });
 	
 	
 	
@@ -71,6 +109,7 @@ angular.module('mainapp')
 	$scope.validateForm = function(){
 		angular.forEach($scope.fields,function(field,index){
 			field.formControl.$validate();
+			field.formControl.$setTouched(); //necessary to show message
 		});
 	}
 	$scope.onSubmit = function() {

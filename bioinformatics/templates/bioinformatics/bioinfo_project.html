@@ -16,7 +16,7 @@
           </div>
           <div class="widget-body">
           {[project]}
-              <table class="table" ng-if="project">
+              <table class="table" ng-if="project.created">
               	<tbody>
               		<tr><th>Created</th><td>{[project.created | date]}</td></tr>
               		<tr><th>Project</th><td><a href="{[projectLink(project.project)]}">{[ project.project.name ]}</a></td></tr>

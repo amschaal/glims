@@ -16,7 +16,7 @@ function BioinfoProjectsController($scope,BioinfoProject,User,DRFNgTableParams) 
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.biocoreProjectLink = function(project){return django_js_utils.urls.resolve('bioinformatics__project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab })};
-	$scope.tableParams = DRFNgTableParams('/bioinformatics/api/bioinfo_projects/',{sorting: { name: "desc" }});
+	$scope.tableParams = DRFNgTableParams('/bioinformatics/api/bioinfo_projects/',{sorting: { created: "desc" }});
 //	$scope.deleteFile = function(file){
 //		file = new FastaFile(file);
 //		console.log($scope);
