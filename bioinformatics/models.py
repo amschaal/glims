@@ -5,9 +5,11 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 
 class BioinfoProject(models.Model):
+    name = models.CharField(max_length=100)
+#     type = models.CharField(max_length=20,choices=[])
     project = models.OneToOneField(Project)
-    created = models.DateTimeField(auto_now=True)
-    assigned_to = models.ForeignKey(User,null=True,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    assigned_to = models.ForeignKey(User,null=True,blank=True) #rename to manager
     description = models.TextField()
 
 @receiver(post_save,sender=Project)

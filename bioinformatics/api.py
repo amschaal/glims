@@ -8,8 +8,8 @@ class BioinfoProjectViewSet(viewsets.ModelViewSet):
     serializer_class = BioinfoProjectSerializer
 #     permission_classes = [CustomPermission]
     model = BioinfoProject
-    filter_fields = {'project':['exact','icontains'], 'description':['exact','icontains'],'project__lab__name':['exact','icontains'],'assigned_to':['exact'],'project__status__id':['icontains','exact']}
-    ordering_fields = ('project__name', 'project__lab__name','created','assigned_to__first_name','assigned_to__last_name','project__status')
+    filter_fields = {'project':['exact','icontains'],'name':['exact','icontains'], 'description':['exact','icontains'],'project__lab__name':['exact','icontains'],'project__name':['exact','icontains'],'assigned_to':['exact'],'project__status__id':['icontains','exact']}
+    ordering_fields = ('name','project__name', 'project__lab__name','created','assigned_to__first_name','assigned_to__last_name','project__status')
     queryset = BioinfoProject.objects.all().select_related('project','assigned_to')
 #     def get_serializer_class(self):
 #         if self.request.method in ['PATCH', 'POST', 'PUT']:

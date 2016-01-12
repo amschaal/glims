@@ -9,4 +9,4 @@ class BioinfoProjectSerializer(serializers.ModelSerializer):
     assigned_to = UserField(queryset=User.objects.filter(groups__id=1))
     class Meta:
         model = BioinfoProject
-        fields = ('id','project','created','assigned_to','description')
+        fields = ('id','name','project','created','assigned_to','description')
