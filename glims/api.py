@@ -123,7 +123,7 @@ def update_pool_sample(request,pool_id,sample_id):
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-    filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact']} 
+    filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact'],'groups__name':['exact']} 
     search_fields=('first_name','last_name','email')
     model = User
     def get_queryset(self):

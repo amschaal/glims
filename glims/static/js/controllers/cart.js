@@ -1,5 +1,5 @@
 
-angular.module('mainapp')
+angular.module('glims.samplecart',[])
 .controller('CartMenuController', ['$scope','$http','cartService', CartMenuController]);
 
 function CartMenuController($scope,$http,cartService) {

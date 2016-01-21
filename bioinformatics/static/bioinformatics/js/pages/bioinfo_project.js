@@ -1,6 +1,7 @@
 
-angular.module('mainapp')
-.controller('BioinfoProjectController', ['$scope','$http', 'BioinfoProject','User','$modal', BioinfoProjectController]);
+var app = angular.module('mainapp');
+app.requires.push('glims.formly');
+app.controller('BioinfoProjectController', ['$scope','$http', 'BioinfoProject','User','$modal', BioinfoProjectController]);
 
 function BioinfoProjectController($scope,$http,BioinfoProject,User,$modal) {
 	$scope.init = function(params){
@@ -16,7 +17,7 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,$modal) {
 //		                 {'first_name': 'Monica', 'last_name': 'Britton', 'email': '', 'groups': [1], 'id': 2},
 //		                 {'first_name': 'Joe', 'last_name': 'Fass', 'email': '', 'groups': [1], 'id': 3}
 //		                ]
-		var userOptions = BioinfoProject.users({search:name});
+		var userOptions = User.query({groups__name:'Bioinformatics Core'});//BioinfoProject.users({search:name});
 		$scope.fields = [
 						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
 						}, 
