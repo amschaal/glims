@@ -15,18 +15,17 @@
             
           </div>
           <div class="widget-body">
-          {[project]}
               <table class="table" ng-if="project.created">
               	<tbody>
               		<tr><th>Created</th><td>{[project.created | date]}</td></tr>
               		<tr><th>Project</th><td><a href="{[projectLink(project.project)]}">{[ project.project.name ]}</a></td></tr>
               		<tr><th>Lab</th><td><a href="{[labLink(project.project)]}">{[ project.project.lab__name ]}</a></td></tr>
-					<tr><th>Assigned to</th><td>{[ project.assigned_to.first_name ]} {[ project.assigned_to.last_name ]}</td></tr>
+					<tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
+					<tr><th>Participants</th><td><p ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}</p></td></tr>
                 	<tr><th>Description</th><td>{[project.description]}</td></tr>
                 	<tr><th>Status</th><td>{[project.project.status]}</td></tr>
                 </tbody>
               </table>
-		      <button ng-click="openFormlyModal()">Open Modal</button>
           </div>
         </div>
       </div>
