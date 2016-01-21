@@ -18,7 +18,7 @@
 			      	<td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}"><a href="{[biocoreProjectLink(row.project)]}">{[ row.name ]}</a></td>
 			      	<td data-title="'Project'" filter="{project__name__icontains: 'text'}" sortable="'project__name'"" ><a href="{[projectLink(row.project)]}">{[ row.project.name ]}</a></td>
 			      	<td data-title="'Lab'" sortable="'project__lab__name'"" filter="{project__lab__name__icontains: 'text'}"><a href="{[labLink(row.project)]}">{[ row.project.lab__name ]}</a></td>
-			      	<td data-title="'Assigned to'" sortable="'assigned_to__first_name,assigned_to__last_name'" filter="{assigned_to: 'select'}" filter-data="users">{[ row.assigned_to.first_name ]} {[ row.assigned_to.last_name ]}</td>
+			      	<td data-title="'Manager'" sortable="'manager__first_name,manager__last_name'" filter="{manager: 'select'}" filter-data="users">{[ row.manager.first_name ]} {[ row.manager.last_name ]}</td>
 			        <td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description|date]}</td>
 			        <td data-title="'Status'" filter="{project__status__id__icontains: 'text'}" sortable="'project__status'">{[row.project.status]}</td>
 			      </tr>

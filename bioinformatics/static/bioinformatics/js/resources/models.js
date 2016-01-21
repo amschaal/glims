@@ -15,7 +15,8 @@ angular.module('glimsModels')
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
     create : { method : 'POST' },
-    remove : { method : 'DELETE' }
+    remove : { method : 'DELETE' },
+    users: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true, url: '/bioinformatics/api/bioinfo_projects/users/' },
   });
 }])
 ;

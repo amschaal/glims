@@ -138,8 +138,20 @@ class JobSerializer(serializers.ModelSerializer):
 
 class UserField(serializers.RelatedField):
     def to_internal_value(self, data):
+        if isinstance(data, int):
+            return User.objects.get(id=data)
         if data.get('id',None):
             return User.objects.get(id=data['id'])
         return None
     def to_representation(self, value):
+#         raise Exception('hello')
         return UserSerializer(value).data
+    
+    
+class ManyUserField(serializers.ManyRelatedField):   
+    def to_representation(self, iterable):
+        return ['foo']
+        return [
+            self.child_relation.to_representation(value)
+            for value in iterable
+        ]

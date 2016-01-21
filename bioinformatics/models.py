@@ -9,8 +9,9 @@ class BioinfoProject(models.Model):
 #     type = models.CharField(max_length=20,choices=[])
     project = models.OneToOneField(Project)
     created = models.DateTimeField(auto_now_add=True)
-    assigned_to = models.ForeignKey(User,null=True,blank=True) #rename to manager
-    description = models.TextField()
+    manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
+    participants = models.ManyToManyField(User,related_name='+')
+    description = models.TextField(null=True,blank=True)
 
 @receiver(post_save,sender=Project)
 def create_bioinfo_project(sender,instance,**kwargs):
