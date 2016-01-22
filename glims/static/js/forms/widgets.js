@@ -15,12 +15,27 @@
 		formlyConfig.setType({
 	        name: 'ui-select-multiple-search',
 	        extends: 'select',
-	        templateUrl: 'ui-select-multiple-search.html'
+	        template: '<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
+	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
+	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
+	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
+	            </ui-select-choices>\
+	          </ui-select>'
 	      });
 		formlyConfig.setType({
 	        name: 'objectMultiCheckbox',
 //	        extends: 'multiCheckbox',
-	        templateUrl: 'object-multi-checkbox.html',
+	        template: '<div class="radio-group">\
+					        	  <div ng-repeat="(key, option) in to.options" class="checkbox">\
+					        <label>\
+					          <input type="checkbox"\
+					                 id="{[id + \'_\'+ $index]}"\
+					                 ng-model="multiCheckbox.checked[$index]"\
+					                 ng-change="multiCheckbox.change()">\
+					          {[option[to.labelProp || \'name\']]}\
+					        </label>\
+					      </div>\
+					    </div>',
 	        wrapper: ['bootstrapLabel', 'bootstrapHasError'],
 	        controller: /* @ngInject */["$scope", function controller($scope) {
 	        	var to = $scope.to;
