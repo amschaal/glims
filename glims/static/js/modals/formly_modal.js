@@ -8,6 +8,45 @@ angular.module('formly.modal',[])
     });
 
   })
+.service('FormlyModal',function($modal){
+	return {
+		create:create
+	};
+	function create(fields,model,options){
+	var modalInstance = $modal.open({
+	      template: '	<div class="modal-header">\
+	          <h3 class="modal-title">{[title]}</h3>\
+	          </div>\
+	          <div class="modal-body">\
+	    	  <!--{[model]}-->\
+	  			<form ng-submit="onSubmit()" name="form" novalidate>\
+	  		        <formly-form model="model" ng-model-options="{ allowInvalid: true }" fields="fields" options="options" form="form">\
+	  		          <button type="submit" class="btn btn-primary submit-button">Submit</button>\
+	  		          <button type="button" class="btn btn-default" ng-click="options.resetModel()">Reset</button>\
+	  		        </formly-form>\
+	  		      </form>\
+	          </div>\
+	          <div class="modal-footer">\
+	              <button class="btn btn-warning" ng-click="cancel()">Cancel</button>\
+	          </div>',
+	      controller: 'FormlyModalController',
+	      size: 'lg',
+	      resolve: {
+	    	  fields: function () {
+		          return fields;
+		      },
+		      model: function () {
+		          return angular.copy(model);
+		      },
+		      options: function(){
+		    	  return options||{title:'Edit!!'};
+		      }
+	      }
+	    });
+	    modalInstance.result.then(options.success||function(model){console.log(model);},options.error||function(){});
+	    return modalInstance;
+	}
+})
 .controller('FormlyModalController', function FormlyModalController($scope, $http, $modalInstance, fields, model, options) {
 	
 	
