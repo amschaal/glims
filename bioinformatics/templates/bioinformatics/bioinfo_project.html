@@ -4,13 +4,13 @@
 {% block content %}
 <script src="/static/bioinformatics/js/resources/models.js"></script>
 <script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
-{% include 'glims/partials/formly_modal.html' %}
+
 <div class="row">
       <div class="col-lg-12">
         <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
           <div class="widget-header">
              {{instance.project.project_id}} 
-            <button class="btn btn-sm btn-success" ng-click="openFormlyModal()">Edit</button>
+            <button class="btn btn-sm btn-success pull-right" ng-click="openFormlyModal()">Edit</button>
             <!-- <a href="{% url 'modify_bioinformatics__project' pk=instance.project.id %}" class="btn btn-sm btn-success">Edit</a> -->
             
           </div>

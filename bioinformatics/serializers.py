@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from bioinformatics.models import BioinfoProject
-from glims.serializers import ProjectSerializer, UserField, ManyUserField
+from glims.serializers import ProjectSerializer, ModelRelatedField, UserSerializer
 from django.contrib.auth.models import User
 
 
 class BioinfoProjectSerializer(serializers.ModelSerializer):
     project = ProjectSerializer(read_only=True,many=False)
-    manager = UserField(queryset=User.objects.filter(groups__id=1))
-    participants = UserField(many=True,queryset=User.objects.filter(groups__id=1))
+    manager = ModelRelatedField(model=User,serializer=UserSerializer,queryset=User.objects.filter(groups__id=1))
+    participants = ModelRelatedField(model=User,serializer=UserSerializer,many=True,queryset=User.objects.filter(groups__id=1))
 #     participants = ManyUserField(queryset=User.objects.all())
     class Meta:
         model = BioinfoProject

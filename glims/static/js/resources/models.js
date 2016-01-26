@@ -10,6 +10,11 @@ var transformDjangoRestResponse = function(data, headers){
 }
 
 angular.module('glimsModels', ['ngResource'])
+.factory('ModelType', ['$resource', function ($resource) {
+  return $resource('/api/model_types/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
+  });
+}])
 .factory('User', ['$resource', function ($resource) {
   return $resource('/api/users/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
@@ -19,14 +24,16 @@ angular.module('glimsModels', ['ngResource'])
   return $resource('/api/samples/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'POST', url: '/samples/api_update/'},
+    patch : { method : 'PATCH' },
     create : { method : 'POST', url: '/samples/api_create/' },
     remove : { method : 'DELETE' }
   });
 }])
-.factory('Workflow', ['$resource', function ($resource) {
-  return $resource('/api/workflows/:id/', {id:'@id'}, {
+.factory('Project', ['$resource', function ($resource) {
+  return $resource('/api/projects/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
+    patch : { method : 'PATCH' },
     create : { method : 'POST' },
     remove : { method : 'DELETE' }
   });
@@ -35,6 +42,7 @@ angular.module('glimsModels', ['ngResource'])
   return $resource('/api/pools/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
+    patch : { method : 'PATCH' },
     create : { method : 'POST' },
     remove : { method : 'DELETE' }
   });

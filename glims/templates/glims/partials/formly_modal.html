@@ -1,13 +1,4 @@
 <script src="/static/js/modals/formly_modal.js"></script>
- <!-- Put custom templates here -->
-    <script type="text/ng-template" id="error-messages.html">
-      <formly-transclude></formly-transclude>
-      <div class="my-messages help-block" ng-messages="fc.$error" ng-if="options.formControl.$touched">
-        <div class="some-message" ng-message="{[::name]}" ng-repeat="(name, message) in ::options.validation.messages">
-          {[message(fc.$viewValue, fc.$modelValue, this)]}
-        </div>
-      </div>
-    </script>
     <!-- Put custom templates here -->
     <script type="text/ng-template" id="ui-select-single.html">
       <ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">

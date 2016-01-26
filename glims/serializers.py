@@ -8,6 +8,32 @@ from glims.models import Status, StatusOption
 from django.contrib.auth.models import User
 # from rest_framework.fields import WritableField
 
+class ModelRelatedField(serializers.RelatedField):
+    model = None
+    pk = 'id'
+    serializer = None
+    def to_internal_value(self, data):
+        if isinstance(data, int):
+            kwargs = {self.pk:data}
+            return self.model.objects.get(**kwargs)
+        if data.get(self.pk,None):
+            return self.model.objects.get(id=data['id'])
+        return None
+    def to_representation(self, value):
+        return self.serializer(value).data
+    def __init__(self, **kwargs):
+        self.model = kwargs.pop('model', self.model)
+        self.pk = kwargs.pop('pk', self.pk)
+        self.serializer = kwargs.pop('serializer', self.serializer)
+        assert self.model is not None, (
+            'Must set model for ModelRelatedField'
+        )
+        assert self.serializer is not None, (
+            'Must set serializer for ModelRelatedField'
+        )
+        self.queryset = kwargs.pop('queryset', self.model.objects.all())
+        super(ModelRelatedField, self).__init__(**kwargs)
+
 class JSONWritableField(serializers.Field):
     """
     DRF JSON Field
@@ -20,6 +46,17 @@ class JSONWritableField(serializers.Field):
 #         else:
 #             return None
 # 
+    def to_internal_value(self,value):
+        import json
+        if not isinstance(value, str) or value is None:
+            return value
+        value = json.loads(value)#JSONField(value)
+        return value
+    def to_representation(self, value):
+        return value
+        import json
+        return json.dumps(value)
+class JSONField(serializers.Field):
     def to_internal_value(self,value):
         import json
         if not isinstance(value, str) or value is None:
@@ -56,12 +93,18 @@ class StatusOptionSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="status.name")
     class Meta:
         model = StatusOption
-        fields = ('id','name','order')   
+        fields = ('id','name','order')
+         
+class LabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lab
 
 class ProjectSerializer(serializers.ModelSerializer):
-    lab__name = serializers.CharField(source='lab.name')
-    type = serializers.StringRelatedField(many=False,read_only=True)
+    lab__name = serializers.CharField(source='lab.name',read_only=True)
+#     type = serializers.StringRelatedField(many=False,read_only=True)
+    type__name = serializers.StringRelatedField(source='type.name',read_only=True)
     status_options = StatusOptionSerializer(many=True,read_only=True,source='type.status_options')
+    lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
     data = JSONWritableField()
     history = JSONWritableField(read_only=True)
 #     history = JSONWritableField()
@@ -70,7 +113,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 #         print self.instance.type.status_options
     class Meta:
         model = Project
-        fields = ('id','name','type','description','lab','lab__name','data','created','status','history','status_options')
+        fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options')
 #         depth = 4
 #         read_only_fields = ('',)
 
@@ -109,6 +152,7 @@ class PoolSerializer(serializers.ModelSerializer):
 
 class ModelTypeSerializer(serializers.ModelSerializer):
     content_type__model = serializers.CharField(source='content_type.model')
+    fields = JSONField()
     class Meta:
         model = ModelType
         field=('name','description','fields','content_type__model')
@@ -121,9 +165,7 @@ class ModelTypeSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Note
         
-class LabSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lab
+
         
 class JobSerializer(serializers.ModelSerializer):
     data = JSONWritableField()
@@ -136,22 +178,32 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ('id','job_id','template','params','created','run_at','args','status','data')
 
-class UserField(serializers.RelatedField):
-    def to_internal_value(self, data):
-        if isinstance(data, int):
-            return User.objects.get(id=data)
-        if data.get('id',None):
-            return User.objects.get(id=data['id'])
-        return None
-    def to_representation(self, value):
-#         raise Exception('hello')
-        return UserSerializer(value).data
+
+
+
+# class UserField(ModelRelatedField):
+#     model = User
+#     serializer = UserSerializer
+# class LabField(ModelRelatedField):
+#     model = Lab
+#     serializer = LabSerializer
+    
+# class UserFieldOld(serializers.RelatedField):
+#     def to_internal_value(self, data):
+#         if isinstance(data, int):
+#             return User.objects.get(id=data)
+#         if data.get('id',None):
+#             return User.objects.get(id=data['id'])
+#         return None
+#     def to_representation(self, value):
+# #         raise Exception('hello')
+#         return UserSerializer(value).data
     
     
-class ManyUserField(serializers.ManyRelatedField):   
-    def to_representation(self, iterable):
-        return ['foo']
-        return [
-            self.child_relation.to_representation(value)
-            for value in iterable
-        ]
+# class ManyUserField(serializers.ManyRelatedField):   
+#     def to_representation(self, iterable):
+#         return ['foo']
+#         return [
+#             self.child_relation.to_representation(value)
+#             for value in iterable
+#         ]
