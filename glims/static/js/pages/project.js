@@ -1,6 +1,6 @@
 
 var app = angular.module('mainapp');
-app.requires.push('ui.grid','ui.grid.pinning','ui.grid.resizeColumns');
+app.requires.push('ui.grid','ui.grid.pinning','ui.grid.resizeColumns','glims.formly');
 app.directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
@@ -16,8 +16,67 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }])
+.controller('ProjectController', ['$scope','$log','FormlyModal', 'ModelType', 'Project',ProjectController])
 .controller('SamplesController', ['$scope','$http','$log','$uibModal','Sample', SamplesController]);
-
+function ProjectController($scope , $log, FormlyModal, ModelType, Project){
+	$scope.init = function (params){
+		$scope.project = Project.get({id:params.project});
+	};
+	var fields =  [
+						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
+						}, 
+//		                {"templateOptions": {"required": false, "options": userOptions, "description": "", "label": "Manager","valueProp":"id","labelProp":"first_name" }
+//							, "type": "select", "key": "manager.id", data:{"error_key":"manager"}
+//						}, 
+		                 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"
+		                 },
+		                 {
+		                	  key: 'sample_type',
+		                	  type: 'select',
+		                	  templateOptions: {
+		                	    label: 'Sample Type',
+		                	    options: ModelType.query({}),
+		                	    valueProp: 'id',
+		                	    labelProp: 'name'
+		                	  }
+		                 },
+		                 {
+	                     key: 'lab',
+	                     type: 'ui-select-search',
+	                     templateOptions: {
+	                       optionsAttr: 'bs-options',
+	                       label: 'Lab',
+	                       valueProp: 'id',
+	                       labelProp: 'name',
+//	                       labelFunc: function(item,to){return item.first_name + ' ' + item.last_name;},
+//	                       placeholder: 'Select lab',
+//	                       refresh: refreshUsers,
+//	                       refreshDelay: 0
+	                       url: '/api/labs/',
+	                       options: []
+	                     }
+	                   }
+//		                 {
+//		                	  key: 'participants',
+//		                	  type: 'objectMultiCheckbox',
+//		                	  templateOptions: {
+//		                	    label: 'Participants',
+//		                	    options: userOptions,
+//		                	    valueProp: 'id',
+//		                	    labelProp: 'first_name'
+//		                	  }
+//		                 }
+	                	];
+	$scope.editProject = function () {
+    	FormlyModal.create(fields,$scope.project,{model_type_query:{content_type__model:'project'},title:'Edit project',controller:'ExtendedFormlyModalController'})
+    	.result.then(
+    			function (project) {
+    		    	$scope.project = project;
+    		    }
+    	);
+    	
+    };
+}
 function SamplesController($scope,$http,$log,$uibModal,$Sample) {
 	var sampleDefaults;
 	$scope.errors = false;

@@ -22,6 +22,8 @@ background-color: pink;
             
           </div>
           <div class="widget-body">
+          	<div ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'})">
+              <button ng-click="editProject()" ng-class="btn">Edit</button>
               <table class="table">
               	<tbody>
 					<tr><th>Status</th><td>{{project.status}}</td></tr>
@@ -35,7 +37,8 @@ background-color: pink;
                 	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
                 </tbody>
               </table>
-             
+          	</div>
+          	             
              <div ng-controller="SamplesController" ng-init="setFields({{sample_fields|escape}});setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
 				<h3>Samples</h3>
 				<p>

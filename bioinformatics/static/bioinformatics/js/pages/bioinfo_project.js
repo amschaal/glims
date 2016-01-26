@@ -44,6 +44,24 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,FormlyModal) 
 //		                       refreshDelay: 0
 //		                     }
 //		                   }
+//		                 {
+//	                     key: 'lab',
+//	                     type: 'ui-select-search',
+//	                     templateOptions: {
+//	                       ngOptions: 'option in to.options | filter: $select.search',//option[to.valueProp] as option in to.options | filter: $select.search
+//		                   searchParam: 'search',
+//	                       optionsAttr: 'bs-options',
+//	                       label: 'Participants',
+//	                       valueProp: 'id',
+//	                       labelProp: 'first_name',
+//	                       labelFunc: function(item,to){return item.first_name + ' ' + item.last_name;},
+//	                       placeholder: 'Select options',
+////	                       options: userOptions
+//	                       options: [],
+//	                       refresh: refreshUsers,
+//	                       refreshDelay: 0
+//	                     }
+//	                   }
 						];
 		 function refreshUsers(name, field) {
 			 console.log(name,field);
@@ -59,7 +77,7 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,FormlyModal) 
 	$scope.options = {};	     	    
     
     $scope.openFormlyModal = function () {
-    	FormlyModal.create($scope.fields,$scope.project,{title:'Edit project'})
+    	FormlyModal.create($scope.fields,$scope.project,{title:'Edit project',controller:'ExtendedFormlyModalController'})
     	.result.then(
     			function (project) {
     		    	$scope.project = project;

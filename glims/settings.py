@@ -152,7 +152,8 @@ COMPUTE_JOB_CALLBACKS = ['glims.callbacks.JOB_CALLBACKS']
 SEARCHGUI_PATH = os.path.join(BASE_DIR,'proteomics/lib/SearchGUI/SearchGUI.jar')
 
 DJANGO_FORMLY_FORMS = {
-    'BioinfoProjectForm':{'form':'bioinformatics.forms.BioinfoProjectForm'}
+    'BioinfoProjectForm':{'form':'bioinformatics.forms.BioinfoProjectForm'},
+    'ProjectForm':{'form':'glims.forms.ProjectForm'}
 }
 
 from config import *
