@@ -6,6 +6,8 @@ from django_compute.models import Job
 from jsonfield import JSONField
 from glims.models import Status, StatusOption
 from django.contrib.auth.models import User
+from rest_framework.fields import DictField, CharField
+from extensible.drf import DRFFieldHandler
 # from rest_framework.fields import WritableField
 
 class ModelRelatedField(serializers.RelatedField):
@@ -117,14 +119,38 @@ class ProjectSerializer(serializers.ModelSerializer):
 #         depth = 4
 #         read_only_fields = ('',)
 
-class SampleSerializer(serializers.ModelSerializer):
-#     project = ProjectSerializer(many=False,read_only=True)
-#     project_id = serializers.RelatedField(many=False)
-#     type = serializers.RelatedField(many=False)
+class DataSerializer(serializers.Serializer):
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields',None)
+        serializer_fields = DRFFieldHandler(fields).get_fields()
+        for key,field in serializer_fields.items():
+            self.fields[key] = field
+        super(DataSerializer, self).__init__(*args,**kwargs)
+
+class ExtensibleSerializer(serializers.ModelSerializer):
     type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
+    data = DictField()
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields',None)
+        super(ExtensibleSerializer, self).__init__(*args,**kwargs)
+        if fields:
+#             print DRFFieldHandler(fields).get_fields()
+            self.fields['data'] = DataSerializer(fields=fields)
+#             print DRFFieldHandler(fields).get_dict_field()
+        print 'fields'
+        print fields
+    def update(self, instance, validated_data):
+        self.fields['data'] = DictField() #hacky, figure out how to serialize to nested DataSerializer
+        return super(ExtensibleSerializer, self).update(instance,validated_data)
+    def create(self, validated_data):
+        self.fields['data'] = DictField() #hacky, figure out how to serialize to nested DataSerializer
+        return super(ExtensibleSerializer, self).create(validated_data)
+        
+class SampleSerializer(ExtensibleSerializer):
     project__name = serializers.CharField(source='project.name',read_only=True)
-    data = JSONWritableField()
+#     data = JSONWritableField()
+#     data = DictField()
     class Meta:
         model = Sample
         read_only_fields = ('sample_id','project__name','type__name')

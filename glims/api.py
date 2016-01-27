@@ -19,6 +19,7 @@ from django_compute.utils import sizeof_fmt
 from glims.models import StatusOption
 from django.db.models.query import Prefetch
 from glims.forms import FullSampleForm
+from django.core.serializers import get_serializer
 
 
 class CustomPermission(permissions.BasePermission):
@@ -129,7 +130,41 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
     def get_queryset(self):
         return User.objects.all().order_by('id')
-    
+
+class ExtensibleViewset(viewsets.ModelViewSet):
+    def get_serializer(self, *args, **kwargs):
+        """
+        Return the serializer instance that should be used for validating and
+        deserializing input, and for serializing output.
+        """
+        print self.request.method
+        print args
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        if self.request.method in ['POST','PUT','PATCH']:
+            kwargs['fields'] = self.get_model_type_fields(*args, **kwargs)
+#             print kwargs['data']['type']['id']
+        return serializer_class(*args, **kwargs)
+    def get_model_type_fields(self,*args,**kwargs):
+        
+        try: #If a type object with "id" is sent
+            type_id = kwargs['data']['type']['id']
+        except:
+            try: #If a type is sent as an integer
+                type_id = int(kwargs['data']['type'])
+            except:
+                type_id = None
+        if type_id: #return fields for sent type id
+            return ModelType.objects.get(id=type_id).fields
+        try: #Otherwise, if the object already has a type, use its fields
+            if type(args[0].type) == ModelType:
+                return args[0].type.fields
+            return []
+        except:
+            return []
+            
+        
+            
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [CustomPermission]
@@ -152,7 +187,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
             Prefetch('type__status_options', queryset=StatusOption.objects.select_related('status').order_by('order')))
     
-class SampleViewSet(viewsets.ModelViewSet):
+class SampleViewSet(ExtensibleViewset):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
     filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
