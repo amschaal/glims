@@ -126,7 +126,8 @@ angular.module('formly.modal',[])
 		});
 	}
 	$scope.onSubmit = function() {
-		$scope.model.$save(
+		var method = $scope.model.id ? '$save' : '$create';
+		$scope.model[method](
 				function(){
 //					$scope.errors = null;
 //					$scope.validateForm();
@@ -147,18 +148,24 @@ angular.module('formly.modal',[])
 	angular.extend(this, $controller('FormlyModalController', {$scope, $http, $modalInstance, fields, model, options}));
 	
 	if (options.model_type_query){
-		var model_types = ModelType.query(options.model_type_query||{});
-		var type_field = {
-			    "key": "type",
-			    "type": "select",
-			    "templateOptions": {
-			      "label": "Type",
-			      "options": model_types,
-			      "valueProp": "id",
-			      "labelProp": "name"
-			    }
-		    };
-		$scope.original_fields.unshift(type_field);
+		var model_types = ModelType.query(options.model_type_query||{}).$promise.then(
+			function(types){
+				var type_field = {
+					    "key": "type",
+					    "type": "select",
+					    "templateOptions": {
+					      "label": "Type",
+					      "ngOptions": "option as option.name for option in to.options track by option.id",
+					      "options": types,
+					      "valueProp": "id",
+					      "labelProp": "name"
+					    }
+				    };
+				$scope.original_fields.unshift(type_field);
+				$scope.fields = angular.copy($scope.original_fields);
+			}
+		);
+		
 	}
 	
 	$scope.fields = angular.copy($scope.original_fields);//angular.copy($scope.original_fields).push(type_field);
@@ -172,15 +179,21 @@ angular.module('formly.modal',[])
 	}
 	
 	$scope.$watch('model.type',function(newValue,oldValue){
-		console.log(newValue,oldValue);
-		$scope.model_type=ModelType.get({id:newValue});
+		console.log('model.type',newValue,oldValue);
+		if (!newValue)
+			return;
+		if (angular.isNumber(newValue))
+			$scope.model_type=ModelType.get({id:newValue});
+		if (newValue.id)
+			$scope.model_type=ModelType.get({id:newValue.id});
 	});
 	$scope.$watch('model_type',function(newValue,oldValue){
-		newValue.$promise.then(function(data){
-			console.log(data.fields,FormlyDynamicFields.translateFields(data.fields));
-			var fields = FormlyDynamicFields.translateFields(data.fields);
-			setExtraFields(fields);
-		});
+		if (newValue)
+			newValue.$promise.then(function(data){
+				console.log(data.fields,FormlyDynamicFields.translateFields(data.fields));
+				var fields = FormlyDynamicFields.translateFields(data.fields);
+				setExtraFields(fields);
+			});
 	});
 //	$scope.model.type = 9; //test
 }

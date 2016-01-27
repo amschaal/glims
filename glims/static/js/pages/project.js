@@ -17,17 +17,29 @@ app.directive('fileModel', ['$parse', function ($parse) {
     };
 }])
 .controller('ProjectController', ['$scope','$log','FormlyModal', 'ModelType', 'Project',ProjectController])
-.controller('SamplesController', ['$scope','$http','$log','$uibModal','Sample', SamplesController]);
+.controller('SamplesController', ['$scope','$http','$log','$uibModal','FormlyModal','Sample', SamplesController]);
 function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 	$scope.init = function (params){
 		$scope.project = Project.get({id:params.project});
 	};
-	var fields =  [
+	
+	
+	$scope.editProject = function () {
+		var fields =  [
+
+						{
+							  key: 'status',
+							  type: 'select',
+							  templateOptions: {
+							    label: 'Status',
+//							    ngOptions: "option as option.name for option in row.status_options track by option.id",
+							    options: $scope.project.status_options,
+							    valueProp: 'id',
+							    labelProp: 'name'
+							  }
+						},
 						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
 						}, 
-//		                {"templateOptions": {"required": false, "options": userOptions, "description": "", "label": "Manager","valueProp":"id","labelProp":"first_name" }
-//							, "type": "select", "key": "manager.id", data:{"error_key":"manager"}
-//						}, 
 		                 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"
 		                 },
 		                 {
@@ -35,7 +47,8 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 		                	  type: 'select',
 		                	  templateOptions: {
 		                	    label: 'Sample Type',
-		                	    options: ModelType.query({}),
+		                	    ngOptions: "option as option.name for option in to.options track by option.id",
+		                	    options: ModelType.query({content_type__model:'sample'}),
 		                	    valueProp: 'id',
 		                	    labelProp: 'name'
 		                	  }
@@ -48,26 +61,11 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 	                       label: 'Lab',
 	                       valueProp: 'id',
 	                       labelProp: 'name',
-//	                       labelFunc: function(item,to){return item.first_name + ' ' + item.last_name;},
-//	                       placeholder: 'Select lab',
-//	                       refresh: refreshUsers,
-//	                       refreshDelay: 0
 	                       url: '/api/labs/',
 	                       options: []
 	                     }
 	                   }
-//		                 {
-//		                	  key: 'participants',
-//		                	  type: 'objectMultiCheckbox',
-//		                	  templateOptions: {
-//		                	    label: 'Participants',
-//		                	    options: userOptions,
-//		                	    valueProp: 'id',
-//		                	    labelProp: 'first_name'
-//		                	  }
-//		                 }
 	                	];
-	$scope.editProject = function () {
     	FormlyModal.create(fields,$scope.project,{model_type_query:{content_type__model:'project'},title:'Edit project',controller:'ExtendedFormlyModalController'})
     	.result.then(
     			function (project) {
@@ -77,7 +75,7 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project){
     	
     };
 }
-function SamplesController($scope,$http,$log,$uibModal,$Sample) {
+function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 	var sampleDefaults;
 	$scope.errors = false;
 	$scope.setSampleDefaults = function(defaults){
@@ -159,17 +157,17 @@ function SamplesController($scope,$http,$log,$uibModal,$Sample) {
 			$scope.gridOptions.data = $scope.samples;
 		});
 	}
-	$scope.setFields = function(fields){
-		angular.forEach(fields,function(field){
-			$scope.gridOptions.columnDefs.push({displayName:field.label,name:'data.'+field.name,minWidth: 100})
-		});
-	};
-	
+//	$scope.setFields = function(fields){
+//		angular.forEach(fields,function(field){
+//			$scope.gridOptions.columnDefs.push({displayName:field.label,name:'data.'+field.name,minWidth: 100})
+//		});
+//	};
 	var columnDefs = [
 	                  {
 	                	  	displayName: "Actions",
 	                	  	name: 'actions',
-						    cellTemplate: '<span uib-dropdown dropdown-append-to-body on-toggle="toggled(open)">\
+						    cellTemplate: '\
+						    	<span uib-dropdown dropdown-append-to-body on-toggle="toggled(open)">\
 						        <a href id="simple-dropdown" uib-dropdown-toggle>\
 					        Actions<span class="caret"></span>\
 					      </a>\
@@ -192,6 +190,25 @@ function SamplesController($scope,$http,$log,$uibModal,$Sample) {
 	                  {displayName: "Received", name: "received", minWidth: 150, type:'date'},
 	                  
 	              ];
+	$scope.$watch('project.sample_type',function(newValue,oldValue){
+		if (!$scope.project.sample_type)
+			return;
+		var cols = angular.copy(columnDefs);
+		angular.forEach($scope.project.sample_type.fields,function(field){
+			cols.push({
+				displayName:field.label,
+				name:'data.'+field.name,
+				minWidth: 100,
+				cellTemplate: '<div class="ui-grid-cell-contents"><div ng-if="grid.appScope.project.sample_type.id != row.entity.type.id" class="error">Incompatible type!</div>{{COL_FIELD}}</div>'
+//				cellTemplate: '\
+//					<div>{[row]}</div>',
+			});
+		});
+		$scope.gridOptions.columnDefs = cols;
+	});
+	
+	
+	
 
 	  $scope.gridOptions = {
 	      columnDefs: columnDefs,
@@ -203,31 +220,49 @@ function SamplesController($scope,$http,$log,$uibModal,$Sample) {
 	  };
 
 
-	  $scope.edit_sample = function (row) {
-		  $log.info(row);
-		    var modalInstance = $uibModal.open({
-		      templateUrl: 'SampleEdit.html',
-		      controller: 'SampleEditCtrl',
-		      size: 'lg',
-		      resolve: {
-		        sample: function () {
-		        	if (row)
-		        		return angular.copy(row.entity);
-		        	else
-		        		return new $Sample(sampleDefaults);
-		        }
-		      }
-		    });
-
-		    modalInstance.result.then(function (sample) {
-		    	if (row)
-		    		row.entity = sample;
-		    	else
-		    		$scope.samples.push(sample);
-		    }, function () {
-		      $log.info('Modal dismissed at: ' + new Date());
-		    });
-		  };
+//	  $scope.edit_sample = function (row) {
+//		  $log.info(row);
+//		    var modalInstance = $uibModal.open({
+//		      templateUrl: 'SampleEdit.html',
+//		      controller: 'SampleEditCtrl',
+//		      size: 'lg',
+//		      resolve: {
+//		        sample: function () {
+//		        	if (row)
+//		        		return angular.copy(row.entity);
+//		        	else
+//		        		return new $Sample(sampleDefaults);
+//		        }
+//		      }
+//		    });
+//
+//		    modalInstance.result.then(function (sample) {
+//		    	if (row)
+//		    		row.entity = sample;
+//		    	else
+//		    		$scope.samples.push(sample);
+//		    }, function () {
+//		      $log.info('Modal dismissed at: ' + new Date());
+//		    });
+//		  };
+		  var fields = [
+		                {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
+		                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
+		                {"templateOptions": {"required": false, "description": "", "label": "Received"}, "type": "input", "key": "received"}
+		                ]
+		  $scope.edit_sample = function (row) {
+		    	var sample = row ? row.entity : new $Sample({project:$scope.project.id,type:$scope.project.sample_type});
+			  	FormlyModal.create(fields,sample,{model_type_query:{content_type__model:'sample'},title:'Edit Sample',controller:'ExtendedFormlyModalController'})
+		    	.result.then(
+		    			function (updatedSample) {
+		    				if (row)
+		    		    		row.entity = updatedSample;
+		    		    	else
+		    		    		$scope.samples.push(updatedSample);
+		    		    }
+		    	);
+		    	
+		    };
 	
 }
 
