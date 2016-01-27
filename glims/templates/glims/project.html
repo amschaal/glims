@@ -38,7 +38,7 @@ background-color: pink;
               </table>
           	</div>
           	             
-             <div ng-controller="SamplesController" ng-init="setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
+             <div ng-controller="SamplesController" ng-init="init();">
 				<h3>Samples</h3>
 				<p>
 					<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
@@ -76,7 +76,7 @@ background-color: pink;
                -->
               <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>
               
-				<button ng-click="addSample()" class="btn btn-success">Add sample</button>
+				<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>
 			</div>
 			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
