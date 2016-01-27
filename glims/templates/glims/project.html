@@ -14,32 +14,31 @@ background-color: pink;
 
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget">
+        <div class="widget" ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'})">
           <div class="widget-header">
-            <i class="fa fa-rocket"></i> {{project.name}}
-            <a href="{% url 'update_project' pk=project.id %}" class="btn btn-sm btn-success pull-right">Edit</a>
-            <a href="{% url 'permissions' model='Project' pk=project.id %}" class="pull-right">Permissions</a>
-            
+            <i class="fa fa-rocket"></i> {[project.name]}
+            <a ng-click="editProject()" class="btn btn-sm btn-success pull-right">Edit</a>
+            <!-- <a href="{% url 'update_project' pk=project.id %}" class="btn btn-sm btn-success pull-right">Edit</a> -->
           </div>
           <div class="widget-body">
-          	<div ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'})">
-              <button ng-click="editProject()" ng-class="btn">Edit</button>
+          	<div>
               <table class="table">
               	<tbody>
-					<tr><th>Status</th><td>{{project.status}}</td></tr>
-					<tr><th>Type</th><td>{{project.type}}</td></tr>
-					<tr><th>ID</th><td>{{project.project_id}}</td></tr>
-					<tr><th>Sample Type</th><td>{{project.sample_type}}</td></tr>
-                	<tr><th>Description</th><td>{{project.description}}</td></tr>
+					<tr><th>Status</th><td>{[project.status]}</td></tr>
+					<tr><th>Type</th><td>{[project.type.name]}</td></tr>
+					<tr><th>ID</th><td>{[project.project_id]}</td></tr>
+					<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
+                	<tr><th>Description</th><td>{[project.description]}</td></tr>
+                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
                 	{% for field in project.data_fields %}
-                	<tr><th>{{field.label}}</th><td>{{field.value}}</td></tr>
+                	<!-- <tr><th>{{field.label}}</th><td>{{field.value}}</td></tr> -->
                 	{% endfor %}
                 	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
                 </tbody>
               </table>
           	</div>
           	             
-             <div ng-controller="SamplesController" ng-init="setFields({{sample_fields|escape}});setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
+             <div ng-controller="SamplesController" ng-init="setSampleDefaults({project:'{{project.id}}',type:{{project.sample_type_id}},data:{}});init();">
 				<h3>Samples</h3>
 				<p>
 					<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>

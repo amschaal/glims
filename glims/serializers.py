@@ -34,6 +34,25 @@ class ModelRelatedField(serializers.RelatedField):
         self.queryset = kwargs.pop('queryset', self.model.objects.all())
         super(ModelRelatedField, self).__init__(**kwargs)
 
+class JSONField(serializers.Field):
+    def to_internal_value(self,value):
+        import json
+        if not isinstance(value, str) or value is None:
+            return value
+        value = json.loads(value)#JSONField(value)
+        return value
+    def to_representation(self, value):
+        return value
+        import json
+        return json.dumps(value)
+
+class ModelTypeSerializer(serializers.ModelSerializer):
+    content_type__model = serializers.CharField(source='content_type.model')
+    fields = JSONField()
+    class Meta:
+        model = ModelType
+        field=('name','description','fields','content_type__model')
+
 class JSONWritableField(serializers.Field):
     """
     DRF JSON Field
@@ -56,28 +75,7 @@ class JSONWritableField(serializers.Field):
         return value
         import json
         return json.dumps(value)
-class JSONField(serializers.Field):
-    def to_internal_value(self,value):
-        import json
-        if not isinstance(value, str) or value is None:
-            return value
-        value = json.loads(value)#JSONField(value)
-        return value
-    def to_representation(self, value):
-        return value
-        import json
-        return json.dumps(value)
-#     def to_native(self, value):
-#         import json
-#         if not isinstance(value, str) or value is None:
-#             return value
-#         value = json.loads(value)#JSONField(value)
-#         return value
 
-# class StatusSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ProjectStatus
-#         fields = ('status','set_by','timestamp')
 
 class UserSerializer(serializers.ModelSerializer):
 #     type = serializers.StringRelatedField(many=False,read_only=True)
@@ -102,6 +100,8 @@ class LabSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     lab__name = serializers.CharField(source='lab.name',read_only=True)
 #     type = serializers.StringRelatedField(many=False,read_only=True)
+    type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
+    sample_type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
     status_options = StatusOptionSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
@@ -121,11 +121,13 @@ class SampleSerializer(serializers.ModelSerializer):
 #     project = ProjectSerializer(many=False,read_only=True)
 #     project_id = serializers.RelatedField(many=False)
 #     type = serializers.RelatedField(many=False)
-    type__name = serializers.StringRelatedField(source='type.name')
-    project__name = serializers.CharField(source='project.name')
+    type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
+    type__name = serializers.StringRelatedField(source='type.name',read_only=True)
+    project__name = serializers.CharField(source='project.name',read_only=True)
     data = JSONWritableField()
     class Meta:
         model = Sample
+        read_only_fields = ('sample_id','project__name','type__name')
 #         fields = ('id','sample_id','project_id','name','description','project'lab','lab__name','data')
 #         fields = ('id','sample_id','project_id','name','description','project__name')
 
@@ -150,12 +152,7 @@ class PoolSerializer(serializers.ModelSerializer):
 #         model = Job
         
 
-class ModelTypeSerializer(serializers.ModelSerializer):
-    content_type__model = serializers.CharField(source='content_type.model')
-    fields = JSONField()
-    class Meta:
-        model = ModelType
-        field=('name','description','fields','content_type__model')
+
         
 # class FileSerializer(serializers.ModelSerializer):
 #     class Meta:

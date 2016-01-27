@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from glims.lims import Project, Sample, ModelType
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from permissions.manage import get_all_user_objects, has_all_permissions
 # from models import 
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,6 +18,7 @@ import os
 from django_compute.utils import sizeof_fmt
 from glims.models import StatusOption
 from django.db.models.query import Prefetch
+from glims.forms import FullSampleForm
 
 
 class CustomPermission(permissions.BasePermission):
@@ -170,6 +171,21 @@ class SampleViewSet(viewsets.ModelViewSet):
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
         return queryset
+#     def create(self,request):
+#         form = FullSampleForm(request.data)
+#         if form.is_valid():
+#             sample = form.save()
+#             return Response(SampleSerializer(sample).data)
+#         else:
+#             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def update(self,request,pk=None):
+#         instance = Sample.objects.get(id=pk)
+#         form = FullSampleForm(request.data,instance=instance)
+#         if form.is_valid():
+#             sample = form.save()
+#             return Response(SampleSerializer(sample).data)
+#         else:
+#             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer

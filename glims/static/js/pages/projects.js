@@ -5,7 +5,7 @@ angular.module('mainapp')
 function ProjectController($scope,$http,DRFNgTableParams) {
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
-	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab })};
+	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
 	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" }});
 //	scope.$watch('name', function(newValue, oldValue) {
 //		  scope.counter = scope.counter + 1;

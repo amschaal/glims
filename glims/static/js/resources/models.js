@@ -23,9 +23,12 @@ angular.module('glimsModels', ['ngResource'])
 .factory('Sample', ['$resource', function ($resource) {
   return $resource('/api/samples/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
-    save : { method : 'POST', url: '/samples/api_update/'},
+//    save : { method : 'POST', url: '/samples/api_update/'},
+//  create : { method : 'POST', url: '/samples/api_create/' },
+    save : { method : 'PUT' },
     patch : { method : 'PATCH' },
-    create : { method : 'POST', url: '/samples/api_create/' },
+    create : { method : 'POST' },
+
     remove : { method : 'DELETE' }
   });
 }])
