@@ -41,11 +41,16 @@
                     searchParam: 'search',
                     optionsAttr: 'bs-options',
                     valueProp: 'id',
+                    minSearchChar: 0,
                     labelFunc: function(item,to){return item ? item[to.labelProp] : '';},
                     placeholder: 'Search',
                     options: [],
 //                    url: '/api/get/url',
                     refresh: function(name,field){
+                    	if (name.length < field.templateOptions.minSearchChar){
+                    		field.templateOptions.options = [];
+                    		return;
+                    	}
 //                    	console.log(name,field);
                     	var queryParams = {};
                     	queryParams[field.templateOptions.searchParam] = name;

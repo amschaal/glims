@@ -4,9 +4,6 @@
 [submodule "proteomics"]
 	path = proteomics
 	url = git@bitbucket.org:amschaal/proteomics_lims.git
-[submodule "django_json_forms"]
-	path = django_json_forms
-	url = git@bitbucket.org:amschaal/django_json_forms.git
 [submodule "extensible"]
 	path = extensible
 	url = git@bitbucket.org:amschaal/django-extensible.git
