@@ -5,7 +5,7 @@ from glims.lims import Project, Sample
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from glims.forms import SampleForm, FullSampleForm
-from glims.serializers import SampleSerializer
+from glims.api.serializers import SampleSerializer
 from rest_framework import status
 from django.db import transaction 
 from django.views.generic.edit import UpdateView

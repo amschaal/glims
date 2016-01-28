@@ -1,9 +1,9 @@
 from rest_framework import viewsets
-from bioinformatics.serializers import BioinfoProjectSerializer 
+from bioinformatics.api.serializers import BioinfoProjectSerializer 
 from bioinformatics.models import BioinfoProject
 from rest_framework.decorators import list_route, detail_route
 from django.contrib.auth.models import User
-from glims.serializers import UserSerializer
+from glims.api.serializers import UserSerializer
 from rest_framework.response import Response
 
 
