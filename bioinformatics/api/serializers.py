@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from bioinformatics.models import BioinfoProject
-from glims.serializers import ProjectSerializer, ModelRelatedField, UserSerializer
+from glims.api.serializers import ProjectSerializer, ModelRelatedField, UserSerializer
 from django.contrib.auth.models import User
 
 

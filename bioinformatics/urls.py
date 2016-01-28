@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',)
 
 from rest_framework import routers
-from api import BioinfoProjectViewSet
+from bioinformatics.api.views import BioinfoProjectViewSet
 
 router = routers.DefaultRouter()
 router.register(r'bioinfo_projects', BioinfoProjectViewSet)

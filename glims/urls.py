@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from glims import views as glims_views
 from django.contrib import admin
-from glims.api import UserViewSet
 admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
@@ -25,7 +24,7 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from api import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset,  FormView
+from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
@@ -82,16 +81,16 @@ urlpatterns += patterns('',
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
     url(r'^bioinformatics/', include(bioinformatics_urls.urlpatterns)),
     url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
-    url(r'^api/add_samples_to_cart/$', 'glims.api.add_samples_to_cart', name='add_samples_to_cart'),
-    url(r'^api/remove_samples_from_cart/$', 'glims.api.remove_samples_from_cart', name='remove_samples_from_cart'),
+    url(r'^api/add_samples_to_cart/$', 'glims.api.views.add_samples_to_cart', name='add_samples_to_cart'),
+    url(r'^api/remove_samples_from_cart/$', 'glims.api.views.remove_samples_from_cart', name='remove_samples_from_cart'),
     url(r'^api/', include(router.urls)),
     url(r'^jsurls.js$', 'utils.jsutils.jsurls', {}, 'jsurls'),
-#    url(r'^api/job/(?P<job_id>\d+\.?\d*)/update/$', 'glims.api.update_job', name='update_job'),
-    url(r'^api/pool/(?P<pk>\d+)/update/$', 'glims.api.update_pool', name='update_pool'),
-    url(r'^api/pool/(?P<pool_id>\d+)/sample/(?P<sample_id>\d+)/update/$', 'glims.api.update_pool_sample', name='update_pool_sample'),
-    url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.remove_pool_samples', name='remove_pool_samples'),
-    url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.add_pool_samples', name='add_pool_samples'),
-    url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.project_files', name='get_project_files'),
+#    url(r'^api/job/(?P<job_id>\d+\.?\d*)/update/$', 'glims.api.views.update_job', name='update_job'),
+    url(r'^api/pool/(?P<pk>\d+)/update/$', 'glims.api.views.update_pool', name='update_pool'),
+    url(r'^api/pool/(?P<pool_id>\d+)/sample/(?P<sample_id>\d+)/update/$', 'glims.api.views.update_pool_sample', name='update_pool_sample'),
+    url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.views.remove_pool_samples', name='remove_pool_samples'),
+    url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.views.add_pool_samples', name='add_pool_samples'),
+    url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.views.project_files', name='get_project_files'),
     url(r'^samples/', include('glims.samples.urls')),
     url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
