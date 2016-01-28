@@ -7,9 +7,6 @@
 [submodule "extensible"]
 	path = extensible
 	url = git@bitbucket.org:amschaal/django-extensible.git
-[submodule "angular_forms"]
-	path = angular_forms
-	url = git@bitbucket.org:amschaal/django-angular-forms.git
 [submodule "django_compute"]
 	path = django_compute
 	url = git@github.com:amschaal/django_compute.git
