@@ -9,7 +9,6 @@ from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
 from bioinformatics import urls as bioinformatics_urls
-from django_json_forms import urls as json_form_urls
 from extensible import urls as extensible_urls
 from django_compute import urls as compute_urls
 from django_formly import urls as formly_urls
@@ -92,7 +91,6 @@ urlpatterns += patterns('',
     url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.views.add_pool_samples', name='add_pool_samples'),
     url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.views.project_files', name='get_project_files'),
     url(r'^samples/', include('glims.samples.urls')),
-    url(r'^json_forms/', include(json_form_urls.urlpatterns)),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
     url(r'^compute/', include(compute_urls.urlpatterns)),
     url(r'^formly_forms/', include(formly_urls.urlpatterns)),

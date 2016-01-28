@@ -48,7 +48,6 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'crispy_forms',
     'django_extensions',
-    'django_json_forms',
     'extensible',
     'angular_forms',
     'django_compute',

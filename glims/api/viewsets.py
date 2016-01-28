@@ -103,7 +103,8 @@ class PoolViewSet(ExtensibleViewset):
     ordering_fields = ('name', 'created','type__name')
     search_fields = ('name', 'description','type__name')
     model = Pool
-#     def get_queryset(self):
+    def get_queryset(self):
+        return Pool.objects.all()
 #         return get_all_user_objects(self.request.user, ['view'], Pool)
         
 
