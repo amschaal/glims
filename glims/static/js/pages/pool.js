@@ -1,41 +1,33 @@
 
-angular.module('mainapp')
-.controller('PoolController', ['$scope','$http','Pool','growl', PoolController]);
+angular.module('mainapp').requires.push('glims.formly');
+angular.module('mainapp').controller('PoolController', ['$scope','$http','Pool','growl','FormlyModal', PoolController]);
 
-function PoolController($scope,$http,$Pool,growl) {
+function PoolController($scope,$http,$Pool,growl,FormlyModal) {
 //	$scope.errors={};
 //	$scope.message = false;
 	var pool_id = null;
-	$scope.init = function(data){
-		pool_id = data.pool_id;
-//		$scope.pool = $Pool.get({'id':data.pool_id});
+	$scope.init = function(params){
+		pool_id = params.pool_id;
+		$scope.pool = $Pool.get({'id':pool_id});
 	}
-	
-//	$scope.getErrors = function(name){
-//		return $scope.errors[name] ? $scope.errors[name] : []; 
-//	};
-//	$scope.submit = function(){
-//		var url = django_js_utils.urls.resolve('update_pool', { pk: pool_id});
-//		$http.post(
-//			url,
-//			$scope.pool
-//		).success(function(data, status, headers, config) {
-//			if (data.errors){
-//				$scope.errors=data.errors;
-//				$scope.message = false;
-//			}
-//			else{
-//				$scope.errors = {}
-//				$scope.message = "Saved successfully.";
-//			}
-//				
-//		});
+//	$scope.onError = function(data,status,headers,config){
+//		growl.error('There were errors updating the pool',{ttl: 4000});
 //	}
-	$scope.onError = function(data,status,headers,config){
-		growl.error('There were errors updating the pool',{ttl: 4000});
-	}
-	$scope.onSuccess = function(data,status,headers,config){
-		growl.success('Pool updated',{ttl: 4000});
+//	$scope.onSuccess = function(data,status,headers,config){
+//		growl.success('Pool updated',{ttl: 4000});
+//	}
+	$scope.edit = function () {
+		var fields =  [
+					{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
+	                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
+//	                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "t", "key": "created"},
+	                	];
+    	FormlyModal.create(fields,$scope.pool,{model_type_query:{content_type__model:'pool'},title:'Edit pool',controller:'ExtendedFormlyModalController'})
+    	.result.then(
+    			function (pool) {
+    		    	$scope.pool = pool;
+    		    }
+    	);
 	}
 }
 

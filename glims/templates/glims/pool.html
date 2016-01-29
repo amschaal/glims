@@ -6,45 +6,20 @@
 <script src="/static/js/pages/pool.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget">
+        <div class="widget" ng-controller="PoolController" ng-init="init({pool_id:{{pool.id}}})">
           <div class="widget-header">
-            <i class="fa fa-rocket"></i> {{pool.name}}
-             <a href="{% url 'delete_pool' pk=pool.id %}" onClick="if(!confirm('Are you sure you want to delete this pool'))return false;" class="btn btn-sm btn-danger pull-right">Delete</a>
+            <i class="fa fa-rocket"></i> {[pool.name]}
+            <a href="{% url 'delete_pool' pk=pool.id %}" onClick="if(!confirm('Are you sure you want to delete this pool'))return false;" class="btn btn-sm btn-danger pull-right">Delete</a>
+             <a ng-click="edit()" class="btn btn-sm btn-default pull-right">Edit</a> 
           </div>
           <div class="widget-body">
-          <div ng-controller="PoolController" ng-init="init({pool_id:{{pool.id}}})">
-		  <div angular-ajax-form url="{% url 'update_pool' pk=pool.id %}" prefix="pool" on-error="onError" on-success="onSuccess">
-	          {% crispy form form.helper %}
-	          <button ng-click="submit()" class="btn btn-default">Submit</button>
-          </div>
-          </div>
-          
-              <!-- 
-              <table class="table">
-              	<tbody>
-					<tr><th>Type</th><td>{{pool.type}}</td></tr>
-                	<tr><th>Description</th><td>{{pool.description}}</td></tr>
-                	{% for k,v in pool.data.items %}
-                	<tr><th>{{k}}</th><td>{{v}}</td></tr>
-                	{% endfor %}
-                </tbody>
-              </table>
-               -->
+        	<table class="table">
+        		<tr><th>Name</th><td>{[pool.name]}</td></tr>
+        		<tr><th>Description</th><td>{[pool.description]}</td></tr>
+        		<tr><th>Created</th><td>{[pool.created | date]}</td></tr>
+        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>
+          	</table>
 
-	<script type="text/ng-template" id="myModalContent.html">
-		<div class="modal-header">
-            <h3 class="modal-title">{[sample.name]}</h3>
-        </div>
-        <div class="modal-body">
-			{[sample_data]}
-			{[override]}
-        	<div style="padding:25px;">{% crispy sample_form sample_form.helper %}</div>    
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
     {% include 'glims/partials/sample_modal.html' %}
 	
              <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">

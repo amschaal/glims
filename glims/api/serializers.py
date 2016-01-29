@@ -36,9 +36,11 @@ class ExtensibleSerializer(serializers.ModelSerializer):
             self.fields['data'] = DataSerializer(fields=fields)
     def update(self, instance, validated_data):
         self.fields['data'] = DictField() #hacky, figure out how to serialize to nested DataSerializer
+        validated_data['data'] = {key:str(value) for key,value in validated_data.get('data',{}).items()} #HStore only takes strings
         return super(ExtensibleSerializer, self).update(instance,validated_data)
     def create(self, validated_data):
         self.fields['data'] = DictField() #hacky, figure out how to serialize to nested DataSerializer
+        validated_data['data'] = {key:str(value) for key,value in validated_data.get('data',{}).items()} #HStore only takes strings
         return super(ExtensibleSerializer, self).create(validated_data)
 
 
@@ -69,6 +71,7 @@ class ProjectSerializer(ExtensibleSerializer):
         model = Project
 #         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options')
 
+        
 class SampleSerializer(ExtensibleSerializer):
     project__name = serializers.CharField(source='project.name',read_only=True)
     class Meta:

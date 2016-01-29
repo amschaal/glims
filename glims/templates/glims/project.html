@@ -18,7 +18,6 @@ background-color: pink;
           <div class="widget-header">
             <i class="fa fa-rocket"></i> {[project.name]}
             <a ng-click="editProject()" class="btn btn-sm btn-success pull-right">Edit</a>
-            <!-- <a href="{% url 'update_project' pk=project.id %}" class="btn btn-sm btn-success pull-right">Edit</a> -->
           </div>
           <div class="widget-body">
           	<div>
@@ -30,9 +29,6 @@ background-color: pink;
 					<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
                 	<tr><th>Description</th><td>{[project.description]}</td></tr>
                 	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
-                	{% for field in project.data_fields %}
-                	<!-- <tr><th>{{field.label}}</th><td>{{field.value}}</td></tr> -->
-                	{% endfor %}
                 	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
                 </tbody>
               </table>
@@ -82,17 +78,4 @@ background-color: pink;
           </div>
         </div>
       </div>
-      <script type="text/ng-template" id="SampleEdit.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Sample {[sample.sample_id]}</h3>
-        </div>
-        <div class="modal-body">
-		
-			{% crispy sample_form %}
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
 {% endblock %}

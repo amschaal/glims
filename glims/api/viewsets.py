@@ -10,6 +10,7 @@ from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     LabSerializer
 from glims.lims import Project, Sample, Pool, Lab
 from glims.models import StatusOption
+from glims.api.filters import HstoreFilter, HstoreOrderFilter
 # from glims.permissions.manage import get_all_user_objects
 
 
@@ -22,6 +23,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return User.objects.all().order_by('id')
 
 class ExtensibleViewset(viewsets.ModelViewSet):
+    def __init__(self,*args,**kwargs):
+        super(ExtensibleViewset, self).__init__(*args,**kwargs)
+        self.filter_backends += (HstoreFilter,HstoreOrderFilter)
+#     def get_queryset(self):
+#         print 'GET queryset'
+#         qs = super(ExtensibleViewset, self).get_queryset()
+#         filters = {}
+#         for key,value in self.request.query_params.items():
+#             if key.starts_with('data__'):
+#                 filters[key]=value
+#         print 'FILTERS!!!!'
+#         print filters
+#         return qs.filter(**filters)
+#     filter_backends = (HstoreFilter,)
     def get_serializer(self, *args, **kwargs):
         """
         Return the serializer instance that should be used for validating and
@@ -79,8 +94,8 @@ class ProjectViewSet(ExtensibleViewset):
 class SampleViewSet(ExtensibleViewset):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
-    ordering_fields = ('sample_id','name', 'description','project__name','received','created','type__name')
+    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'data':['contains']}
+    ordering_fields = ('id','sample_id','name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
     model = Sample
 #     def get_queryset(self):

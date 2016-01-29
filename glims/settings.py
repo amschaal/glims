@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'django_js_utils',
     'glims',
     'permissions',
@@ -49,7 +50,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'extensible',
-    'angular_forms',
     'django_compute',
     'autocomplete_light',
     'django_cloudstore'
@@ -133,8 +133,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend','rest_framework.filters.OrderingFilter','rest_framework.filters.SearchFilter',),
-    'PAGINATE_BY': 10,                 # Default to 10
+    'PAGE_SIZE': 10,
+#     'PAGINATE_BY': 10,                 # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
     'MAX_PAGINATE_BY': 1000             # Maximum limit allowed when using `?page_size=xxx`.
 }
