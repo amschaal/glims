@@ -11,7 +11,6 @@ from permissions.manage import get_all_user_objects
 from sendfile import sendfile
 from forms import ProjectForm, SampleForm, PoolForm, LabForm, ProjectTypeForm, FullSampleForm
 import json
-from angular_forms.decorators import AngularFormDecorator 
 from django_compute.models import Job
 from glims.models import ModelTypePlugins
 
@@ -23,9 +22,7 @@ def project(request, pk):
     project = Project.objects.get(pk=pk)
     inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
-    sample_fields = json.dumps(project.sample_type.fields) if project.sample_type else []
-    sample_form = AngularFormDecorator(SampleForm)(prefix="sample",initial={'type':project.sample_type_id})
-    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs,'sample_fields':sample_fields,'sample_form':sample_form} ,context_instance=RequestContext(request))
+    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
 @login_required
 def project_files(request,pk):
     project = Project.objects.get(pk=pk)
@@ -40,9 +37,9 @@ def sample(request,pk):
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
 #     samples = SampleSerializer(pool.samples.all()).data
-    form = AngularFormDecorator(PoolForm)(instance=pool,prefix="pool")
-    sample_form = AngularFormDecorator(PoolForm)(instance=pool,prefix="sample",field_template='glims/crispy/sample_field.html')
-    return render(request, 'glims/pool.html', {'pool':pool,'form':form,'sample_form':sample_form} ,context_instance=RequestContext(request))
+#     form = AngularFormDecorator(PoolForm)(instance=pool,prefix="pool")
+#     sample_form = AngularFormDecorator(PoolForm)(instance=pool,prefix="sample",field_template='glims/crispy/sample_field.html')
+    return render(request, 'glims/pool.html', {'pool':pool} ,context_instance=RequestContext(request))
 @login_required
 def labs(request):
     return render(request, 'glims/labs.html', {} ,context_instance=RequestContext(request))
@@ -107,18 +104,6 @@ def create_lab(request):
 def choose_project_type(request):
     form = ProjectTypeForm(initial={'lab':request.GET.get('lab',None)})
     return render(request, 'glims/choose_project_type.html', {'form':form} ,context_instance=RequestContext(request))
-@login_required
-def create_project(request,pk=None):
-    instance = None if not pk else Project.objects.get(pk=pk)
-    initial = None if pk else {'lab':request.GET.get('lab',None),'type':request.GET.get('type',None)}
-    if request.method == 'GET':
-        form = ProjectForm(instance=instance,initial=initial)
-    elif request.method == 'POST':
-        form = ProjectForm(request.POST,instance=instance,initial=initial)
-        if form.is_valid():
-            project = form.save()
-            return redirect(project.get_absolute_url()) 
-    return render(request, 'glims/create_project.html', {'form':form} ,context_instance=RequestContext(request))
 
 
 @login_required
@@ -149,9 +134,4 @@ def delete_project(request,pk):
     project = Project.objects.get(pk=pk)
     project.delete()
     return redirect('projects')
-
-class ProjectUpdate(UpdateView):
-    template_name = 'glims/create_project.html'
-    model = Project
-    form_class = ProjectForm
 
