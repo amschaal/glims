@@ -23,7 +23,7 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 		$scope.project = Project.get({id:params.project});
 	};
 	
-	
+	var sample_types = ModelType.query({content_type__model:'sample'});
 	$scope.editProject = function () {
 		var fields =  [
 
@@ -48,7 +48,7 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 		                	  templateOptions: {
 		                	    label: 'Sample Type',
 		                	    ngOptions: "option as option.name for option in to.options track by option.id",
-		                	    options: ModelType.query({content_type__model:'sample'}),
+		                	    options: sample_types,
 		                	    valueProp: 'id',
 		                	    labelProp: 'name'
 		                	  }
@@ -158,6 +158,9 @@ function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 						    enableFiltering: false
 	                  },
 	                  {displayName: "ID", name: "sample_id", pinnedLeft:true, minWidth: 150},
+	                  {displayName: "Type", name: "type.name", minWidth: 150,
+	                	  cellTemplate: '<div class="ui-grid-cell-contents" ng-class="{\'error\':grid.appScope.project.sample_type.id != row.entity.type.id}">{{COL_FIELD}}</div>'
+	                  },
 	                  {displayName: "Name", name: "name", minWidth: 150},
 	                  {displayName: "Description", name: "description", minWidth: 150},
 	                  {displayName: "Received", name: "received", minWidth: 150, type:'date'},
