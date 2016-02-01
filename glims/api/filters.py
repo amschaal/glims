@@ -5,9 +5,12 @@ from rest_framework import filters
 class HstoreFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
 #         @todo: This could probably be more secure... (it takes any filter starting with "data__")
+        hstore_field = getattr(view, 'hstore_field', None)
+        if not hstore_field:
+            return queryset
         filters = {}
         for key,value in request.query_params.items():
-            if key.startswith('%s__'%view.hstore_field) and value:
+            if key.startswith('%s__'%hstore_field) and value:
                 filters[key]=value
         return queryset.filter(**filters)
 
@@ -17,13 +20,19 @@ class HstoreOrderFilter(filters.OrderingFilter):
     Filter that only allows users to see their own objects.
     """
     def get_valid_fields(self, queryset, view):
+        hstore_field = getattr(view, 'hstore_field', None)
+        if not hstore_field:
+            return super(HstoreOrderFilter, self).get_valid_fields(queryset,view)
         valid_fields = super(HstoreOrderFilter, self).get_valid_fields(queryset,view)
         for field in view.request.query_params.get('ordering','').split(','):
             trimmed = field.lstrip('-')
-            if trimmed.startswith("%s__"%view.hstore_field):
+            if trimmed.startswith("%s__"%hstore_field):
                 valid_fields.append((trimmed,trimmed))
         return valid_fields
     def get_ordering(self, request, queryset, view):
+        hstore_field = getattr(view, 'hstore_field', None)
+        if not hstore_field:
+            return super(HstoreOrderFilter, self).get_ordering(request,queryset,view)
         """
         Ordering is set by a comma delimited ?ordering=... query parameter.
 
@@ -42,12 +51,12 @@ class HstoreOrderFilter(filters.OrderingFilter):
         ordering = []
         for field in ordering_strings:
             trimmed = field.lstrip('-')
-            if trimmed.startswith("%s__"%view.hstore_field):
+            if trimmed.startswith("%s__"%hstore_field):
                 parts = trimmed.split('__')
                 if field.startswith('-'):
-                    ordering += [RawSQL('"%s"."%s"'%(table,view.hstore_field)+"->%s",(parts[1],)).desc()]
+                    ordering += [RawSQL('"%s"."%s"'%(table,hstore_field)+"->%s",(parts[1],)).desc()]
                 else:
-                    ordering += [RawSQL('"%s"."%s"'%(table,view.hstore_field)+"->%s",(parts[1],)).asc()]
+                    ordering += [RawSQL('"%s"."%s"'%(table,hstore_field)+"->%s",(parts[1],)).asc()]
             else:
                 ordering.append(field)
         if len(ordering) != 0:
