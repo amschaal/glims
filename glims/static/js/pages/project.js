@@ -20,6 +20,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
 .controller('SamplesController', ['$scope','$http','$log','$uibModal','FormlyModal','Sample', SamplesController]);
 function ProjectController($scope , $log, FormlyModal, ModelType, Project){
 	$scope.init = function (params){
+		$scope.project_id = params.project;
 		$scope.project = Project.get({id:params.project});
 	};
 	
@@ -131,7 +132,7 @@ function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 		$scope.refreshSamples();
 	};
 	$scope.refreshSamples = function(){
-		$scope.samples = $Sample.query({project:$scope.project.id},function() {
+		$scope.samples = $Sample.query({project:$scope.project_id},function() {
 			$scope.gridOptions.data = $scope.samples;
 		});
 	}

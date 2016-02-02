@@ -74,6 +74,7 @@ class ProjectSerializer(ExtensibleSerializer):
         
 class SampleSerializer(ExtensibleSerializer):
     project__name = serializers.CharField(source='project.name',read_only=True)
+    project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
     class Meta:
         model = Sample
         read_only_fields = ('sample_id','project__name','type__name')
