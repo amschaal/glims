@@ -61,5 +61,16 @@ angular.module('glimsServices',['ngTable'])
 	 };
 
 
- });
+ })
+.service('urlService', function($rootScope,$http) {
+	 return {
+		 getURL: getURL
+	 };
+	 function getURL(name,params) {
+		 return django_js_utils.urls.resolve(name, params);
+	 }
+
+
+});
+//$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
 

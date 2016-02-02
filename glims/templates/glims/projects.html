@@ -5,11 +5,12 @@
 <script src="/static/js/pages/projects.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget">
+        <div class="widget" ng-controller="ProjectController">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Projects
+            <button ng-click="createProject()" class="btn btn-success pull-right">Create</button>
           </div>
-          <div class="widget-body" ng-controller="ProjectController">
+          <div class="widget-body">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>

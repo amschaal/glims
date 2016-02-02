@@ -85,7 +85,15 @@
 	.config(['$resourceProvider', function($resourceProvider) {
 	  // Don't strip trailing slashes from calculated URLs
 	  $resourceProvider.defaults.stripTrailingSlashes = false;
-	}]);
+	}]).run(function($rootScope) {
+		$rootScope.getURL = function(name,params){
+			return django_js_utils.urls.resolve(name, params);
+		}
+    });
+	
+	
+	
+	
   //angular.module('mainapp').requires.push('angular-growl');
   
   </script>
