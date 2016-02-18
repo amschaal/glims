@@ -1,4 +1,4 @@
-angular.module('glimsServices',['ngTable'])
+angular.module('glimsServices',['glims.formly','glims.ui'])
 .factory('DRFNgTableParams', ['NgTableParams','$http', function(NgTableParams,$http) {
 	return function(url,ngparams) {
 		var params = {

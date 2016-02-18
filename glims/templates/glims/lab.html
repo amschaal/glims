@@ -17,17 +17,17 @@
           	{{lab.cloudstore.attributes}}
 				<tabset>
 					<tab heading="Projects">
-					<a href="{% url 'choose_project_type' %}?lab={{lab.id}}" class="btn btn-success pull-right">Create</a>
-						<div ng-controller="ProjectController" ng-init="init({lab__name:'{{lab.name}}'});">
-						<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
-					      <tr ng-repeat="row in $data track by row.id">
-					        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
-					        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
-					        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
-					        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
-					        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
-					      </tr>
-					    </table>
+					<div ng-controller="ProjectController" ng-init="init({lab__name:'{{lab.name}}'},{{lab.id}});">
+					<button ng-click="createProject()" class="btn btn-success pull-right">Create</button>
+							<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+						      <tr ng-repeat="row in $data track by row.id">
+						        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
+						        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
+						        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
+						        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
+						        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+						      </tr>
+						    </table>
 					    </div>
 					</tab>
 					<tab heading="Samples">

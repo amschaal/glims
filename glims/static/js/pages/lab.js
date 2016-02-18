@@ -1,15 +1,18 @@
 
 angular.module('mainapp')
-.controller('ProjectController', ['$scope','DRFNgTableParams', ProjectController])
+.controller('ProjectController', ['$scope','DRFNgTableParams','Project','projectService', ProjectController])
 .controller('SampleController', ['$scope','$http','DRFNgTableParams','cartService', SampleController]);
-function ProjectController($scope,DRFNgTableParams) {
+function ProjectController($scope,DRFNgTableParams,Project,projectService) {
 	$scope.permissionLink = function(project){return django_js_utils.urls.resolve('permissions', { model: 'project', pk: project.id })};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
-	$scope.init = function(filters){
+	$scope.createProject = function(){
+		projectService.create(new Project({lab:$scope.lab_id}),{exclude:['lab']});
+	}
+	$scope.init = function(filters,lab_id){
+		$scope.lab_id = lab_id;
 		$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:filters});
 	}
 }
-
 
 
 function SampleController($scope, $http,DRFNgTableParams, cartService) {

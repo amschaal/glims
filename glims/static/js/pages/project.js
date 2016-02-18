@@ -16,65 +16,73 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }])
-.controller('ProjectController', ['$scope','$log','FormlyModal', 'ModelType', 'Project',ProjectController])
+.controller('ProjectController', ['$scope','$log','FormlyModal', 'ModelType', 'Project','projectService',ProjectController])
 .controller('SamplesController', ['$scope','$http','$log','$uibModal','FormlyModal','Sample', SamplesController]);
-function ProjectController($scope , $log, FormlyModal, ModelType, Project){
+function ProjectController($scope , $log, FormlyModal, ModelType, Project, projectService){
 	$scope.init = function (params){
 		$scope.project_id = params.project;
 		$scope.project = Project.get({id:params.project});
 	};
 	
-	var sample_types = ModelType.query({content_type__model:'sample'});
-	$scope.editProject = function () {
-		var fields =  [
-
-						{
-							  key: 'status',
-							  type: 'select',
-							  templateOptions: {
-							    label: 'Status',
-//							    ngOptions: "option as option.name for option in row.status_options track by option.id",
-							    options: $scope.project.status_options,
-							    valueProp: 'id',
-							    labelProp: 'name'
-							  }
-						},
-						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
-						}, 
-		                 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"
-		                 },
-		                 {
-		                	  key: 'sample_type',
-		                	  type: 'select',
-		                	  templateOptions: {
-		                	    label: 'Sample Type',
-		                	    ngOptions: "option as option.name for option in to.options track by option.id",
-		                	    options: sample_types,
-		                	    valueProp: 'id',
-		                	    labelProp: 'name'
-		                	  }
-		                 },
-		                 {
-	                     key: 'lab',
-	                     type: 'ui-select-search',
-	                     templateOptions: {
-	                       optionsAttr: 'bs-options',
-	                       label: 'Lab',
-	                       valueProp: 'id',
-	                       labelProp: 'name',
-	                       url: '/api/labs/',
-	                       options: []
-	                     }
-	                   }
-	                	];
-    	FormlyModal.create(fields,$scope.project,{model_type_query:{content_type__model:'project'},title:'Edit project',controller:'ExtendedFormlyModalController'})
-    	.result.then(
-    			function (project) {
-    		    	$scope.project = project;
-    		    }
-    	);
-    	
-    };
+//	var sample_types = ModelType.query({content_type__model:'sample'});
+	$scope.editProject = function(){
+		projectService.update($scope.project)
+		.result.then(
+				function (project) {
+				    $scope.project = project;
+				}
+				);
+	}
+//	$scope.editProject = function () {
+//		var fields =  [
+//
+//						{
+//							  key: 'status',
+//							  type: 'select',
+//							  templateOptions: {
+//							    label: 'Status',
+////							    ngOptions: "option as option.name for option in row.status_options track by option.id",
+//							    options: $scope.project.status_options,
+//							    valueProp: 'id',
+//							    labelProp: 'name'
+//							  }
+//						},
+//						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"
+//						}, 
+//		                 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"
+//		                 },
+//		                 {
+//		                	  key: 'sample_type',
+//		                	  type: 'select',
+//		                	  templateOptions: {
+//		                	    label: 'Sample Type',
+//		                	    ngOptions: "option as option.name for option in to.options track by option.id",
+//		                	    options: sample_types,
+//		                	    valueProp: 'id',
+//		                	    labelProp: 'name'
+//		                	  }
+//		                 },
+//		                 {
+//	                     key: 'lab',
+//	                     type: 'ui-select-search',
+//	                     templateOptions: {
+//	                       optionsAttr: 'bs-options',
+//	                       label: 'Lab',
+//	                       valueProp: 'id',
+//	                       labelProp: 'name',
+//	                       url: '/api/labs/',
+//	                       options: []
+//	                     }
+//	                   }
+//	                	];
+//    	FormlyModal.create(fields,$scope.project,{model_type_query:{content_type__model:'project'},title:'Edit project',controller:'ExtendedFormlyModalController'})
+//    	.result.then(
+//    			function (project) {
+//    		    	$scope.project = project;
+//    		    }
+//    	);
+//    	
+//    };
 }
 function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 	$scope.errors = false;

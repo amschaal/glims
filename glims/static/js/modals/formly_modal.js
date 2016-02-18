@@ -89,8 +89,14 @@ angular.module('formly.modal',[])
 .controller('FormlyModalController', function FormlyModalController($scope, $http, $modalInstance, fields, model, options) {
 	$scope.model = model;
 	$scope.options = {};
-	fields = angular.copy(fields);
+//	fields = angular.copy(fields);
 	$scope.title = options.title ? options.title : 'Edit';
+	if (options.exclude){
+		angular.forEach(fields,function(field,index){
+			if (options.exclude.indexOf(field.key)!=-1)
+				fields.splice(index,1);
+		});
+	}
 
 	$scope.alterFields = function(fields){
 		angular.forEach(fields,function(field,index){
@@ -162,18 +168,18 @@ angular.module('formly.modal',[])
 					    }
 				    };
 				$scope.original_fields.unshift(type_field);
-				$scope.fields = angular.copy($scope.original_fields);
+				$scope.fields = $scope.original_fields;//angular.copy($scope.original_fields);
 			}
 		);
 		
 	}
 	
-	$scope.fields = angular.copy($scope.original_fields);//angular.copy($scope.original_fields).push(type_field);
+	$scope.fields = $scope.original_fields;//angular.copy($scope.original_fields);//angular.copy($scope.original_fields).push(type_field);
 	
 	function setExtraFields(extra_fields){
 		
-		var fields = angular.copy($scope.original_fields);
-		console.log('extra',$scope.alterFields(extra_fields));
+		var fields = $scope.original_fields;//angular.copy($scope.original_fields);
+//		console.log('extra',$scope.alterFields(extra_fields));
 		extra_fields = $scope.alterFields(extra_fields);
 		$scope.fields = fields.concat(extra_fields);
 	}
