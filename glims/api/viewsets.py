@@ -23,7 +23,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return User.objects.all().order_by('id')
 
 class ExtensibleViewset(viewsets.ModelViewSet):
-    hstore_field = 'data'
+#     hstore_field = 'data'
     def __init__(self,*args,**kwargs):
         super(ExtensibleViewset, self).__init__(*args,**kwargs)
         self.filter_backends += (HstoreFilter,HstoreOrderFilter)

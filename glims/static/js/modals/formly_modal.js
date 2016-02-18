@@ -89,7 +89,7 @@ angular.module('formly.modal',[])
 .controller('FormlyModalController', function FormlyModalController($scope, $http, $modalInstance, fields, model, options) {
 	$scope.model = model;
 	$scope.options = {};
-//	fields = angular.copy(fields);
+	fields = angular.copy(fields);
 	$scope.title = options.title ? options.title : 'Edit';
 	if (options.exclude){
 		angular.forEach(fields,function(field,index){

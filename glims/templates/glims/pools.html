@@ -5,12 +5,12 @@
 <script src="/static/js/pages/pools.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget">
+        <div class="widget" ng-controller="PoolController">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Pools
-            <a href="{% url 'create_pool' %}" class="pull-right btn btn-sm btn-success">Create</a>
+            <button ng-click="createPool()" class="pull-right btn btn-sm btn-success">Create</button>
           </div>
-          <div class="widget-body" ng-controller="PoolController">
+          <div class="widget-body">
 	            <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
 			        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
