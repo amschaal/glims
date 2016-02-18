@@ -1,8 +1,8 @@
 
 angular.module('mainapp').requires.push('glims.formly');
-angular.module('mainapp').controller('PoolController', ['$scope','$http','Pool','growl','FormlyModal', PoolController]);
+angular.module('mainapp').controller('PoolController', ['$scope','$http','Pool','growl','poolService', PoolController]);
 
-function PoolController($scope,$http,$Pool,growl,FormlyModal) {
+function PoolController($scope,$http,$Pool,growl,poolService) {
 //	$scope.errors={};
 //	$scope.message = false;
 	var pool_id = null;
@@ -16,18 +16,13 @@ function PoolController($scope,$http,$Pool,growl,FormlyModal) {
 //	$scope.onSuccess = function(data,status,headers,config){
 //		growl.success('Pool updated',{ttl: 4000});
 //	}
-	$scope.edit = function () {
-		var fields =  [
-					{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
-	                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
-//	                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "t", "key": "created"},
-	                	];
-    	FormlyModal.create(fields,$scope.pool,{model_type_query:{content_type__model:'pool'},title:'Edit pool',controller:'ExtendedFormlyModalController'})
-    	.result.then(
-    			function (pool) {
-    		    	$scope.pool = pool;
-    		    }
-    	);
+	$scope.updatePool = function(){
+		poolService.update($scope.pool)
+			.result.then(
+	    			function (pool) {
+	    		    	$scope.pool = pool;
+	    		    }
+	    	);
 	}
 }
 

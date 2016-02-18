@@ -157,7 +157,7 @@ class Pool(ExtensibleModel):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     created = models.DateField(auto_now=True)
-    samples = models.ManyToManyField(Sample,related_name='pools')
+    samples = models.ManyToManyField(Sample,related_name='pools',null=True,blank=True)
     sample_data = JSONField(null=True,blank=True,default={})
     def __unicode__(self):
         return self.name

@@ -10,11 +10,11 @@ from extensible.drf import DRFFieldHandler
 from glims.api.fields import JSONField, ModelRelatedField
 
 class ModelTypeSerializer(serializers.ModelSerializer):
-    content_type__model = serializers.CharField(source='content_type.model')
+    content_type__model = serializers.CharField(source='content_type.model',read_only=True)
     fields = JSONField()
     class Meta:
         model = ModelType
-        field=('name','description','fields','content_type__model')
+#         field=('name','description','fields','content_type__model')
 
 class DataSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
@@ -26,9 +26,9 @@ class DataSerializer(serializers.Serializer):
         super(DataSerializer, self).__init__(*args,**kwargs)
 
 class ExtensibleSerializer(serializers.ModelSerializer):
-    type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
+    type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer,required=False,allow_null=True)
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
-    data = DictField()
+    data = DictField(default={},required=False)
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields',None)
         super(ExtensibleSerializer, self).__init__(*args,**kwargs)
@@ -82,8 +82,8 @@ class SampleSerializer(ExtensibleSerializer):
 #         fields = ('id','sample_id','project_id','name','description','project__name')
 
 class PoolSerializer(ExtensibleSerializer):
-    type__name = serializers.StringRelatedField(source='type.name')
-    sample_data = JSONField()
+    type__name = serializers.StringRelatedField(source='type.name',read_only=True)
+    sample_data = DictField(default={},required=False)
     class Meta:
         model = Pool
 
