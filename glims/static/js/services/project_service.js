@@ -2,6 +2,7 @@ angular.module('glimsServices')
  .service('projectService', function($rootScope,$http,FormlyModal,Project,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
 	 var fields =  [
+
 	   		     {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
 	   			 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
 	   			 {
