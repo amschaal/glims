@@ -3,10 +3,11 @@
 	angular.module('formly.widgets',['formly','ngMessages','formlyBootstrap', 'ui.bootstrap', 'ui.select', 'ngSanitize'])
 	.run(runBlock)
 
-	runBlock.$inject = [ 'formlyConfig','$http' ];
+	runBlock.$inject = [ 'formlyConfig','$http','$window' ];
 
-	function runBlock(formlyConfig,$http) {
+	function runBlock(formlyConfig,$http,$window) {
 		formlyConfig.extras.errorExistsAndShouldBeVisibleExpression = 'fc.$touched || form.$submitted';
+		
 		formlyConfig.setType({
 	        name: 'ui-select-multiple',
 	        extends: 'select',
@@ -129,3 +130,60 @@
 	}
 
 })();
+
+
+
+
+
+
+//// File input type
+//formlyConfig.setType({
+//  name: 'upload',
+//  extends: 'input',
+//  wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+//  link: function(scope, el, attrs) {
+//    el.on("change", function(changeEvent) {
+//      var file = changeEvent.target.files[0];
+//      if (file) {
+//        var fileProp = {};
+//        for (var properties in file) {
+//          if (!angular.isFunction(file[properties])) {
+//            fileProp[properties] = file[properties];
+//          }
+//        }
+//        scope.fc.$setViewValue(fileProp);
+//      } else {
+//        scope.fc.$setViewValue(undefined);
+//      }
+//    });
+//    el.on("focusout", function(focusoutEvent) {
+//      // dont run validation , user still opening pop up file dialog
+//      if ($window.document.activeElement.id === scope.id) {
+//        // so we set it untouched
+//        scope.$apply(function(scope) {
+//          scope.fc.$setUntouched();  
+//        });
+//      } else {
+//        // element losing focus so we trigger validation
+//        scope.fc.$validate();
+//      }
+//    });
+//    
+//  },
+//  defaultOptions: {
+//    templateOptions: {
+//      type: 'file',
+//      required: true
+//    }
+//  }
+//});
+//
+///* EXAMPLE 
+//{
+//    key: 'project_file',
+//    type: 'upload',
+//    templateOptions: {
+//      label: 'test file upload'
+//    }
+//  },
+//  */

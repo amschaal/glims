@@ -44,11 +44,12 @@ class ExtensibleViewset(viewsets.ModelViewSet):
         deserializing input, and for serializing output.
         """
         print self.request.method
-        print args
+#         print args
+#         print kwargs
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         if self.request.method in ['POST','PUT','PATCH']:
-            kwargs['fields'] = self.get_model_type_fields(*args, **kwargs)
+            kwargs['model_type'] = self.get_model_type(*args, **kwargs)
 #             print kwargs['data']['type']['id']
         return serializer_class(*args, **kwargs)
     def get_model_type_fields(self,*args,**kwargs):
@@ -67,7 +68,16 @@ class ExtensibleViewset(viewsets.ModelViewSet):
             return []
         except:
             return []
-
+    def get_model_type(self,*args,**kwargs):
+        type_id=None
+        try: #If a type object with "id" is sent
+            type_id = kwargs['data']['type']['id']
+        except:
+            try: #If a type is sent as an integer
+                type_id = int(kwargs['data']['type'])
+            except:
+                type_id = None
+        return type_id
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
 #     permission_classes = [CustomPermission]

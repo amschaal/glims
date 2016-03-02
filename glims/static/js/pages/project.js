@@ -17,7 +17,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
     };
 }])
 .controller('ProjectController', ['$scope','$log','FormlyModal', 'ModelType', 'Project','projectService',ProjectController])
-.controller('SamplesController', ['$scope','$http','$log','$uibModal','FormlyModal','Sample', SamplesController]);
+.controller('SamplesController', ['$scope','$http','$log','$uibModal','Sample','sampleService', SamplesController]);
 function ProjectController($scope , $log, FormlyModal, ModelType, Project, projectService){
 	$scope.init = function (params){
 		$scope.project_id = params.project;
@@ -84,7 +84,7 @@ function ProjectController($scope , $log, FormlyModal, ModelType, Project, proje
 //    	
 //    };
 }
-function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
+function SamplesController($scope,$http,$log,$uibModal,Sample,sampleService) {
 	$scope.errors = false;
 	$scope.save = function(sample){
 		$log.info('save',sample);
@@ -140,7 +140,7 @@ function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 		$scope.refreshSamples();
 	};
 	$scope.refreshSamples = function(){
-		$scope.samples = $Sample.query({project:$scope.project_id},function() {
+		$scope.samples = Sample.query({project:$scope.project_id},function() {
 			$scope.gridOptions.data = $scope.samples;
 		});
 	}
@@ -202,25 +202,18 @@ function SamplesController($scope,$http,$log,$uibModal,FormlyModal,$Sample) {
 	      enableFiltering: true
 	  };
 
-
-		  var fields = [
-		                {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
-		                {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
-		                {"templateOptions": {"required": false, "description": "", "label": "Received"}, "type": "input", "key": "received"}
-		                ]
-		  $scope.edit_sample = function (row) {
-		    	var sample = row ? row.entity : new $Sample({project:$scope.project.id,type:$scope.project.sample_type,data:{}});
-			  	FormlyModal.create(fields,sample,{model_type_query:{content_type__model:'sample'},title:'Edit Sample',controller:'ExtendedFormlyModalController'})
-		    	.result.then(
-		    			function (updatedSample) {
-		    				if (row)
-		    		    		row.entity = updatedSample;
-		    		    	else
-		    		    		$scope.samples.push(updatedSample);
-		    		    }
-		    	);
-		    	
-		    };
+	    $scope.edit_sample = function(row){
+	    	var sample = row ? row.entity : new Sample({project:$scope.project.id,type:$scope.project.sample_type,data:{}});
+			sampleService.update(sample)
+			.result.then(
+					function (updatedSample) {
+						if (row)
+	    		    		row.entity = updatedSample;
+	    		    	else
+	    		    		$scope.samples.push(updatedSample);
+					}
+					);
+		}
 	
 }
 
