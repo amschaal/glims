@@ -5,13 +5,17 @@ from rest_framework import filters
 class HstoreFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
 #         @todo: This could probably be more secure... (it takes any filter starting with "data__")
+        print 'HSTORE FILTER'
         hstore_field = getattr(view, 'hstore_field', None)
+        print hstore_field
         if not hstore_field:
             return queryset
+        print hstore_field
         filters = {}
         for key,value in request.query_params.items():
             if key.startswith('%s__'%hstore_field) and value:
                 filters[key]=value
+        print filters
         return queryset.filter(**filters)
 
 

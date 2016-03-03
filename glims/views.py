@@ -1,15 +1,11 @@
 from django.shortcuts import render, redirect
-from django.views.generic import UpdateView
 from django.template.context import RequestContext
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from lims import *
-from glims.api.serializers import SampleSerializer, PoolSerializer
 from django.contrib.auth.decorators import login_required
-from permissions.manage import get_all_user_objects
 from sendfile import sendfile
-from forms import ProjectForm, SampleForm, PoolForm, LabForm, ProjectTypeForm, FullSampleForm
+from forms import PoolForm, LabForm, ProjectTypeForm
 import json
 from django_compute.models import Job
 from glims.models import ModelTypePlugins
@@ -20,9 +16,10 @@ def home(request):
 @login_required
 def project(request, pk):
     project = Project.objects.get(pk=pk)
+    content_type_id = ContentType.objects.get_for_model(project).id
     inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
     tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
-    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
+    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs,'content_type_id':content_type_id} ,context_instance=RequestContext(request))
 @login_required
 def project_files(request,pk):
     project = Project.objects.get(pk=pk)

@@ -20,20 +20,31 @@ background-color: pink;
             <a ng-click="editProject()" class="btn btn-sm btn-success pull-right">Edit</a>
           </div>
           <div class="widget-body">
-          	<div>
-              <table class="table">
-              	<tbody>
-					<tr><th>Status</th><td>{[project.status]}</td></tr>
-					<tr><th>Type</th><td>{[project.type.name]}</td></tr>
-					<tr><th>ID</th><td>{[project.project_id]}</td></tr>
-					<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
-                	<tr><th>Description</th><td>{[project.description]}</td></tr>
-                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
-                	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
-                </tbody>
-              </table>
-          	</div>
-          	             
+          	<tabset>
+				<tab heading="Details">
+		              <table class="table">
+		              	<tbody>
+							<tr><th>Status</th><td>{[project.status]}</td></tr>
+							<tr><th>Type</th><td>{[project.type.name]}</td></tr>
+							<tr><th>ID</th><td>{[project.project_id]}</td></tr>
+							<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
+		                	<tr><th>Description</th><td>{[project.description]}</td></tr>
+		                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
+		                	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
+		                </tbody>
+		              </table>
+              	</tab>
+              	<tab heading="Notes">
+              	{% with project as object %}
+              		{% include "attachments/partials/notes.html" %}
+              	{% endwith%}
+              	</tab>
+              	<tab heading="Files">
+              	{% with project as object %}
+              		{% include "attachments/partials/attached_files.html" %}
+              	{% endwith%}
+              	</tab>
+			</tabset>          	             
              <div ng-controller="SamplesController" ng-init="init();">
 				<h3>Samples</h3>
 				<p>
