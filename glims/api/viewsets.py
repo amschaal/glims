@@ -23,7 +23,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return User.objects.all().order_by('id')
 
 class ExtensibleViewset(viewsets.ModelViewSet):
-#     hstore_field = 'data'
+    hstore_field = 'data'
     def __init__(self,*args,**kwargs):
         super(ExtensibleViewset, self).__init__(*args,**kwargs)
         self.filter_backends += (HstoreFilter,HstoreOrderFilter)
@@ -93,8 +93,8 @@ class ProjectViewSet(ExtensibleViewset):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
     model = Project
-    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
-    search_fields = ('name', 'description','lab__name','type__name')
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    search_fields = ('name', 'description','lab__name','type__name','project_id')
     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Project).prefetch_related(
           return Project.objects.prefetch_related(  

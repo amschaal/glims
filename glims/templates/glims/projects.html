@@ -14,7 +14,8 @@
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
-		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
+		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
+		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}">{[row.name]}</td>
 		        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
 		        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>

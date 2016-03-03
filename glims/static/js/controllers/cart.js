@@ -5,7 +5,6 @@ angular.module('glims.samplecart',[])
 function CartMenuController($scope,$http,cartService) {
 	$scope.samples=[1];
 	$scope.$on('cart',function (event, data) {
-		console.log('cart!!',data);
 	    $scope.samples = cartService.getSamples();
 	  });
 	$scope.init = function(){
