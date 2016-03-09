@@ -7,7 +7,6 @@ function BioinfoProjectController($scope,$http,BioinfoProject,User,FormlyModal) 
 	$scope.init = function(params){
 		console.log(params.id);
 		$scope.project = BioinfoProject.get({id:params.id});
-		$scope.project_simple = BioinfoProject.get({id:params.id,simple:true});
 		var userOptions = User.query({groups__name:'Bioinformatics Core'});//BioinfoProject.users({search:name});
 		$scope.fields = [
 						{"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"

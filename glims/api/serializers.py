@@ -55,7 +55,8 @@ class ExtensibleSerializer(serializers.ModelSerializer):
     def to_representation(self, instance ):
         rep = super(ExtensibleSerializer, self).to_representation(instance)
         if hasattr(instance, 'type_id'):
-            rep['data'] = DataSerializer(instance.data,fields=self.get_model_type_fields(instance.type_id),read_only=True).data
+            if instance.type:
+                rep['data'] = DataSerializer(instance.data,fields=self.get_model_type_fields(instance.type_id),read_only=True).data
         return rep
     def get_model_type_fields(self,model_type):
         if not self.model_type_fields.has_key(str(model_type)):

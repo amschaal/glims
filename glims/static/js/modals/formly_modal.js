@@ -105,18 +105,30 @@ angular.module('formly.modal',[])
 			var error_key = field.key;
 			if (field.data)
 				error_key = field.data.error_key ? field.data.error_key : field.key;
-
+			console.log('alterFields',field);
 			field.validators['server'] = {
 					expression: function(viewValue, modelValue, scope) {
+						console.log('expression',field.key,viewValue,modelValue,error_key);
 						if (!$scope.errors)
 							return true;
+						if (error_key.indexOf('data.')==0){
+							if (!$scope.errors['data'])
+								return true;
+							return $scope.errors['data'][error_key.substr(5)] == null;
+						}
 						console.log('error key',error_key,$scope.errors[error_key] == null,$scope.errors[error_key]);
 						return $scope.errors[error_key] == null;
 					},
 					message: function()
-					{		
+					{	
+						console.log('message',field.key,error_key.substr(5));
 						if (!$scope.errors)
 							return;
+						if (error_key.indexOf('data.')==0){
+							if (!$scope.errors['data'])
+								return;
+							return $scope.errors['data'][error_key.substr(5)].join(', ');
+						}
 						console.log('get message',$scope.errors[error_key].join(', '));
 						return $scope.errors[error_key].join(', ');
 					}

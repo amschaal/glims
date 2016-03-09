@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from bioinformatics.api.serializers import BioinfoProjectSerializer 
 from bioinformatics.models import BioinfoProject
-from rest_framework.decorators import list_route, detail_route
+from rest_framework.decorators import list_route, detail_route, api_view
 from django.contrib.auth.models import User
 from glims.api.serializers import UserSerializer
 from rest_framework.response import Response
@@ -38,3 +38,10 @@ class BioinfoProjectViewSet(viewsets.ModelViewSet):
 #         return serializer_class(*args, request_user=self.request.user, context=context, **kwargs)
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Project)
+
+@api_view(['post','get'])
+def create_bioinfo_project(request):
+    project_id = request.data.get('project_id')
+    bioinfo_project, created = BioinfoProject.objects.get_or_create(project_id=project_id)
+    print bioinfo_project
+    return Response(BioinfoProjectSerializer(bioinfo_project).data)
