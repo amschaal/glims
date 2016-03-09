@@ -12,7 +12,7 @@ background-color: pink;
 <script src="/static/vendor/ui-grid/ui-grid.min.js"></script>
 <script src="/static/js/pages/project.js"></script>
 
-<div class="row">
+<div class="row" ng-cloak>
       <div class="col-lg-12">
         <div class="widget" ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'})">
           <div class="widget-header">
@@ -30,61 +30,49 @@ background-color: pink;
 							<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
 		                	<tr><th>Description</th><td>{[project.description]}</td></tr>
 		                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
+		                	<tr><th>Bioinformatics Project</th><td ng-if="bioinfo_project"><a href="{[getURL('bioinformatics__project',{pk:project.id})]}">{[bioinfo_project.created|date]}</a></td><td ng-if="!bioinfo_project"><button class="btn btn-xs" ng-click="createBioinfoProject()">Create</button></td></tr>
 		                	<tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr>
 		                </tbody>
 		              </table>
-              	</tab>
-              	<tab heading="Notes">
+              	         	             
+	             <div ng-controller="SamplesController" ng-init="init();">
+					<h3>Samples</h3>
+					<p>
+						<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
+						<br><a href="{% url 'sample_template_tsv'%}{% if project.sample_type%}?type_id={{project.sample_type_id}}{%endif%}">Download</a> template
+						<a href="{% url 'download_samplesheet_tsv' project_id=project.id%}">Download</a> samplesheet
+					</p>
+					
+					<div class="alert alert-danger" role="alert" ng-show="errors">
+						<button ng-click="errors = false;" class="btn btn-sm btn-danger pull-right">Clear errors</button>
+						<div ng-repeat="(id, sample_errors) in errors">
+							<b>{[id]}:</b>
+							<ul>
+								<li ng-repeat="(id,errors) in sample_errors">{[id]}: {[errors.join(', ')]}</li>
+							</ul>
+						</div>
+						<div ng-show="errors.length==0">There was an error processing the sample file.</div>				
+					</div>
+	              <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>
+	              
+					<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>
+				</div>
+			
+			</tab>
+              	<tab heading="Notes ({[attachments_object.notes]})">
               	{% with project as object %}
               		{% include "attachments/partials/notes.html" %}
               	{% endwith%}
               	</tab>
-              	<tab heading="Files">
+              	<tab heading="Files ({[attachments_object.files]})">
               	{% with project as object %}
               		{% include "attachments/partials/attached_files.html" %}
               	{% endwith%}
               	</tab>
-			</tabset>          	             
-             <div ng-controller="SamplesController" ng-init="init();">
-				<h3>Samples</h3>
-				<p>
-					<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
-					<br><a href="{% url 'sample_template_tsv'%}{% if project.sample_type%}?type_id={{project.sample_type_id}}{%endif%}">Download</a> template
-					<a href="{% url 'download_samplesheet_tsv' project_id=project.id%}">Download</a> samplesheet
-				</p>
-				
-				<div class="alert alert-danger" role="alert" ng-show="errors">
-					<button ng-click="errors = false;" class="btn btn-sm btn-danger pull-right">Clear errors</button>
-					<div ng-repeat="(id, sample_errors) in errors">
-						<b>{[id]}:</b>
-						<ul>
-							<li ng-repeat="(id,errors) in sample_errors">{[id]}: {[errors.join(', ')]}</li>
-						</ul>
-					</div>
-					<div ng-show="errors.length==0">There was an error processing the sample file.</div>				
-				</div>
-				<!-- 
-				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
-				<table class="table" ng-show="samples.length">
-              	<thead><tr><th>ID</th><td>Name</td><td>Description</td><td>Received</td>{%for field in project.sample_type.fields%}<td>{{field.label}}</td>{%endfor%}<td></td></tr></thead>
-              	<tbody>
-                	<tr ng-repeat="s in samples track by $index">
-                		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.sample_id}" title="{[s.errors.sample_id]}" ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
-                		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.name}" title="{[s.errors.name]}" ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
-                		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
-                		<td ng-if="s.editing"><input ng-class="{'input-error':s.errors.received}" title="{[s.errors.received]}" ng-model="s.received" value="{[s.received]}" placeholder="(Optional) YYYY-MM-DD"/></td><td ng-if="!s.editing">{[s.received]}</td>
-                		{%for field in project.sample_type.fields%}
-                		<td ng-if="s.editing"><input ng-class="{'input-error':samples[$index].errors['data.{{field.name}}']}" title="{[samples[$index].errors['data.{{field.name}}']]}" ng-model="samples[$index].data.{{field.name}}" /></td><td ng-if="!s.editing">{[samples[$index].data.{{field.name}}]}</td>
-                		{%endfor%}
-                		<td ng-if="s.editing"><button class="btn btn-warning btn-sm" ng-click="cancel(s,$index)">Cancel</button><button class="btn btn-danger btn-sm" ng-click="deleteSample(s,$index)">Delete</button><button class="btn btn-success btn-sm" ng-click="save(s);">Save</button></td><td ng-if="!s.editing"><i style="margin-left:5px" class="glyphicon glyphicon-pencil pull-right" ng-click="s.editing=true"></i></td>
-                	</tr>
-                </tbody>
-              </table>
-               -->
-              <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>
-              
-				<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>
-			</div>
+			</tabset> 
+			
+			
+			
 			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
         </div>

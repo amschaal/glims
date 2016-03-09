@@ -23,12 +23,12 @@
 	                </tbody>
 	              </table>
               </tab>
-              <tab heading="Notes">
+              <tab heading="Notes ({[attachments_object.notes]})">
               	{% with sample as object %}
               		{% include "attachments/partials/notes.html" %}
               	{% endwith%}
               	</tab>
-              	<tab heading="Files">
+              	<tab heading="Files ({[attachments_object.files]})">
               	{% with sample as object %}
               		{% include "attachments/partials/attached_files.html" %}
               	{% endwith%}

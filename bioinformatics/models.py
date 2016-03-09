@@ -7,7 +7,7 @@ from django.dispatch.dispatcher import receiver
 class BioinfoProject(models.Model):
     name = models.CharField(max_length=100)
 #     type = models.CharField(max_length=20,choices=[])
-    project = models.OneToOneField(Project)
+    project = models.OneToOneField(Project,related_name='bioinfo_project')
     created = models.DateTimeField(auto_now_add=True)
     manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
     participants = models.ManyToManyField(User,related_name='+')

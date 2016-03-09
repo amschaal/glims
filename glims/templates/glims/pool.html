@@ -13,35 +13,50 @@
              <a ng-click="updatePool()" class="btn btn-sm btn-default pull-right">Edit</a> 
           </div>
           <div class="widget-body">
-        	<table class="table">
-        		<tr><th>Name</th><td>{[pool.name]}</td></tr>
-        		<tr><th>Description</th><td>{[pool.description]}</td></tr>
-        		<tr><th>Created</th><td>{[pool.created | date]}</td></tr>
-        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>
-          	</table>
-
-    {% include 'glims/partials/sample_modal.html' %}
+          <tabset>
+          <tab heading="Details">
+	        	<table class="table">
+	        		<tr><th>Name</th><td>{[pool.name]}</td></tr>
+	        		<tr><th>Description</th><td>{[pool.description]}</td></tr>
+	        		<tr><th>Created</th><td>{[pool.created | date]}</td></tr>
+	        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>
+	          	</table>
 	
-             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
-				<h3>Samples <button class="pull-right btn btn-sm btn-success" ng-click="openSampleModal();">Add</button></h3>
-				
-				<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
-				<table class="table" ng-show="samples.length">
-              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>
-              	<tbody>
-                	<tr ng-repeat="s in samples">
-                		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
-                		<td ng-if="s.editing"><input ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
-                		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
-                		<td>{[overriddenFields(s)]}</span></td>
-                		<td>
-                			<button class="btn btn-danger" ng-click="removeSample(s,$index)">Remove</button>
-                			<button class="btn btn-default" ng-click="open(s,'lg')">Edit</button>	
-                		</td>
-                	</tr>
-                </tbody>
-              </table>
-			</div>
+	    {% include 'glims/partials/sample_modal.html' %}
+		
+	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
+					<h3>Samples <button class="pull-right btn btn-sm btn-success" ng-click="openSampleModal();">Add</button></h3>
+					
+					<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
+					<table class="table" ng-show="samples.length">
+	              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>
+	              	<tbody>
+	                	<tr ng-repeat="s in samples">
+	                		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
+	                		<td ng-if="s.editing"><input ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
+	                		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
+	                		<td>{[overriddenFields(s)]}</span></td>
+	                		<td>
+	                			<button class="btn btn-danger" ng-click="removeSample(s,$index)">Remove</button>
+	                			<button class="btn btn-default" ng-click="open(s,'lg')">Edit</button>	
+	                		</td>
+	                	</tr>
+	                </tbody>
+	              </table>
+				</div>
+			</tab>
+			<tab heading="Notes ({[attachments_object.notes]})">
+              	{% with pool as object %}
+              		{% include "attachments/partials/notes.html" %}
+              	{% endwith%}
+           	</tab>
+           	<tab heading="Files ({[attachments_object.files]})">
+              	{% with pool as object %}
+              		{% include "attachments/partials/attached_files.html" %}
+              	{% endwith%}
+              	</tab>
+			</tabset> 
+			
           </div>
         </div>
       </div>

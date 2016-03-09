@@ -2,7 +2,6 @@
 {% block page %}Bioinformatics {% endblock %}
 {% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.project.project_id}}{% endblock %}
 {% block content %}
-<script src="/static/bioinformatics/js/resources/models.js"></script>
 <script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
 
 <div class="row">
@@ -14,7 +13,9 @@
             <!-- <a href="{% url 'modify_bioinformatics__project' pk=instance.project.id %}" class="btn btn-sm btn-success">Edit</a> -->
             
           </div>
-          <div class="widget-body">
+          <div class="widget-body" ng-cloak>
+          <tabset>
+			<tab heading="Details">
               <table class="table" ng-if="project.created">
               	<tbody>
               		<tr><th>Created</th><td>{[project.created | date]}</td></tr>
@@ -26,6 +27,18 @@
                 	<tr><th>Status</th><td>{[project.project.status]}</td></tr>
                 </tbody>
               </table>
+            </tab>
+           	<tab heading="Notes ({[attachments_object.notes]})">
+           	{% with instance as object %}
+           		{% include "attachments/partials/notes.html" %}
+           	{% endwith%}
+           	</tab>
+           	<tab heading="Files ({[attachments_object.files]})">
+           	{% with instance as object %}
+           		{% include "attachments/partials/attached_files.html" %}
+           	{% endwith%}
+           	</tab>
+       		</tabset>
           </div>
         </div>
       </div>

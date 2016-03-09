@@ -12,5 +12,6 @@ urlpatterns += patterns('',
     url(r'^projects/(?P<pk>[\-\w]+)/$', 'bioinformatics.views.bioinfo_project', name='bioinformatics__project'),
     url(r'^projects/(?P<pk>[\-\w]+)/modify/$', 'bioinformatics.views.modify_bioinfo_project', name='modify_bioinformatics__project'),
     url(r'^api/', include(router.urls)),
+    url(r'^api/bioinfo_projectss/create/$', 'bioinformatics.api.views.create_bioinfo_project', name='create_bioinfo_project'),
 )
 
