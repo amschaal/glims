@@ -1,16 +1,15 @@
 {% extends "glims/dashboard.html" %}
 {% block page %}Bioinformatics {% endblock %}
-{% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.project.project_id}}{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.name}}{% endblock %}
 {% block content %}
+<script src="/static/bioinformatics/js/services/bioinfo_project_service.js"></script>
 <script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
-
 <div class="row">
       <div class="col-lg-12">
         <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
           <div class="widget-header">
-             {{instance.project.project_id}} 
-            <button class="btn btn-sm btn-success pull-right" ng-click="openFormlyModal()">Edit</button>
-            <!-- <a href="{% url 'modify_bioinformatics__project' pk=instance.project.id %}" class="btn btn-sm btn-success">Edit</a> -->
+             {[project.name]} 
+            <button class="btn btn-sm btn-success pull-right" ng-click="editProject()">Edit</button>
             
           </div>
           <div class="widget-body" ng-cloak>
@@ -19,11 +18,13 @@
               <table class="table" ng-if="project.created">
               	<tbody>
               		<tr><th>Created</th><td>{[project.created | date]}</td></tr>
-              		<tr><th>Project</th><td><a href="{[projectLink(project.project)]}">{[ project.project.name ]}</a></td></tr>
-              		<tr><th>Lab</th><td><a href="{[labLink(project.project)]}">{[ project.project.lab__name ]}</a></td></tr>
+              		<tr><th>Inherited Project</th><td><a ng-if="project.project" href="{[getURL('project',{pk:project.project.id})]}">{[ project.project.name ]} <span ng-if="project.project.status">({[ project.project.status ]})</span></a></td></tr>
+              		<tr><th>Lab</th><td><a ng-if="project.lab" href="{[getURL('lab',{pk:project.lab.id})]}">{[ project.lab.name ]}</a></td></tr>
 					<tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
 					<tr><th>Participants</th><td><span ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}{[$last ? '' : ', ']}</span></td></tr>
                 	<tr><th>Description</th><td>{[project.description]}</td></tr>
+                	<tr><th>Data location</th><td>{[project.data_location]}</td></tr>
+                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
                 	<tr><th>Status</th><td>{[project.project.status]}</td></tr>
                 </tbody>
               </table>

@@ -90,16 +90,6 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 			<button class="btn btn-sm btn-primary" ng-click="addField()">Add Field</button>
 			<button class="btn btn-sm btn-success" ng-click="save()" ng-if="id != null">Save</button>
 			
-			
-			<form target="_blank" action="{% url 'test_json_form' %}" method="POST">
-				{% csrf_token %}
-				<h3>JSON representation</h3>
-				<pre>
-				{[fields | json]}
-				</pre>
-				<input type="hidden" name="fields" value="{[fields]}"></textarea>
-				<button>Test</button>
-			</form>
 		</div>
 		</div>
 	</div>

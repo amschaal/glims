@@ -14,7 +14,7 @@ from django.dispatch.dispatcher import receiver
 from django.db import transaction
 from django_cloudstore.models import CloudStore
 from django_cloudstore.engines.bioshare import BioshareStorageEngine
-from glims.models import Status, StatusOption
+from glims.models import Status
 from datetime import datetime
 
 def generate_pk():
@@ -95,8 +95,8 @@ class Project(ExtensibleModel):
         self.create_directory()
 #     def limit_sample_type_choices(self):
 #         return {'content_type_id': 16}
-    def status_options(self):
-        return StatusOption.objects.filter(model_type=self.model_type).order_by('order')
+    def statuses(self):
+        return Status.objects.filter(model_type=self.model_type).order_by('order')
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):

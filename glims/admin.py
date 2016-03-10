@@ -3,7 +3,7 @@ from models import EmailTemplate
 from lims import Project, Sample, ModelType
 from guardian.admin import GuardedModelAdmin
 from glims.lims import Lab
-from glims.models import Status, StatusOption
+from glims.models import Status
 
 
 class PostAdmin(GuardedModelAdmin):
@@ -31,17 +31,17 @@ class SampleAdmin(GuardedModelAdmin):
     model = Sample
 
 
-class StatusAdmin(admin.ModelAdmin):
+# class StatusAdmin(admin.ModelAdmin):
+#     model = Status
+# 
+class StatusInline(admin.TabularInline):
     model = Status
-
-class StatusOptionsInline(admin.TabularInline):
-    model = StatusOption
     extra = 1
 
 class ModelTypeAdmin(GuardedModelAdmin):
     model = ModelType
     inlines = [
-        StatusOptionsInline,
+        StatusInline,
     ]
 # 
 # class StatusOptionsInline(GuardedModelAdmin):
@@ -67,5 +67,5 @@ admin.site.register(Lab, LabAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(ModelType, ModelTypeAdmin)
-admin.site.register(Status, StatusAdmin)
+# admin.site.register(Status, StatusAdmin)
 
