@@ -1,8 +1,8 @@
 
 angular.module('mainapp')
-.controller('BioinfoProjectsController', ['$scope', 'BioinfoProject','User','DRFNgTableParams', BioinfoProjectsController]);
+.controller('BioinfoProjectsController', ['$scope', 'BioinfoProject','BioinfoProjectService','User','DRFNgTableParams', BioinfoProjectsController]);
 
-function BioinfoProjectsController($scope,BioinfoProject,User,DRFNgTableParams) {
+function BioinfoProjectsController($scope,BioinfoProject,BioinfoProjectService,User,DRFNgTableParams) {
 	$scope.init = function(params){
 		$scope.users = User.query({groups__id:params.group_id},function(users){
 			angular.forEach(users,function(user){
@@ -13,8 +13,6 @@ function BioinfoProjectsController($scope,BioinfoProject,User,DRFNgTableParams) 
 //			data.title = data.first_name + ' ' + data.last_name;
 		});
 	};
-	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
-	$scope.biocoreProjectLink = function(project){return django_js_utils.urls.resolve('bioinformatics__project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab })};
 	$scope.tableParams = DRFNgTableParams('/bioinformatics/api/bioinfo_projects/',{sorting: { created: "desc" }});
 //	$scope.deleteFile = function(file){
@@ -25,5 +23,8 @@ function BioinfoProjectsController($scope,BioinfoProject,User,DRFNgTableParams) 
 //			file.$remove(function(){$scope.tableParams.reload();});
 //		}
 //	};
+	$scope.createProject = function(){
+		BioinfoProjectService.create();
+	}
 }
 

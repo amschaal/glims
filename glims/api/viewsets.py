@@ -9,7 +9,7 @@ from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer
 from glims.lims import Project, Sample, Pool, Lab
-from glims.models import StatusOption
+from glims.models import Status
 from glims.api.filters import HstoreFilter, HstoreOrderFilter
 # from glims.permissions.manage import get_all_user_objects
 
@@ -95,12 +95,12 @@ class ProjectViewSet(ExtensibleViewset):
     model = Project
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
+    ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description')
     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Project).prefetch_related(
-          return Project.objects.prefetch_related(  
+          return Project.objects.select_related('type').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
-            Prefetch('type__status_options', queryset=StatusOption.objects.select_related('status').order_by('order')))
-    
+            Prefetch('type__status_options'))#, queryset=Status.objects.order_by('order')
 
 class SampleViewSet(ExtensibleViewset):
     serializer_class = SampleSerializer

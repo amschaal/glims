@@ -16,7 +16,7 @@
 		formlyConfig.setType({
 	        name: 'ui-select-multiple-search',
 	        extends: 'select',
-	        template: '<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
+	        template: '{[::options.validation.messages.length]}<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" on-remove="console.log($item,$model)" on-select="console.log($item,$model)" theme="bootstrap">\
 	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
 	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
 	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
@@ -35,8 +35,16 @@
 //	      });
 		formlyConfig.setType({
 	        name: 'ui-select-search',
-//	        extends: 'select',
+	        extends: 'select',
 	        defaultOptions:{
+	        	validation:{show:false},
+//	        	expressionProperties: {
+//	        	      "validation.show": function ($viewValue,$modelValue,scope){
+//	        	    	  console.log('validation.show',$viewValue,$modelValue,scope);
+//	        	    	  return scope.options.validation.errorExistsandShouldBeVisible;
+////	        	    	  return true;
+//	        	      }
+//        	    },
 	        	templateOptions: {
                     ngOptions: 'option in to.options | filter: $select.search track by option[to.valueProp]',//option[to.valueProp] as option in to.options | filter: $select.search
                     searchParam: 'search',
@@ -45,6 +53,7 @@
                     minSearchChar: 0,
                     labelFunc: function(item,to){return item ? item[to.labelProp] : '';},
                     placeholder: 'Search',
+                    required: false,
                     options: [],
 //                    url: '/api/get/url',
                     refresh: function(name,field){
@@ -69,12 +78,12 @@
 //	        },
 //	        template: '{[to]}',
 	        wrapper: ['validation','bootstrapLabel','bootstrapHasError'],
-	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
-				        <ui-select-match placeholder="{[to.placeholder]}" data-allow-clear="true">{[to.labelFunc($select.selected,to)]}</ui-select-match>\
+	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" on-remove="to.updateSelect($item,$model)" on-select="to.updateSelect($item,$model)" theme="bootstrap">\
+				        <ui-select-match placeholder="{[to.placeholder]}" >{[to.labelFunc($select.selected,to)]}</ui-select-match>\
 				        <ui-select-choices data-repeat="{[to.ngOptions]}" refresh="to.refresh($select.search, options)" refresh-delay="{[to.refreshDelay]}">\
 				          <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
 				        </ui-select-choices>\
-				      </ui-select>'
+				      </ui-select><a ng-click="model[options.key]=null;">Clear</a>'
 //	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
 //	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
 //	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
@@ -105,6 +114,7 @@
 //		  	          change: setModel
 		  	        };
 		        function checkBoxes(selected,options){
+		        	selected = selected||[];
 		        	var ids = selected.map(function(obj){
 		        		return obj[to.valueProp];
 		        	});

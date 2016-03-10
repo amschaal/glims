@@ -29,16 +29,13 @@ class ModelTypePlugins(models.Model):
     header = models.CharField(max_length=30, null=True, blank=True)
 
 class Status(models.Model):
-    id = models.CharField(max_length=20,primary_key=True)
+#     id = models.CharField(max_length=20,primary_key=True)
+    model_type = models.ForeignKey(ModelType,related_name="status_options")
     name = models.CharField(max_length=30)
     description = models.TextField(null=True,blank=True)
+    order = models.PositiveSmallIntegerField()
     def __unicode__(self):
         return self.name
-
-class StatusOption(models.Model):
-    model_type = models.ForeignKey(ModelType,related_name="status_options")
-    status = models.ForeignKey(Status)
-    order = models.PositiveSmallIntegerField()
 
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=100)

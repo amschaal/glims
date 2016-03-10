@@ -62,19 +62,31 @@ angular.module('formly.modal',[])
 		switch (type){
 			case 'checkbox':
 				return 'checkbox';
+			case 'select':
+				return 'select';
 			default:
 				return 'input';
 		}
 	}
 	function translateField(field){
-		return {
+		var field_description = {
 			    "key": "data."+field.name,
 			    "type": translateFieldType(field.type),
 			    "templateOptions": {
 			      "label": field.label,
 			      "required": field.required
 				    }
-				}
+				};
+		if (field_description.type == 'select'){
+			
+			field_description.templateOptions.options = field.choices.map(function(obj){
+				var choice = {'name':obj.name||obj.value,'value':obj.value||obj.name};
+				console.log('choice',choice);
+				return choice;
+			});
+			console.log('select',field,field_description);
+		}
+		return field_description;
 		
 //		return field;
 	}
@@ -108,7 +120,7 @@ angular.module('formly.modal',[])
 			console.log('alterFields',field);
 			field.validators['server'] = {
 					expression: function(viewValue, modelValue, scope) {
-						console.log('expression',field.key,viewValue,modelValue,error_key);
+//						console.log('expression',field.key,viewValue,modelValue,error_key);
 						if (!$scope.errors)
 							return true;
 						if (error_key.indexOf('data.')==0){

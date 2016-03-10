@@ -16,8 +16,8 @@
 		        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
 		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
 		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}">{[row.name]}</td>
-		        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
-		        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
+		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
+		        <td data-title="'Lab'" sortable="'lab__name'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
 		        <td data-title="'Status'" >
 		        	<select ng-change="setStatus(row)" ng-options="option.name for option in row.status_options track by option.id" ng-model="row.new_status" ng-init="row.new_status.id = row.status;"></select>

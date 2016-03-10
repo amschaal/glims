@@ -3,7 +3,7 @@ from glims.lims import Project, Sample, ModelType, Pool, Lab
 from django_compute.models import Job
 
 # from jsonfield import JSONField
-from glims.models import StatusOption
+from glims.models import Status
 from django.contrib.auth.models import User
 from rest_framework.fields import DictField
 from extensible.drf import DRFFieldHandler
@@ -68,12 +68,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id','last_login','first_name','last_name','email','groups')
 
-class StatusOptionSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(source="status.id")
-    name = serializers.CharField(source="status.name")
+class StatusSerializer(serializers.ModelSerializer):
+#     id = serializers.CharField(source="status.id")
+#     name = serializers.CharField(source="status.name")
     class Meta:
-        model = StatusOption
-        fields = ('id','name','order')
+        model = Status
+#         fields = ('id','name','order')
          
 class LabSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,7 +83,7 @@ class ProjectSerializer(ExtensibleSerializer):
     lab__name = serializers.CharField(source='lab.name',read_only=True)
     sample_type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
-    status_options = StatusOptionSerializer(many=True,read_only=True,source='type.status_options')
+    status_options = StatusSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
     history = JSONField(read_only=True)
     class Meta:
