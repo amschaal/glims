@@ -46,6 +46,11 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
         	$log.info('error',data)
         });
 	}
+	$scope.deleteProject = function(){
+		if (!confirm('Are you sure you want to delete this project?  This action cannot be undone!'))
+			return;
+		$scope.project.$delete(function(){window.location.href = $scope.getURL('projects');})
+	}
 }
 function SamplesController($scope,$http,$log,$uibModal,Sample,sampleService) {
 	$scope.errors = false;
