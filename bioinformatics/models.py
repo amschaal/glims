@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from glims.lims import Project, Lab
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 from extensible.models import ExtensibleModel
 from glims.models import Status
+from attachments.models import delete_attachments
 
 class BioinfoProject(ExtensibleModel):
     name = models.CharField(max_length=100)
@@ -25,3 +26,5 @@ def create_bioinfo_project(sender,instance,**kwargs):
     if instance.status:
         if instance.status.id == 'BIOINFORMATICS':
             BioinfoProject.objects.get_or_create(project=instance)
+
+post_delete.connect(delete_attachments, sender=BioinfoProject)
