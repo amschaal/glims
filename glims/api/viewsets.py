@@ -3,17 +3,16 @@ from django.db.models.query import Prefetch
 from rest_framework import viewsets
 
 from django_compute.models import Job
+from extensible.drf.viewsets import ExtensibleViewset
 from extensible.models import ModelType
-# from glims.api.permissions import CustomPermission
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer
 from glims.lims import Project, Sample, Pool, Lab
-from glims.models import Status
-from glims.api.filters import HstoreFilter, HstoreOrderFilter
+
+
+# from glims.api.permissions import CustomPermission
 # from glims.permissions.manage import get_all_user_objects
-
-
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact'],'groups__name':['exact']} 
@@ -22,62 +21,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return User.objects.all().order_by('id')
 
-class ExtensibleViewset(viewsets.ModelViewSet):
-    hstore_field = 'data'
-    def __init__(self,*args,**kwargs):
-        super(ExtensibleViewset, self).__init__(*args,**kwargs)
-        self.filter_backends += (HstoreFilter,HstoreOrderFilter)
-#     def get_queryset(self):
-#         print 'GET queryset'
-#         qs = super(ExtensibleViewset, self).get_queryset()
-#         filters = {}
-#         for key,value in self.request.query_params.items():
-#             if key.starts_with('data__'):
-#                 filters[key]=value
-#         print 'FILTERS!!!!'
-#         print filters
-#         return qs.filter(**filters)
-#     filter_backends = (HstoreFilter,)
-    def get_serializer(self, *args, **kwargs):
-        """
-        Return the serializer instance that should be used for validating and
-        deserializing input, and for serializing output.
-        """
-        print self.request.method
-#         print args
-#         print kwargs
-        serializer_class = self.get_serializer_class()
-        kwargs['context'] = self.get_serializer_context()
-        if self.request.method in ['POST','PUT','PATCH']:
-            kwargs['model_type'] = self.get_model_type(*args, **kwargs)
-#             print kwargs['data']['type']['id']
-        return serializer_class(*args, **kwargs)
-    def get_model_type_fields(self,*args,**kwargs):
-        try: #If a type object with "id" is sent
-            type_id = kwargs['data']['type']['id']
-        except:
-            try: #If a type is sent as an integer
-                type_id = int(kwargs['data']['type'])
-            except:
-                type_id = None
-        if type_id: #return fields for sent type id
-            return ModelType.objects.get(id=type_id).fields
-        try: #Otherwise, if the object already has a type, use its fields
-            if type(args[0].type) == ModelType:
-                return args[0].type.fields
-            return []
-        except:
-            return []
-    def get_model_type(self,*args,**kwargs):
-        type_id=None
-        try: #If a type object with "id" is sent
-            type_id = kwargs['data']['type']['id']
-        except:
-            try: #If a type is sent as an integer
-                type_id = int(kwargs['data']['type'])
-            except:
-                type_id = None
-        return type_id
+
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
 #     permission_classes = [CustomPermission]
