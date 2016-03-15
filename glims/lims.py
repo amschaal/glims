@@ -8,7 +8,7 @@ import operator, os
 from django.conf import settings
 import string
 import random
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_delete
 from django.dispatch.dispatcher import receiver
 
 from django.db import transaction
@@ -16,6 +16,7 @@ from django_cloudstore.models import CloudStore
 from django_cloudstore.engines.bioshare import BioshareStorageEngine
 from glims.models import Status
 from datetime import datetime
+from attachments.models import delete_attachments
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -177,3 +178,7 @@ def handle_status(sender,instance,**kwargs):
     except Project.DoesNotExist, e:
         if instance.status:
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
+            
+post_delete.connect(delete_attachments, sender=Project)
+post_delete.connect(delete_attachments, sender=Sample)
+post_delete.connect(delete_attachments, sender=Pool)
