@@ -141,7 +141,6 @@ angular.module('formly.modal',[])
 								return;
 							return $scope.errors['data'][error_key.substr(5)].join(', ');
 						}
-						console.log('get message',$scope.errors[error_key].join(', '));
 						return $scope.errors[error_key].join(', ');
 					}
 			};

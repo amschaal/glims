@@ -9,7 +9,8 @@
         <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
           <div class="widget-header">
              {[project.name]} 
-            <button class="btn btn-sm btn-success pull-right" ng-click="editProject()">Edit</button>
+            <button class="btn btn-sm btn-danger pull-right" ng-click="deleteProject()">Delete</button>
+            <button class="btn btn-sm btn-success pull-right" ng-click="editProject()">Edit</button> 
             
           </div>
           <div class="widget-body" ng-cloak>
