@@ -2,3 +2,4 @@
 media
 /data/
 files
+*/migrations/backup*
