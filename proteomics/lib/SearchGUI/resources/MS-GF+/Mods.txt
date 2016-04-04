@@ -1,0 +1,6 @@
+#max number of modifications per peptide
+NumMods=2
+
+#fixed modifications
+
+#variable modifications

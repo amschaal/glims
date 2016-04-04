@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<bioml>
+	<note type="input" label="list path, default parameters">parameters_searchGUI.xml</note>
+	<note type="input" label="list path, taxonomy information">taxonomy_searchGUI.xml</note>
+	<note type="input" label="protein, taxon">all</note>
+	<note type="input" label="spectrum, path">/data/proteomics/mousliver/qe09282012_41gel3_121001173313.mgf</note>
+	<note type="input" label="output, path">/data/proteomics/jobs/YC5ncImd0mWB/.SearchGUI_temp/qe09282012_41gel3_121001173313.t.xml</note>
+</bioml>
