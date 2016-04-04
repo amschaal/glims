@@ -1,0 +1,9 @@
+INFO: CPU: fatboy
+INFO: Tue Oct 20 23:05:39 UTC 2015
+COMMAND LINE: /data/proteomics/SearchGUI/./resources/Tide/linux/linux_64bit/crux tide-index /data/proteomics/mousliver/uniprot-proteome3AUP000000589_concatenated_target_decoy.fasta fasta-index --overwrite T --decoy-format none --missed-cleavages 2 --output-dir crux-output --peptide-list F --verbosity 30 --min-length 6 --max-length 30 --min-mass 200.0 --max-mass 7200.0 --monoisotopic-precursor T --clip-nterm-methionine F --enzyme trypsin --digestion full-digest
+WARNING: The file 'crux-output/tide-index.params.txt' already exists and will be overwritten.
+INFO: Running tide-index...
+WARNING: The output directory 'fasta-index' already exists.
+Existing files will be overwritten.
+INFO: Reading /data/proteomics/mousliver/uniprot-proteome3AUP000000589_concatenated_target_decoy.fasta and computing unmodified peptides...
+FATAL: An exception occurred: std::bad_alloc

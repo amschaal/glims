@@ -1,0 +1,20 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Create/Update SearchGUI Parameter File{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'proteomics__parameter_files' %}">SearchGUI Parameter Files</a> / Create/Update {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+        <div class="row">
+      	<div class="col-lg-10">
+        <form method="post" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{next}}"/>
+          {{form|crispy}}
+          <button class="btn">Create/Update</button>
+        </form>
+        </div>
+        </div>
+      </div>
+{% endblock %}

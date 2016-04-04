@@ -1,0 +1,29 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Import from Uniprot{% endblock %}
+{% block content %}
+<script src="/static/proteomics/js/pages/uniprot.js"></script>
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+        <div class="row">
+      	<div ng-controller="UniprotController">
+      		<div ng-show="Utils.keys(downloads).length > 0">
+      		<strong>Downloads</strong>
+      		<alert ng-repeat="(proteome, row) in downloads" type="{[row.type]}" close="closeAlert(proteome)">{[proteome]}: {[row.message]}</alert>
+      		</div>
+      	
+      		Search: <input ng-model="params.search"> Limit: <select ng-model="params.limit" ng-options="limit for limit in [10,25,50]"></select>
+      		<button ng-click="search()">Search</button>
+      		<div ng-show="response.rows.length > 0">Search returned {[response.rows.length]} results</div>
+      		<table class="table">
+      		<tr><th ng-repeat="header in response.headers">{[header]}</th><th></th></tr>
+      		<tr ng-repeat="row in response.rows">
+      		<td ng-repeat="column in row"><a ng-if="$index == 0" href="{[preoteomeLink(row)]}" target="_blank">{[column]}</a><span ng-if="$index != 0">{[column]}</span></td>
+      		<td><button ng-hide="downloads[row[0]]" ng-click="importProteome(row)">Import</button></td>
+      		</tr>
+      		</table>
+      	</div>
+        </div>
+      </div>
+{% endblock %}

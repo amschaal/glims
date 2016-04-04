@@ -1,0 +1,25 @@
+{% extends "glims/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Submit Tandem Job {% endblock %}
+{% block content %}
+
+
+<div class="row">
+	<div class="col-lg-12">
+      	<div class="widget">
+          <div class="widget-header">
+            Fasta File
+          </div>
+          <div class="widget-body">
+          	<table class="table">
+          		<tr><th>Name</th><td>{{instance.name}}</td></tr>
+          		<tr><th>Modified</th><td>{{instance.modified}}</td></tr>
+          		<tr><th>File</th><td>{{instance.file.url}} (<a href="{% url 'proteomics__view_fasta' instance.pk %}">View</a>) (<a href="{% url 'proteomics__view_fasta' instance.pk %}?transform=reverse">Reverse</a>) (<a href="{% url 'proteomics__view_fasta' instance.pk %}?transform=f_r_with_crap">Forward + Reverse w/ crap</a>)</td></tr>
+          		<tr><th>Description</th><td>{{instance.description}}</td></tr>
+          		<tr><th>Sequence Count</th><td>{{instance.count}}</td></tr>
+          	</table>
+          </div>
+        </div>
+	</div>
+</div>
+{% endblock %}
