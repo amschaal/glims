@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% block page %}Project{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'jobs' %}">Jobs</a> / <a href="{% url 'job' id=job.id %}">{{job.id}}</a> / Output files {% endblock %}
 {% block content %}

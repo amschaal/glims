@@ -12,6 +12,7 @@ from bioinformatics import urls as bioinformatics_urls
 from extensible import urls as extensible_urls
 from django_compute import urls as compute_urls
 from django_formly import urls as formly_urls
+from notifications import urls as notification_urls
 import glims
 urlpatterns = patterns('',)
 # if USE_CAS:
@@ -23,10 +24,11 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet
+from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
+router.register(r'groups', GroupViewSet,'Group')
 router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
 router.register(r'projects', ProjectViewSet,'Project')
 router.register(r'samples', SampleViewSet,'Sample')
@@ -91,6 +93,7 @@ urlpatterns += patterns('',
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
     url(r'^compute/', include(compute_urls.urlpatterns)),
     url(r'^formly_forms/', include(formly_urls.urlpatterns)),
+    url(r'^notifications/', include(notification_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

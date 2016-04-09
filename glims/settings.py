@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'django_js_utils',
-    'glims',
+    'glims.apps.GlimsConfig',
     'permissions',
     'attachments',
     'proteomics',
@@ -52,7 +52,8 @@ INSTALLED_APPS = (
     'extensible',
     'django_compute',
     'autocomplete_light',
-    'django_cloudstore'
+    'django_cloudstore',
+    'notifications'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -74,8 +75,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "glims.context_processors.menus"
+    "glims.context_processors.menus",
+    'notifications.context_processors.notifications'
 )
+
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
@@ -157,5 +160,11 @@ DJANGO_FORMLY_FORMS = {
     'BioinfoProjectForm':{'form':'bioinformatics.forms.BioinfoProjectForm'},
     'ProjectForm':{'form':'glims.forms.ProjectForm'}
 }
+
+NOTIFICATION_TYPES = (
+    'glims.notification_types.NOTIFICATION_TYPES',
+)
+
+NOTIFICATION_EMAIL_FREQUENCY_HOURS=1
 
 from config import *

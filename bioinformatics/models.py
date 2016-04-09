@@ -6,6 +6,7 @@ from django.dispatch.dispatcher import receiver
 from extensible.models import ExtensibleModel
 from glims.models import Status
 from attachments.models import delete_attachments
+from django.core.urlresolvers import reverse
 
 class BioinfoProject(ExtensibleModel):
     name = models.CharField(max_length=100)
@@ -18,6 +19,10 @@ class BioinfoProject(ExtensibleModel):
     participants = models.ManyToManyField(User,related_name='+')
     description = models.TextField(null=True,blank=True)
     data_location = models.CharField(max_length=250,blank=True,null=True)
+    def get_absolute_url(self):
+        return reverse('bioinformatics__project', args=[str(self.id)])
+    def get_notification_users(self):
+        return self.participants.all() | User.objects.filter(id=self.manager_id)
 
 @receiver(post_save,sender=Project)
 def create_bioinfo_project(sender,instance,**kwargs):

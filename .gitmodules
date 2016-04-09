@@ -1,9 +1,12 @@
 [submodule "attachments"]
 	path = attachments
-	url = https://github.com/amschaal/django-attachments.git
+	url = git@github.com:amschaal/django-attachments.git
 [submodule "extensible"]
 	path = extensible
-	url = https://github.com/amschaal/django-extensible.git
+	url = git@github.com:amschaal/django-extensible.git
 [submodule "django_compute"]
 	path = django_compute
-	url = https://github.com/amschaal/django_compute.git
+	url = git@github.com:amschaal/django_compute.git
+[submodule "notifications"]
+	path = notifications
+	url = git@github.com:amschaal/django-simple-notifications.git

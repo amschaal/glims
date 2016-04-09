@@ -1,6 +1,18 @@
 angular.module('glimsServices')
  .service('poolService', function($rootScope,$http,FormlyModal,Pool,ModelType) {
 	 var fields =  [
+				{
+					 key: 'group',
+					 type: 'ui-select-search',
+					 templateOptions: {
+					   optionsAttr: 'bs-options',
+					   label: 'Group',
+					   valueProp: 'id',
+					   labelProp: 'name',
+					   url: '/api/groups/',
+					   options: []
+					 }
+				},
 	   		     {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
 	   			 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
 	   			];

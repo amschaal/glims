@@ -1,12 +1,13 @@
 
 var app = angular.module('mainapp');
 app.requires.push('glims.formly');
-app.controller('BioinfoProjectController', ['$scope','$http','BioinfoProjectService', 'BioinfoProject','User','FormlyModal', BioinfoProjectController]);
+app.controller('BioinfoProjectController', ['$scope','$http','BioinfoProjectService', 'BioinfoProject','User','FormlyModal','Subscription', BioinfoProjectController]);
 
-function BioinfoProjectController($scope,$http,BioinfoProjectService,BioinfoProject,User,FormlyModal) {
+function BioinfoProjectController($scope,$http,BioinfoProjectService,BioinfoProject,User,FormlyModal,Subscription) {
 	$scope.init = function(params){
 		console.log(params.id);
 		$scope.project = BioinfoProject.get({id:params.id});
+		
 		 function refreshUsers(name, field) {
 			 console.log(name,field);
 			  return  BioinfoProject.users({search:name}).$promise.then(function(users){

@@ -1,4 +1,5 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
+{% load attachment_helpers %}
 {% block page %}Bioinformatics {% endblock %}
 {% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / {{instance.name}}{% endblock %}
 {% block content %}
@@ -8,9 +9,10 @@
       <div class="col-lg-12">
         <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
           <div class="widget-header">
-             {[project.name]} 
+             {[project.name]}
+             <div class="pull-right" notification-subscription object-id="{{instance.id}}" content-type="{{instance | content_type_id}}"></div>
             <button class="btn btn-sm btn-danger pull-right" ng-click="deleteProject()">Delete</button>
-            <button class="btn btn-sm btn-success pull-right" ng-click="editProject()">Edit</button> 
+            <button class="btn btn-sm btn-default pull-right" ng-click="editProject()">Edit</button> 
             
           </div>
           <div class="widget-body" ng-cloak>

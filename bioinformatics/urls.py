@@ -5,7 +5,7 @@ from rest_framework import routers
 from bioinformatics.api.views import BioinfoProjectViewSet
 
 router = routers.DefaultRouter()
-router.register(r'bioinfo_projects', BioinfoProjectViewSet)
+router.register(r'bioinfo_projects', BioinfoProjectViewSet,'BioinfoProject')
 
 urlpatterns += patterns('',
     url(r'^projects/$', 'bioinformatics.views.bioinfo_projects', name='bioinformatics__projects'),

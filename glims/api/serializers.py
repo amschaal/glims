@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from rest_framework.fields import DictField
 
@@ -9,11 +9,16 @@ from glims.lims import Project, Sample, ModelType, Pool, Lab
 from glims.models import Status
 
 
-# from jsonfield import JSONField
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','last_login','first_name','last_name','email','groups')
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id','name')
+
 
 class StatusSerializer(serializers.ModelSerializer):
 #     id = serializers.CharField(source="status.id")
@@ -32,12 +37,13 @@ class ProjectSerializer(ExtensibleSerializer):
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
     status_options = StatusSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
+    group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     history = JSONField(read_only=True)
     class Meta:
         model = Project
 #         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options')
 
-        
+
 class SampleSerializer(ExtensibleSerializer):
     project__name = serializers.CharField(source='project.name',read_only=True)
     project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
@@ -50,6 +56,7 @@ class SampleSerializer(ExtensibleSerializer):
 class PoolSerializer(ExtensibleSerializer):
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
     sample_data = DictField(default={},required=False)
+    group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     class Meta:
         model = Pool
 

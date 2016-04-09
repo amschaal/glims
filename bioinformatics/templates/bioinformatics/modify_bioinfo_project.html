@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page %}Bioinformatics {% endblock %}
 {% block breadcrumbs %}<a href="{% url 'bioinformatics__projects' %}">Projects</a> / <a href="{% url 'bioinformatics__project' pk=instance.project.id %}">{{instance.project.project_id}}</a> / Modify{% endblock %}

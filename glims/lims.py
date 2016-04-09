@@ -17,6 +17,7 @@ from django_cloudstore.engines.bioshare import BioshareStorageEngine
 from glims.models import Status
 from datetime import datetime
 from attachments.models import delete_attachments
+from django.contrib.auth.models import Group, User
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -77,6 +78,7 @@ class Lab(models.Model):
 
 class Project(ExtensibleModel):
     project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
+    group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now=True)
     lab = models.ForeignKey(Lab)
     name = models.CharField(max_length=100)
@@ -102,6 +104,13 @@ class Project(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('project', args=[str(self.id)])
+    def get_group(self):
+        return self.group
+    def get_notification_users(self):
+        return self.group.user_set.all()
+    @staticmethod
+    def user_queryset(user):
+        Project.objects.filter(group__in=user.groups)
     class Meta:
         app_label = 'glims'
         permissions = (
@@ -127,6 +136,13 @@ class Sample(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('sample', args=[str(self.id)])
+    def get_group(self):
+        if not self.project:
+            return None
+        return self.project.group
+    @staticmethod
+    def user_queryset(user):
+        Sample.objects.filter(project__group__in=user.groups)
     class Meta:
         app_label = 'glims'
         permissions = (
@@ -156,6 +172,7 @@ class Sample(ExtensibleModel):
 
 class Pool(ExtensibleModel):
     name = models.CharField(max_length=100)
+    group = models.ForeignKey(Group)
     description = models.TextField(null=True,blank=True)
     created = models.DateField(auto_now=True)
     samples = models.ManyToManyField(Sample,related_name='pools',null=True,blank=True)
@@ -164,7 +181,11 @@ class Pool(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('pool', args=[str(self.id)])
-
+    def get_group(self):
+        return self.group
+    @staticmethod
+    def user_queryset(user):
+        Pool.objects.filter(group__in=user.groups)
 @receiver(pre_save,sender=Project)
 def handle_status(sender,instance,**kwargs):
     if not hasattr(instance, 'id'):

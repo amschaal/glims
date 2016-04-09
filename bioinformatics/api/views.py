@@ -7,6 +7,7 @@ from glims.api.serializers import UserSerializer
 from rest_framework.response import Response
 from glims.api.viewsets import ExtensibleViewset
 from glims.lims import Project
+from django.conf import settings
 
 
 
@@ -16,7 +17,10 @@ class BioinfoProjectViewSet(ExtensibleViewset):
     model = BioinfoProject
     filter_fields = {'project':['exact','icontains'],'type__name':['exact','icontains'],'name':['exact','icontains'], 'description':['exact','icontains'],'lab__name':['exact','icontains'],'project__name':['exact','icontains'],'manager':['exact'],'project__status__id':['icontains','exact']}
     ordering_fields = ('name','project__name','type__name', 'lab__name','created','manager__first_name','manager__last_name','project__status')
-    queryset = BioinfoProject.objects.all().select_related('project','manager','type')
+    def get_queryset(self):
+        if not self.request.user.groups.filter(id=settings.BIOCORE_ID).exists():
+            return None
+        return BioinfoProject.objects.all().select_related('project','manager','type')
     @list_route()
 #     @detail_route(methods=['get'])
     def users(self, request, pk=None):

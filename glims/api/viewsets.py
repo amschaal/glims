@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.query import Prefetch
 from rest_framework import viewsets
 
@@ -7,8 +7,10 @@ from extensible.drf.viewsets import ExtensibleViewset
 from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
-    LabSerializer
+    LabSerializer, GroupSerializer
 from glims.lims import Project, Sample, Pool, Lab
+from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
+from rest_framework.permissions import IsAuthenticated
 
 
 # from glims.api.permissions import CustomPermission
@@ -21,10 +23,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return User.objects.all().order_by('id')
 
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = GroupSerializer
+    model = Group
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Group.objects.all().order_by('id')
+        return self.request.user.groups.all()
+
 
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
-#     permission_classes = [CustomPermission]
+    permission_classes = [IsAuthenticated,AdminOrReadOnlyPermission]
     filter_fields = {'content_type':['exact'],'description':['exact', 'icontains'],'name':['exact', 'icontains'],'content_type__model':['exact', 'icontains']}
     search_fields = ('content_type__model', 'name','description')
     ordering_fields = ('content_type__model', 'name')
@@ -36,6 +46,7 @@ class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(ExtensibleViewset):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
+    permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
@@ -49,6 +60,7 @@ class ProjectViewSet(ExtensibleViewset):
 class SampleViewSet(ExtensibleViewset):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
+    permission_classes = [IsAuthenticated,GroupPermission]
     filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'data':['contains']}
     ordering_fields = ('id','sample_id','name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
@@ -69,6 +81,7 @@ class SampleViewSet(ExtensibleViewset):
 class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer
 #     permission_classes = [CustomPermission]
+    permission_classes = [IsAuthenticated,GroupPermission]
     filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains']}
     ordering_fields = ('name', 'created','type__name')
     search_fields = ('name', 'description','type__name')

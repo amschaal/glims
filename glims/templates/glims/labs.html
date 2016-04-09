@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% block page %}Labs{% endblock %}
 {% block breadcrumbs %} Labs {% endblock %}
 {% block content %}
@@ -8,7 +8,7 @@
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-group"></i> Labs
-            <a href="{% url 'create_lab' %}" class="pull-right btn btn-success">Add</a>
+            <a href="{% url 'create_lab' %}" class="pull-right btn btn-sm btn-success">Add</a>
           </div>
           <div class="widget-body" ng-controller="LabController">
 				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">

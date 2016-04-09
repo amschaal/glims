@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page %}Pools{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'pools' %}">Pools</a> / {{pool.name}} {% endblock %}
@@ -17,6 +17,7 @@
           <tab heading="Details">
 	        	<table class="table">
 	        		<tr><th>Name</th><td>{[pool.name]}</td></tr>
+	        		<tr><th>Group</th><td>{[pool.group.name]}</td></tr>
 	        		<tr><th>Description</th><td>{[pool.description]}</td></tr>
 	        		<tr><th>Created</th><td>{[pool.created | date]}</td></tr>
 	        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>
@@ -27,7 +28,7 @@
 	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
 					<h3>Samples <button class="pull-right btn btn-sm btn-success" ng-click="openSampleModal();">Add</button></h3>
 					
-					<h4 ng-hide="samples.length">There are no samples associated with this project</h4>
+					<h4 ng-hide="samples.length">There are no samples associated with this pool</h4>
 					<table class="table" ng-show="samples.length">
 	              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>
 	              	<tbody>

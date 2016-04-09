@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% block page %}Manage Group Permissions{% endblock %}
 {% block breadcrumbs %}{{model}} / <a href="{{obj.get_absolute_url}}">{{obj}}</a> / <a href="{% url 'permissions' model=model pk=obj.id %}">Permissions</a> for {{group}}{% endblock %}
 {% block content %}

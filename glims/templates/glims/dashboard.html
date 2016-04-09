@@ -186,18 +186,33 @@
                 </ul>
               </div>
    			  {% endif %}
-              <div class="item dropdown">
-               <a href="#" class="dropdown-toggle">
-                  <i class="fa fa-bell-o"></i>
+              <div class="item dropdown" dropdown>
+               <a href="#" class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" title="Notifications">
+                  <i class="fa fa-bell-o"></i>{{user_notifications|length}}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">
-                    Notifications
+                    <a href="{   % url 'notifications' %  }">Notifications</a> 
                   </li>
                   <li class="divider"></li>
-                  <li>
-                    <a href="#">Server Down!</a>
-                  </li>
+                  
+					{% for un in user_notifications %}
+					<li class="notification notification-{{un.notification.importance}}{% if un.seen %} notification-seen{% endif %}">
+					{% if un.aggregated_text%}
+						<a href="{% url 'notifications_redirect_to_url' pk=un.notification.id %}" title="{{un.aggregated_description}}"><span class="created">{{un.notification.short_datetime}}</span> {{un.aggregated_text}}</a>
+					{% else %}
+	                	<a href="{% url 'notifications_redirect_to_url' pk=un.notification.id %}" title="{{un.notification.description}}"><span class="created">{{un.notification.short_datetime}}</span> {{un.notification.text}}</a>
+	                {% endif %}
+	                </li>
+	                {% empty %}
+	                <li>
+	                	<a>You have no new notifications</a>
+	                </li>
+					{% endfor %}
+					<li class="divider"></li>
+					<li>
+	                	<a href="{% url 'notifications_manage_subscriptions' %}">Manage subscriptions</a>
+	                </li>
                 </ul>
               </div>
               <div class="item" ng-controller="CartMenuController" ng-init="init()">

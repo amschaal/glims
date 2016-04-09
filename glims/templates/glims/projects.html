@@ -1,4 +1,4 @@
-{% extends "glims/dashboard.html" %}
+{% extends "base.html" %}
 {% block page %}Projects{% endblock %}
 {% block breadcrumbs %} Projects {% endblock %}
 {% block content %}
@@ -8,7 +8,7 @@
         <div class="widget" ng-controller="ProjectController">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Projects
-            <button ng-click="createProject()" class="btn btn-success pull-right">Create</button>
+            <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
           <div class="widget-body">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
