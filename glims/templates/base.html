@@ -190,7 +190,7 @@
    			  {% endif %}
               <div class="item dropdown" dropdown>
                <a href="#" class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" title="Notifications">
-                  <i class="fa fa-bell-o"></i>{{user_notifications|length}}
+                  <i class="fa fa-bell-o"></i>{{notifications|length}}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">
@@ -198,12 +198,12 @@
                   </li>
                   <li class="divider"></li>
                   
-					{% for un in user_notifications %}
-					<li class="notification notification-{{un.notification.importance}}{% if un.seen %} notification-seen{% endif %}">
-					{% if un.aggregated%}
-						<a href="{% url 'notifications_redirect_to_url' pk=un.id %}" title="{{un.description}}"><span class="created">{{un.short_datetime}}</span> {{un.text}}</a>
+					{% for n in notifications %}
+					<li class="notification notification-{{n.notification.importance}}{% if n.seen %} notification-seen{% endif %}">
+					{% if n.aggregated%}
+						<a href="{% url 'notifications_redirect_to_url' pk=n.id %}" title="{{n.description}}"><span class="created">{{n.short_datetime}}</span> {{n.text}}</a>
 					{% else %}
-	                	<a href="{% url 'notifications_redirect_to_url' pk=un.id %}" title="{{un.description}}"><span class="created">{{un.short_datetime}}</span> {{un.text}}</a>
+	                	<a href="{% url 'notifications_redirect_to_url' pk=n.id %}" title="{{n.description}}"><span class="created">{{n.short_datetime}}</span> {{n.text}}</a>
 	                {% endif %}
 	                </li>
 	                {% empty %}
