@@ -106,8 +106,6 @@ class Project(ExtensibleModel):
         return reverse('project', args=[str(self.id)])
     def get_group(self):
         return self.group
-    def get_notification_users(self):
-        return self.group.user_set.all()
     @staticmethod
     def user_queryset(user):
         Project.objects.filter(group__in=user.groups)

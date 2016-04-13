@@ -10,13 +10,20 @@ var transformDjangoRestResponse = function(data, headers){
 }
 
 angular.module('notificationsModels', ['ngResource'])
+.factory('Notification', ['$resource', function ($resource) {
+  return $resource('/notifications/api/notifications/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
+    remove : { method : 'DELETE' }
+  });
+}])
 .factory('Subscription', ['$resource', function ($resource) {
   return $resource('/notifications/api/subscriptions/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
     patch : { method : 'PATCH' },
     create : { method : 'POST' },
-    remove : { method : 'DELETE' }
+    remove : { method : 'DELETE' },
+    clear : { method : 'DELETE', url:'/notifications/api/subscriptions/:id/clear/' }
   });
 }]);
 

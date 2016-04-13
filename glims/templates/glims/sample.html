@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load attachment_helpers %}
 {% block page %}Sample Details{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'samples' %}">Samples</a> / {{sample.name}} {% endblock %}
 {% block content %}
@@ -8,6 +9,7 @@
         <div class="widget" ng-controller="SampleController" ng-init="init({sample:'{{sample.id}}'})">
           <div class="widget-header">
             <i class="fa fa-flask"></i> {[sample.name]} 
+            <div class="pull-right" notification-subscription object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></div>
             <a ng-click="editSample()" class="btn btn-sm btn-default pull-right">Edit</a>
           </div>
           <div class="widget-body">

@@ -5,8 +5,8 @@ class NoteCreatedConf(NotificationConfiguration):
     description = 'Get notified when a note is written.'
     aggregable = True
     @classmethod
-    def aggregated_text(cls,user_notifications):
-        return "There are %d new notes" % len(user_notifications)
+    def aggregated_text(cls,notifications):
+        return "There are %d new notes" % len(notifications)
 # class URLCreatedConf(NotificationConfiguration):
 #     name = 'URL created'
 #     description = 'Get notified when a URL is added to an order.'
@@ -19,8 +19,8 @@ class FileCreatedConf(NotificationConfiguration):
     description = 'Get notified when a file is uploaded.'
     aggregable = True
     @classmethod
-    def aggregated_text(cls,user_notifications):
-        return "%d new files have been uploaded" % len(user_notifications)
+    def aggregated_text(cls,notifications):
+        return "%d new files have been uploaded" % len(notifications)
 NOTIFICATION_TYPES = {
     'note_created': NoteCreatedConf,
     'file_created': FileCreatedConf

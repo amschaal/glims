@@ -22,13 +22,12 @@ def create_note_notification(sender,**kwargs):
     if kwargs['created']:
         instance = kwargs['instance']
         obj = instance.content_object#ct.get_object_for_this_type(instance.object_id)
-        if hasattr(obj, 'get_notification_users'):
-            users = obj.get_notification_users().exclude(id=instance.created_by.id).distinct()
-            print users
-            url = settings.SITE_URL + obj.get_absolute_url()+'?tab=notes'
-            description = '%s wrote: "%s..."'%(str(instance.created_by), instance.content[:200])
-            text = '%s wrote: "%s..."'%(str(instance.created_by),instance.content[:20])
-            create_notification(url,text,type_id='note_created',description=description,users=users,importance=Notification.IMPORTANCE_LOW)
+#         if hasattr(obj, 'get_notification_users'):
+#             users = obj.get_notification_users().exclude(id=instance.created_by.id).distinct()
+        url = settings.SITE_URL + obj.get_absolute_url()+'?tab=notes'
+        description = '%s wrote: "%s..."'%(str(instance.created_by), instance.content[:200])
+        text = '%s wrote: "%s..."'%(str(instance.created_by),instance.content[:20])
+        create_notification(url,text,type_id='note_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.created_by)
         
 # @receiver(post_save,sender=URL)
 # def create_url_notification(sender,**kwargs):
@@ -46,9 +45,9 @@ def create_file_notification(sender,**kwargs):
     if kwargs['created']:
         instance = kwargs['instance']
         obj = instance.content_object#ct.get_object_for_this_type(instance.object_id)
-        if hasattr(obj, 'get_notification_users'):
-            users = obj.get_notification_users().exclude(id=instance.uploaded_by.id).distinct()
-            url = settings.SITE_URL + obj.get_absolute_url()+'?tab=files'
-            description = instance.description
-            text = '%s uploaded %s'%(str(instance.uploaded_by),str(instance))
-            create_notification(url,text,type_id='file_created',description=description,users=users,importance=Notification.IMPORTANCE_LOW)
+#         if hasattr(obj, 'get_notification_users'):
+#             users = obj.get_notification_users().exclude(id=instance.uploaded_by.id).distinct()
+        url = settings.SITE_URL + obj.get_absolute_url()+'?tab=files'
+        description = instance.description
+        text = '%s uploaded %s'%(str(instance.uploaded_by),str(instance))
+        create_notification(url,text,type_id='file_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.uploaded_by)
