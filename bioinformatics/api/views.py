@@ -19,7 +19,7 @@ class BioinfoProjectViewSet(ExtensibleViewset):
     ordering_fields = ('name','project__name','type__name', 'lab__name','created','manager__first_name','manager__last_name','project__status')
     def get_queryset(self):
         if not self.request.user.groups.filter(id=settings.BIOCORE_ID).exists():
-            return None
+            return BioinfoProject.objects.none()
         return BioinfoProject.objects.all().select_related('project','manager','type')
     @list_route()
 #     @detail_route(methods=['get'])
