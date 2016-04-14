@@ -56,9 +56,11 @@ angular.module('notifications.directives', ["notificationsModels"])
 angular.module('template/notifications/subscription.html', []).run(['$templateCache', function($templateCache) {
 	  $templateCache.put('template/notifications/subscription.html',
 	'<div class="btn-group" uib-dropdown is-open="status.isopen">\
-      <button id="single-button" type="button" class="btn btn-primary btn-sm">\
-			  <span ng-if="subscription.subscribed" ng-click="unsubscribe()"><span class="glyphicon glyphicon-star" style="color:yellow" aria-hidden="true"></span> Unsubscribe <span ng-if="subscription.notifications.length">({[subscription.notifications.length]})</span></span>\
-			  <span ng-if="!subscription.subscribed" ng-click="subscribe()">Subscribe</span>\
+	  <button id="single-button" type="button" class="btn btn-primary btn-sm" ng-if="!subscription.subscribed" ng-click="subscribe()">\
+			  Subscribe\
+      </button>\
+	  <button id="single-button" type="button" class="btn btn-primary btn-sm" ng-if="subscription.subscribed" ng-click="unsubscribe()">\
+			  <span class="glyphicon glyphicon-star" style="color:yellow" aria-hidden="true"></span> Unsubscribe <span ng-if="subscription.notifications.length">({[subscription.notifications.length]})</span>\
       </button>\
 	  <button type="button" class="btn btn-primary btn-sm" uib-dropdown-toggle>\
         <span class="caret"></span>\
