@@ -7,6 +7,7 @@ from extensible.models import ExtensibleModel
 from glims.models import Status
 from attachments.models import delete_attachments
 from django.core.urlresolvers import reverse
+from glims.notification_signals import create_update_notification
 
 class BioinfoProject(ExtensibleModel):
     name = models.CharField(max_length=100)
@@ -33,3 +34,6 @@ def create_bioinfo_project(sender,instance,**kwargs):
             BioinfoProject.objects.get_or_create(project=instance)
 
 post_delete.connect(delete_attachments, sender=BioinfoProject)
+
+post_save.connect(create_update_notification, sender=BioinfoProject)
+

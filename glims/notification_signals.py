@@ -12,6 +12,7 @@ from django.db.models import Q
 
 from notifications.utils import create_notification
 from notifications.models import Notification
+from glims.lims import Project
 
 
 
@@ -26,7 +27,7 @@ def create_note_notification(sender,**kwargs):
 #             users = obj.get_notification_users().exclude(id=instance.created_by.id).distinct()
         url = settings.SITE_URL + obj.get_absolute_url()+'?tab=notes'
         description = '%s wrote: "%s..."'%(str(instance.created_by), instance.content[:200])
-        text = '%s wrote: "%s..."'%(str(instance.created_by),instance.content[:20])
+        text = '%s: %s wrote "%s..."'%(str(obj),str(instance.created_by),instance.content[:20])
         create_notification(url,text,type_id='note_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.created_by)
         
 # @receiver(post_save,sender=URL)
@@ -49,5 +50,14 @@ def create_file_notification(sender,**kwargs):
 #             users = obj.get_notification_users().exclude(id=instance.uploaded_by.id).distinct()
         url = settings.SITE_URL + obj.get_absolute_url()+'?tab=files'
         description = instance.description
-        text = '%s uploaded %s'%(str(instance.uploaded_by),str(instance))
+        text = '%s: %s uploaded %s'%(str(obj),str(instance.uploaded_by),str(instance))
         create_notification(url,text,type_id='file_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.uploaded_by)
+
+@receiver(post_save,sender=Project)
+def create_update_notification(sender,**kwargs):
+    if not kwargs['created']:
+        instance = kwargs['instance']
+        url = settings.SITE_URL + instance.get_absolute_url()
+        text = '"%s" has been updated'%(str(instance))
+        create_notification(url,text,type_id='object_updated',description='',instance=instance,importance=Notification.IMPORTANCE_LOW)
+
