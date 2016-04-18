@@ -42,6 +42,11 @@
            		{% include "attachments/partials/attached_files.html" %}
            	{% endwith%}
            	</tab>
+           	<tab heading="URLs ({[attachments_object.urls]})">
+           	{% with instance as object %}
+           		{% include "attachments/partials/attached_urls.html" %}
+           	{% endwith%}
+           	</tab>
        		</tabset>
           </div>
         </div>
