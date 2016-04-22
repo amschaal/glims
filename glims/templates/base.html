@@ -199,12 +199,8 @@
                   <li class="divider"></li>
                   
 					{% for n in notifications %}
-					<li class="notification notification-{{n.notification.importance}}{% if n.seen %} notification-seen{% endif %}">
-					{% if n.aggregated%}
-						<a href="{% url 'notifications_redirect_to_url' pk=n.id %}" title="{{n.description}}"><span class="created">{{n.short_datetime}}</span> {{n.text}}</a>
-					{% else %}
-	                	<a href="{% url 'notifications_redirect_to_url' pk=n.id %}" title="{{n.description}}"><span class="created">{{n.short_datetime}}</span> {{n.text}}</a>
-	                {% endif %}
+					<li class="notification notification-{{n.importance}}{% if n.seen %} notification-seen{% endif %}">
+						<a href="{{n.get_url}}" title="{{n.description}}"><span class="created">{{n.short_datetime}}</span> {{n.text}}</a>
 	                </li>
 	                {% empty %}
 	                <li>

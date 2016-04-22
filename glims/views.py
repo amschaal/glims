@@ -12,7 +12,7 @@ from glims.models import ModelTypePlugins
 
 @login_required
 def home(request):
-    return render(request, 'base.html', {},context_instance=RequestContext(request))
+    return render(request, 'glims/home.html', {},context_instance=RequestContext(request))
 @login_required
 def project(request, pk):
     project = Project.objects.get(pk=pk)
