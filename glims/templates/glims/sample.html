@@ -6,7 +6,7 @@
 <script src="/static/js/pages/sample.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget" ng-controller="SampleController" ng-init="init({sample:'{{sample.id}}'})">
+        <div class="widget" ng-controller="SampleController" ng-init="init({sample:'{{sample.id}}'});tabs['{{tab}}']=true;">
           <div class="widget-header">
             <i class="fa fa-flask"></i> {[sample.name]} 
             <div class="pull-right" notification-subscription object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></div>
@@ -25,12 +25,12 @@
 	                </tbody>
 	              </table>
               </tab>
-              <tab heading="Notes ({[attachments_object.notes]})">
+              <tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
               	{% with sample as object %}
               		{% include "attachments/partials/notes.html" %}
               	{% endwith%}
               	</tab>
-              	<tab heading="Files ({[attachments_object.files]})">
+              	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
               	{% with sample as object %}
               		{% include "attachments/partials/attached_files.html" %}
               	{% endwith%}

@@ -7,7 +7,7 @@
 <script src="/static/bioinformatics/js/pages/bioinfo_project.js"></script>
 <div class="row">
       <div class="col-lg-12">
-        <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'})">
+        <div class="widget" ng-controller="BioinfoProjectController" ng-init="init({'id':'{{instance.id}}'});tabs['{{tab}}']=true;">
           <div class="widget-header">
              {[project.name]}
              <div class="pull-right" notification-subscription object-id="{{instance.id}}" content-type="{{instance | content_type_id}}"></div>
@@ -32,17 +32,17 @@
                 </tbody>
               </table>
             </tab>
-           	<tab heading="Notes ({[attachments_object.notes]})">
+           	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
            	{% with instance as object %}
            		{% include "attachments/partials/notes.html" %}
            	{% endwith%}
            	</tab>
-           	<tab heading="Files ({[attachments_object.files]})">
+           	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
            	{% with instance as object %}
            		{% include "attachments/partials/attached_files.html" %}
            	{% endwith%}
            	</tab>
-           	<tab heading="URLs ({[attachments_object.urls]})">
+           	<tab heading="URLs ({[attachments_object.urls]})" active="tabs['urls']">
            	{% with instance as object %}
            		{% include "attachments/partials/attached_urls.html" %}
            	{% endwith%}

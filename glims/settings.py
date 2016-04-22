@@ -77,6 +77,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "glims.context_processors.menus",
+    "glims.context_processors.tab",
     'notifications.context_processors.notifications'
 )
 
