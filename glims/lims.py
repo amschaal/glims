@@ -59,11 +59,11 @@ class Lab(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     slug = models.SlugField(max_length=20,unique=True,null=True)
-    cloudstore = models.ForeignKey(CloudStore,null=True,blank=True,on_delete=models.SET_NULL)
-    def create_cloudstore(self):
-        if not self.cloudstore:
-            self.cloudstore = BioshareStorageEngine.create(self.name, self.description, {'link_to_path':self.directory})
-            self.save()
+#     cloudstore = models.ForeignKey(CloudStore,null=True,blank=True,on_delete=models.SET_NULL)
+#     def create_cloudstore(self):
+#         if not self.cloudstore:
+#             self.cloudstore = BioshareStorageEngine.create(self.name, self.description, {'link_to_path':self.directory})
+#             self.save()
 #     def get_absolute_url(self):
 #         return reverse('lab', args=[str(self.id)])
     @property
@@ -80,7 +80,7 @@ class Project(ExtensibleModel):
     project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
     group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now=True)
-    lab = models.ForeignKey(Lab)
+    lab = models.ForeignKey(Lab, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")

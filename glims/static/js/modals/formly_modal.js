@@ -141,7 +141,8 @@ angular.module('formly.modal',[])
 								return;
 							return $scope.errors['data'][error_key.substr(5)].join(', ');
 						}
-						return $scope.errors[error_key].join(', ');
+						if ($scope.errors[error_key])
+							return $scope.errors[error_key].join(', ');
 					}
 			};
 		});
@@ -175,7 +176,8 @@ angular.module('formly.modal',[])
 )
 .controller('ExtendedFormlyModalController', function FormlyModalController($scope,$controller, $http, $modalInstance,ModelType,FormlyDynamicFields, fields, model, options) {
 	angular.extend(this, $controller('FormlyModalController', {$scope, $http, $modalInstance, fields, model, options}));
-	
+	if (!$scope.model.data)
+		$scope.model.data = {};
 	if (options.model_type_query){
 		var model_types = ModelType.query(options.model_type_query||{}).$promise.then(
 			function(types){
