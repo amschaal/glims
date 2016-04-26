@@ -5,3 +5,7 @@ a
 .tab-pane {
     padding-top: 10px;
 }
+
+.borderless td, .borderless th {
+    border: none;
+}

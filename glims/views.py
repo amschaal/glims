@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
@@ -97,6 +97,19 @@ def create_lab(request):
             lab = form.save()
             return redirect(reverse('lab',kwargs={'pk':lab.pk})) 
     return render(request, 'glims/create_lab.html', {'form':form} ,context_instance=RequestContext(request))
+
+@login_required
+def modify_lab(request,pk):
+    lab = get_object_or_404(Lab,pk=pk)
+    if request.method == 'GET':
+        form = LabForm(instance=lab)
+    elif request.method == 'POST':
+        form = LabForm(request.POST,instance=lab)
+        if form.is_valid():
+            lab = form.save()
+            return redirect(reverse('lab',kwargs={'pk':lab.pk})) 
+    return render(request, 'glims/modify_lab.html', {'form':form} ,context_instance=RequestContext(request))
+
 @login_required
 def choose_project_type(request):
     form = ProjectTypeForm(initial={'lab':request.GET.get('lab',None)})

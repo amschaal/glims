@@ -7,7 +7,7 @@
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-group"></i> {{lab}} ({{lab.slug}})
+            <span><i class="fa fa-group"></i> {{lab}} ({{lab.slug}})</span> <a href="{% url 'modify_lab' pk=lab.id %}" class="btn btn-default pull-right">Edit</a>
           </div>
           <div class="widget-body" >
           {% if lab.cloudstore.url %}
@@ -15,6 +15,11 @@
           {% endif %}
           	{{lab.cloudstore}}
           	{{lab.cloudstore.attributes}}
+          	
+          		<table class="table borderless">
+          		<tr><th>Name</th><td>{{lab.name}}</td></tr>
+          		<tr><th>Description</th><td>{{lab.description}}</td></tr>
+          		</table>
 				<tabset>
 					<tab heading="Projects">
 					<div ng-controller="ProjectController" ng-init="init({lab__name:'{{lab.name}}'},{{lab.id}});">
