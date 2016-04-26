@@ -11,6 +11,12 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 //	scope.$watch('name', function(newValue, oldValue) {
 //		  scope.counter = scope.counter + 1;
 //		});
+	$scope.filterArchive = function(){
+		if (!$scope.archived)
+			$scope.changeFilter('archived','False');
+		else
+			delete $scope.tableParams.filter()['archived'];
+	}
 	$scope.filterGroups = function(){
 		var keys = Object.keys($scope.groups);
 		var filtered = keys.filter(function(key) {
