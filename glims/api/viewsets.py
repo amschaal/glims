@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 # from glims.permissions.manage import get_all_user_objects
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-    filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact'],'groups__name':['exact']} 
+    filter_fields = {'first_name':['exact', 'icontains'],'last_name':['icontains'],'email':['exact', 'icontains'],'groups__id':['exact'],'groups__name':['exact'],'id':['gte','exact']} 
     search_fields=('first_name','last_name','email')
     model = User
     def get_queryset(self):
@@ -48,7 +48,7 @@ class ProjectViewSet(ExtensibleViewset):
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
-    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
     ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description')
     def get_queryset(self):

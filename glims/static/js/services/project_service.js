@@ -1,6 +1,7 @@
 angular.module('glimsServices')
- .service('projectService', function($rootScope,$http,FormlyModal,Project,ModelType) {
+ .service('projectService', function($rootScope,$http,FormlyModal,Project,User,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
+	 var userOptions = User.query({id__gte:1});//groups__name:'Bioinformatics Core'
 	 var fields =  [
 	            {
 					 key: 'group',
@@ -38,7 +39,23 @@ angular.module('glimsServices')
 	   			   url: '/api/labs/',
 	   			   options: []
 	   			 }
-	   			}
+	   			},
+	   			{
+	   				"templateOptions": {"required": false, "options": userOptions, "description": "", "label": "Manager","valueProp":"id","labelProp":"name" }
+				, "type": "select", "key": "manager.id", data:{"error_key":"manager"}
+				}, 
+	             {
+	            	  key: 'participants',
+	            	  type: 'objectMultiCheckbox',
+	            	  templateOptions: {
+	            	    label: 'Participants',
+	            	    options: userOptions,
+	            	    valueProp: 'id',
+	            	    labelProp: 'name',
+	            	    required: false
+	            	  }
+	        	},
+	        	{"templateOptions": {"required": false, "description": "", "label": "Archived"}, "type": "checkbox", "key": "archived"}
 	   			];
 	 return {
 		 create: create,

@@ -7,10 +7,25 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
-	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" }});
+	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:{archived:'False'}});
 //	scope.$watch('name', function(newValue, oldValue) {
 //		  scope.counter = scope.counter + 1;
 //		});
+	$scope.filterGroups = function(){
+		var keys = Object.keys($scope.groups);
+		var filtered = keys.filter(function(key) {
+		    return $scope.groups[key];
+		});
+		if (filtered.length > 0)
+			$scope.changeFilter('group__id__in',filtered.join(','));
+		else
+			delete $scope.tableParams.filter()['group__id__in'];
+	}
+	$scope.changeFilter = function(field, value){
+	      var filter = {};
+	      filter[field] = value;
+	      angular.extend($scope.tableParams.filter(), filter);
+	    }
 	$scope.saveStatus = function(project){
 		console.log('project',project);
 		project.status = project.new_status.id;

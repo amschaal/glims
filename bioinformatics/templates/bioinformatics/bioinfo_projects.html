@@ -11,10 +11,11 @@
           <div class="widget-header">
             Bioinformatics Projects<button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
+          <label><input type="checkbox" ng-model="archived" ng-true-value="''" ng-false-value="'False'" ng-change="changeFilter('archived',archived)"/> Show archived</label>
           <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
 			      	<td data-title="'Created'" sortable="'created'"" ><a href="{[getURL('bioinformatics__project',{pk:row.id})]}">{[ row.created|date ]}</a></td>
-			      	<td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
+			      	<td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}"><i class="fa fa-archive" ng-if="row.archived"></i> {[row.type.name]}</td>
 			      	<td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}"><a href="{[getURL('bioinformatics__project',{pk:row.id})]}">{[ row.name ]}</a></td>
 			      	<td data-title="'Inherited Project'" filter="{project__name__icontains: 'text'}" sortable="'project__name'"" ><a href="{[getURL('project',{pk:row.project.id})]}">{[ row.project.name ]}</a></td>
 			      	<td data-title="'Lab'" sortable="'lab__name'"" filter="{lab__name__icontains: 'text'}"><a ng-if="row.lab" href="{[getURL('lab',{pk:row.lab.id})]}">{[ row.lab.name ]}</a></td>

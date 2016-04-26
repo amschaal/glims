@@ -32,6 +32,8 @@ background-color: pink;
 							<tr><th>Type</th><td>{[project.type.name]}</td></tr>
 							<tr><th>ID</th><td>{[project.project_id]}</td></tr>
 							<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
+							<tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
+							<tr><th>Participants</th><td><span ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}{[$last ? '' : ', ']}</span></td></tr>
 		                	<tr><th>Description</th><td>{[project.description]}</td></tr>
 		                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
 		                	<tr><th>Bioinformatics Project</th><td ng-if="bioinfo_project"><a href="{[getURL('bioinformatics__project',{pk:bioinfo_project.id})]}">{[bioinfo_project.created|date]}</a></td><td ng-if="!bioinfo_project"><button class="btn btn-xs" ng-click="createBioinfoProject()">Create</button></td></tr>
@@ -65,7 +67,6 @@ background-color: pink;
 			</tab>
 			
               	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-              	{[selected_tab]}
               	{% with project as object %}
               		{% include "attachments/partials/notes.html" %}
               	{% endwith%}

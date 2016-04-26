@@ -46,6 +46,7 @@ angular.module('glimsServices')
 		                	  }
 	                	},
 	                	{"templateOptions": {"required": false, "description": "", "label": "Data location"}, "type": "input", "key": "data_location"},
+	                	{"templateOptions": {"required": false, "description": "", "label": "Archived"}, "type": "checkbox", "key": "archived"}
          ];
 	 return {
 		 create: create,

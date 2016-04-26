@@ -10,9 +10,13 @@ from glims.models import Status
 
 
 class UserSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    def get_name(self, user):
+        return '%s %s'%(user.first_name,user.last_name)
+        
     class Meta:
         model = User
-        fields = ('id','last_login','first_name','last_name','email','groups')
+        fields = ('id','name','last_login','first_name','last_name','email','groups')
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,6 +42,8 @@ class ProjectSerializer(ExtensibleSerializer):
     status_options = StatusSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
+    manager = ModelRelatedField(model=User,serializer=UserSerializer,queryset=User.objects.filter(groups__id=1))
+    participants = ModelRelatedField(model=User,serializer=UserSerializer,many=True,queryset=User.objects.filter(groups__id=1),required=False,allow_null=True)
     history = JSONField(read_only=True)
     class Meta:
         model = Project

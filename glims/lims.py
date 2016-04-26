@@ -79,12 +79,15 @@ class Lab(models.Model):
 class Project(ExtensibleModel):
     project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
     group = models.ForeignKey(Group)
-    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     lab = models.ForeignKey(Lab, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
     status = models.ForeignKey(Status,null=True,blank=True)
+    manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
+    participants = models.ManyToManyField(User,related_name='+')
+    archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
     @property

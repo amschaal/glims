@@ -11,6 +11,8 @@
             <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
           <div class="widget-body">
+          	<label>  <input type="checkbox" ng-model="archived" ng-true-value="''" ng-false-value="'False'" ng-change="changeFilter('archived',archived)"/>  Show archived </label><br>
+          	{% for g in user.groups.all %}<label><input type="checkbox" ng-model="groups['{{g.id}}']" ng-change="filterGroups()"/>{{g}} </label> {% endfor %}
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
@@ -21,6 +23,7 @@
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
 		        <td data-title="'Status'" >
 		        	<select ng-change="setStatus(row)" ng-options="option.name for option in row.status_options track by option.id" ng-model="row.new_status" ng-init="row.new_status.id = row.status;"></select>
+		        	<i class="fa fa-folder" ng-if="row.archived" title="Archived"></i>
 		        	<button ng-show="row.new_status.id != row.status" ng-click="saveStatus(row)">Save</button>
 		        </td>
 		      </tr>

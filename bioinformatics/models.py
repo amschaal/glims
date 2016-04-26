@@ -20,6 +20,7 @@ class BioinfoProject(ExtensibleModel):
     participants = models.ManyToManyField(User,related_name='+')
     description = models.TextField(null=True,blank=True)
     data_location = models.CharField(max_length=250,blank=True,null=True)
+    archived = models.BooleanField(default=False)
     def get_absolute_url(self):
         return reverse('bioinformatics__project', args=[str(self.id)])
     def get_notification_users(self):

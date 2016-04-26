@@ -13,8 +13,13 @@ function BioinfoProjectsController($scope,BioinfoProject,BioinfoProjectService,U
 //			data.title = data.first_name + ' ' + data.last_name;
 		});
 	};
+	$scope.changeFilter = function(field, value){
+	      var filter = {};
+	      filter[field] = value;
+	      angular.extend($scope.tableParams.filter(), filter);
+	    }
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab })};
-	$scope.tableParams = DRFNgTableParams('/bioinformatics/api/bioinfo_projects/',{sorting: { created: "desc" }});
+	$scope.tableParams = DRFNgTableParams('/bioinformatics/api/bioinfo_projects/',{sorting: { created: "desc" },filter:{archived:'False'}});
 //	$scope.deleteFile = function(file){
 //		file = new FastaFile(file);
 //		console.log($scope);
