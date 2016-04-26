@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block page %}Modify lab{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'labs' %}">Labs</a> / {{lab.name}} / Modify {% endblock %}
+{% block content %}
+<div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+        <div class="row">
+      	<div class="col-lg-10">
+        <form method="post" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{next}}"/>
+          {{form|crispy}}
+          <button class="btn">Update</button>
+        </form>
+        </div>
+        </div>
+      </div>
+{% endblock %}
