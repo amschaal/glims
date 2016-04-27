@@ -16,9 +16,9 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }])
-.controller('ProjectController', ['$scope','$log','$http','FormlyModal', 'ModelType', 'Project', 'BioinfoProject','projectService','Subscription',ProjectController])
+.controller('ProjectController', ['$scope','$log','$http','FormlyModal', 'ModelType', 'Project','projectService','Subscription',ProjectController])
 .controller('SamplesController', ['$scope','$http','$log','$uibModal','Sample','sampleService', SamplesController]);
-function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project, BioinfoProject, projectService, Subscription){
+function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project, projectService, Subscription){
 	$scope.init = function (params){
 		$scope.project_id = params.project;
 		$scope.project = Project.get({id:params.project});
@@ -35,17 +35,6 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
 				    $scope.project = project;
 				}
 				);
-	}
-	$scope.createBioinfoProject = function(){
-		$http.post($scope.getURL('create_bioinfo_project'), {
-            project_id: $scope.project_id
-        })
-        .success(function(bioinfo_project){
-        	$scope.bioinfo_project = bioinfo_project;
-        })
-        .error(function(data){
-        	$log.info('error',data)
-        });
 	}
 	$scope.deleteProject = function(){
 		if (!confirm('Are you sure you want to delete this project?  This action cannot be undone!'))

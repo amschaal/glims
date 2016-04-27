@@ -87,6 +87,7 @@ class Project(ExtensibleModel):
     status = models.ForeignKey(Status,null=True,blank=True)
     manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
     participants = models.ManyToManyField(User,related_name='+')
+    related_projects = models.ManyToManyField('self')
     archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)

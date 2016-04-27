@@ -2,6 +2,7 @@ angular.module('glimsServices')
  .service('projectService', function($rootScope,$http,FormlyModal,Project,User,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
 	 var userOptions = User.query({id__gte:1});//groups__name:'Bioinformatics Core'
+	 var projectOptions = Project.query({id__gte:1});
 	 var fields =  [
 	            {
 					 key: 'group',
@@ -15,6 +16,18 @@ angular.module('glimsServices')
 					   options: []
 					 }
 				 },
+				 {
+		   			 key: 'related_projects',
+		   			 type: 'ui-select-search-multiple',
+		   			 templateOptions: {
+		   			   optionsAttr: 'bs-options',
+		   			   label: 'Related Projects',
+		   			   valueProp: 'id',
+		   			   labelProp: 'name',
+		   			   url: '/api/projects/',
+		   			   options: []
+		   			 }
+		   			},
 	   		     {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
 	   			 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
 	   			 {

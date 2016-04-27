@@ -35,19 +35,28 @@ class LabSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lab
 
+class BasicProjectSerializer(serializers.ModelSerializer):
+    lab__name = serializers.CharField(source='lab.name',read_only=True)
+    group__name = serializers.CharField(source='group.name',read_only=True)
+    class Meta:
+        model = Project
+        fields = ('id','name','lab__name','group__name','description')
+
 class ProjectSerializer(ExtensibleSerializer):
     lab__name = serializers.CharField(source='lab.name',read_only=True)
-    sample_type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer)
+    sample_type = ModelRelatedField(model=ModelType,serializer=ModelTypeSerializer,required=False,allow_null=True)
     type__name = serializers.StringRelatedField(source='type.name',read_only=True)
     status_options = StatusSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
-    manager = ModelRelatedField(model=User,serializer=UserSerializer,queryset=User.objects.filter(groups__id=1))
+    manager = ModelRelatedField(model=User,serializer=UserSerializer,queryset=User.objects.filter(groups__id=1), required=False, allow_null=True)
     participants = ModelRelatedField(model=User,serializer=UserSerializer,many=True,queryset=User.objects.filter(groups__id=1),required=False,allow_null=True)
+    related_projects = ModelRelatedField(model=Project,serializer=BasicProjectSerializer,many=True,required=False,allow_null=True)
+#     referencing_projects = BasicProjectSerializer(many=True)
     history = JSONField(read_only=True)
     class Meta:
         model = Project
-#         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options')
+#         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options','referencing_projects','related_projects','group','participants','manager')
 
 
 class SampleSerializer(ExtensibleSerializer):
