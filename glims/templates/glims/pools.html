@@ -16,7 +16,7 @@
 			        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
 			        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ poolLink(row) ]}">{[row.name]}</a></td>
 			        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
-			        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+			        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 			      </tr>
 			    </table>
             </div>

@@ -9,3 +9,7 @@ a
 .borderless td, .borderless th {
     border: none;
 }
+
+.show-more{
+	white-space: pre-line;
+}

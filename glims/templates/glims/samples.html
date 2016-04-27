@@ -18,7 +18,7 @@
 		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}">{[row.name]}</td>
 		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
 		        <td data-title="'Project'" sortable="'project__name'" filter="{project__name__icontains: 'text'}"><a href="{[ getURL('project',{pk:row.project.id}) ]}">{[row.project__name]}</a></td>
-		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td><a ng-show="!cartSamples[row.id]" ng-click="addSample(row)"><i class="fam-basket-add"></i></a> <a ng-show="cartSamples[row.id]" ng-click="removeSample(row)"><i class="fam-basket-delete"></i></a></td>
 		      </tr>
 		    </table>

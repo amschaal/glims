@@ -14,7 +14,7 @@
 				<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 			      <tr ng-repeat="row in $data track by row.id">
 			        <td data-title="'Name'" sortable="'name'"" filter="{name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.name]}</a></td>
-			        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+			        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 			      </tr>
 		    	</table>
             </div>
