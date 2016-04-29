@@ -23,10 +23,6 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
 		$scope.project_id = params.project;
 		$scope.project = Project.get({id:params.project});
 		$scope.subscription = Subscription.get({object_id:params.project,content_type__model:'project'});
-		BioinfoProject.query({project:params.project},function(projects){
-			if (projects.length == 1)
-				$scope.bioinfo_project = projects[0];
-		});
 	};
 	$scope.editProject = function(){
 		projectService.update($scope.project)

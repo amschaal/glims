@@ -12,8 +12,7 @@ table.details th {
     width: 200px;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="/static/vendor/ui-grid/ui-grid.min.css">
-<script src="/static/vendor/ui-grid/ui-grid.min.js"></script>
+
 <script src="/static/js/pages/project.js"></script>
 
 <div class="row" ng-cloak>
@@ -45,7 +44,7 @@ table.details th {
 		                </tbody>
 		              </table>
               	         	             
-	             <div ng-controller="SamplesController" ng-init="init();">
+	            <!--  <div ng-controller="SamplesController" ng-init="init();">
 					<h3>Samples</h3>
 					<p>
 						<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
@@ -67,6 +66,8 @@ table.details th {
 	              
 					<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>
 				</div>
+				 -->
+				<samples-plugin project="project" ng-if="project.id"></samples-plugin>
 			
 			</tab>
 			

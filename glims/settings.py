@@ -22,6 +22,7 @@ SECRET_KEY = 'jn+=$cikt$$$*mazyt2bz!nvmfmx2_nyn62cp3nhnx=6h1=p_f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+COMPRESS_ENABLED = True
 
 TEMPLATE_DEBUG = True
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'django_js_utils',
+    'compressor',
     'glims.apps.GlimsConfig',
     'permissions',
     'attachments',
@@ -54,6 +56,13 @@ INSTALLED_APPS = (
     'autocomplete_light',
     'django_cloudstore',
     'notifications'
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -113,6 +122,7 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+STATIC_ROOT = os.path.join(BASE_DIR,'STATIC')
 
 DJANGO_JSON_FORMS_UPLOAD_DIRECTORY = os.path.join(MEDIA_ROOT,'dynamic_uploads')
 
