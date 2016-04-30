@@ -21,6 +21,9 @@
   <link rel="stylesheet" href="{% static 'vendor/angular-ui-select/select.css' %}">
   
   <link href="/static/vendor/angular-growl/angular-growl.min.css" rel="stylesheet">
+  {% for css in plugins.css %}
+	  	<link rel="stylesheet" type="text/css" href="/static/{{css}}">
+  {% endfor %}
   {% endcompress %}
   {% compress js%}
   <!-- SCRIPTS -->
@@ -84,13 +87,11 @@
 
   <script src="{% static 'js/forms/widgets.js' %}"></script>
   <script src="{% static 'js/controllers/cart.js' %}"></script>
-  {% endcompress %}
   
-  <!-- Eventually, all plugin files will need to be concatenated and available before bootstrapping -->
-  <!-- project samples plugin -->
-  <link rel="stylesheet" type="text/css" href="/static/vendor/ui-grid/ui-grid.min.css">
-  <script src="/static/vendor/ui-grid/ui-grid.min.js"></script>
-  <!--  end project samples plugin -->
+  {% for js in plugins.js %}
+  	<script src="/static/{{js}}"></script>
+  {% endfor %}  
+  {% endcompress %}
   
   <script>
   angular.module('widgets.select',['ngSanitize','ui.select'])

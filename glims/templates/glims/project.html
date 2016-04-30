@@ -43,30 +43,7 @@ table.details th {
 		                	<!-- <tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr> -->
 		                </tbody>
 		              </table>
-              	         	             
-	            <!--  <div ng-controller="SamplesController" ng-init="init();">
-					<h3>Samples</h3>
-					<p>
-						<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile('{% url 'import_samplesheet' project_id=project.id %}')" class="btn btn-success">Import TSV samplesheet</button>
-						<br><a href="{% url 'sample_template_tsv'%}{% if project.sample_type%}?type_id={{project.sample_type_id}}{%endif%}">Download</a> template
-						<a href="{% url 'download_samplesheet_tsv' project_id=project.id%}">Download</a> samplesheet
-					</p>
-					
-					<div class="alert alert-danger" role="alert" ng-show="errors">
-						<button ng-click="errors = false;" class="btn btn-sm btn-danger pull-right">Clear errors</button>
-						<div ng-repeat="(id, sample_errors) in errors">
-							<b>{[id]}:</b>
-							<ul>
-								<li ng-repeat="(id,errors) in sample_errors">{[id]}: {[errors.join(', ')]}</li>
-							</ul>
-						</div>
-						<div ng-show="errors.length==0">There was an error processing the sample file.</div>				
-					</div>
-	              <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>
-	              
-					<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>
-				</div>
-				 -->
+
 				<samples-plugin project="project" ng-if="project.id"></samples-plugin>
 			
 			</tab>
