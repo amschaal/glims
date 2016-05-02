@@ -13,16 +13,33 @@ class SamplePlugin(object):
     js_files = ['vendor/ui-grid/ui-grid.min.js']
     allowed_models = [Project]
 #     extra_context = {'BASE_URL':settings.BASE_URL,'foo':'bar'} #to be passed to template
-"""
+
 class NotePlugin(object):
     id = 'note-plugin'
     name = 'Note Plugin'
     description = 'Allows addition of notes'
 #     template = 'glims/plugins/notes.html'
-    js_files = ['attachments/static/attachments/js/pages/notes.js']
-    css_files = ['attachments/static/attachments/css/attachments.js','sdfsdf']
+    js_files = ['attachments/js/directives/notes.js']
+    css_files = ['attachments/css/attachments.css']
     allowed_models = [Project,Sample,Pool]
-
+class URLPlugin(object):
+    id = 'url-plugin'
+    name = 'URL Plugin'
+    description = 'Allows addition of urls'
+#     template = 'glims/plugins/notes.html'
+    js_files = ['attachments/js/directives/urls.js']
+    css_files = ['attachments/css/attachments.css']
+    allowed_models = [Project,Sample,Pool]
+class FilePlugin(object):
+    id = 'file-plugin'
+    name = 'File Plugin'
+    description = 'Allows addition of files'
+#     template = 'glims/plugins/notes.html'
+    js_files = ['attachments/js/vendor/ng-file-upload/ng-file-upload-shim.min.js','attachments/js/vendor/ng-file-upload/ng-file-upload.min.js','attachments/js/directives/files.js']
+    css_files = ['attachments/css/attachments.css']
+    allowed_models = [Project,Sample,Pool]
+    
+"""
 class BiosharePlugin(object):
     id = 'bioshare_plugin'
     name = 'Bioshare plugin'

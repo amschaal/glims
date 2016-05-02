@@ -40,34 +40,21 @@ table.details th {
 		                	<tr><th>Description</th><td style="white-space: pre-wrap;">{[project.description]}</td></tr>
 		                	<tr><th>Related Projects</th><td><span ng-repeat="p in project.related_projects"><a title="Group: {[p.group__name]}, Lab: {[p.lab__name]}" href="{[getURL('project',{pk:p.id})]}">{[p.name]}</a>{[$last ? '' : ', ']}</span></td></tr>
 		                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
-		                	<!-- <tr><th colspan="2"><a href="{% url 'project_files' pk=project.pk %}">View Data</a></th></tr> -->
-		                </tbody>
+	                	</tbody>
 		              </table>
 
-				<samples-plugin project="project" ng-if="project.id"></samples-plugin>
-			
-			</tab>
-			
+					<samples-plugin project="project" ng-if="project.id"></samples-plugin>
+				</tab>
               	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-              	{% with project as object %}
-              		{% include "attachments/partials/notes.html" %}
-              	{% endwith%}
+              		<attachment-notes object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-notes>
               	</tab>
               	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
-              	{% with project as object %}
-              		{% include "attachments/partials/attached_files.html" %}
-              	{% endwith%}
+              		<attachment-files object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-files>
               	</tab>
   	           	<tab heading="URLs ({[attachments_object.urls]})" active="tabs['urls']">
-	           	{% with project as object %}
-	           		{% include "attachments/partials/attached_urls.html" %}
-	           	{% endwith%}
+		           <attachment-urls object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-urls>
 	           	</tab>
 			</tabset> 
-			
-			
-			
-			  {% include 'glims/partials/plugins.html' with object=project model='project' pk=project.id %}
           </div>
         </div>
       </div>
