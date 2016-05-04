@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     
     url(r'^api/get_plugins/$', 'plugins.api.get_plugins', name='get_plugins'),
     url(r'^api/model_type/(?P<pk>\d+)/available_plugins/$', 'plugins.api.available_model_type_plugins', name='available_model_type_plugins'),
+    url(r'^api/content_type/(?P<content_type>\d+)/object/(?P<pk>\d+)/plugins/$', 'plugins.api.object_plugins', name='object_plugins'),
     url(r'^api/', include(router.urls)),
 
 )

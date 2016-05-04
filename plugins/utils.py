@@ -11,4 +11,14 @@ def get_available_plugins(content_type_id):
         if content_type_id in [ct.pk for ct in plugin.get_content_types()]:
             plugins.append(plugin)
     return plugins
+    
+class PluginManager(object):
+    def __init__(self):
+        PLUGINS = getattr(settings,'PLUGINS')
+        self.plugins = {}
+        for plugin_string in PLUGINS:
+            plugin = import_string(plugin_string)
+            self.plugins[plugin.id] = plugin
+    def get_plugin(self,id):
+        return self.plugins[id]
         

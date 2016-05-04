@@ -48,12 +48,7 @@
 	              </table>
 				</div>
 			</tab>
-          	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-           		<attachment-notes object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></attachment-notes>
-           	</tab>
-           	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
-           		<attachment-files object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></attachment-files>
-           	</tab>
+          	<object-plugins object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></object-plugins>    
 			</tabset> 
           </div>
         </div>

@@ -17,7 +17,7 @@ table.details th {
 
 <div class="row" ng-cloak>
       <div class="col-lg-12">
-        <div class="widget" ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'});tabs['{{tab}}']=true;object_id='{{project.id}}';content_type={{project | content_type_id}};">
+        <div class="widget" ng-controller="ProjectController" ng-init="tabs['{{tab}}']=true;object_id='{{project.id}}';content_type={{project | content_type_id}};init({project:'{{project.id}}'});">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> {[project.name]}
             <div class="pull-right" notification-subscription object-id="{{project.id}}" content-type="{{project | content_type_id}}"></div>
@@ -42,12 +42,14 @@ table.details th {
 		                	<tr ng-repeat="field in project.type.fields"><th>{[field.label]}</th><td>{[project.data[field.name]]}</td></tr>
 	                	</tbody>
 		              </table>
-
 				</tab>
-				<tab ng-repeat="plugin in plugins">
+				<!--  <tab ng-repeat="plugin in plugins">
 					<uib-tab-heading><span bind-unsafe-html="plugin.header"></span></uib-tab-heading>
 					<div bind-unsafe-html="plugin.template"></div>
 				</tab>
+				-->
+				<object-plugins object-id="{{project.id}}" content-type="{{project | content_type_id}}"></object-plugins>
+				<!--  <object-plugins ng-init="objectId={{project.id}};contentType={{project | content_type_id}};"></object-plugins> -->
 			</tabset> 
           </div>
         </div>
