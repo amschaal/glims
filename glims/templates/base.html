@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Dashboard</title>
+	<title>Genome Center LIMS</title>
 
   <script src="{% url 'jsurls' %}"></script>
    {% compress css %}
@@ -54,7 +54,6 @@
   <script src="/static/js/services/project_service.js"></script>
   <script src="/static/js/services/sample_service.js"></script>
   <script src="/static/js/services/pool_service.js"></script>
-  <script src="/static/bioinformatics/js/resources/models.js"></script>
   <!-- <script src="//cdn.jsdelivr.net/angular.initial-value/latest/angular-initial-value.min.js"></script> -->
   
   <script src="/static/vendor/angular-growl/angular-growl.min.js"></script>
@@ -64,7 +63,6 @@
   
   <script src="/static/js/modals/formly_modal.js"></script>
   
-  <script src="/static/js/plugins/samples.plugin.js"></script>
   <!-- experimental -->
   <!-- 
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-sanitize.js"></script>
@@ -87,7 +85,7 @@
 
   <script src="{% static 'js/forms/widgets.js' %}"></script>
   <script src="{% static 'js/controllers/cart.js' %}"></script>
-  
+  <script src="/static/js/directives/plugins.js"></script>
   {% for js in plugins.js %}
   	<script src="/static/{{js}}"></script>
   {% endfor %}  

@@ -1,5 +1,3 @@
-//will happen elsewhere
-angular.module("plugins",[]);
 //angular.module("plugin-base",[])
 //.directive('plugin',function(){
 //	return {
@@ -31,6 +29,9 @@ angular.module("samples-plugin")
 		controller: function ($scope,$rootScope,$http,$log,$uibModal) {
 			$scope.getURL = $rootScope.getURL;
 			$scope.errors = false;
+			function updateSampleCount(){
+				$rootScope.sample_count = $scope.samples ? $scope.samples.length : 0;
+			}
 			$scope.save = function(sample){
 				$log.info('save',sample);
 				var onSuccess = function(response){delete sample.errors;};
@@ -50,9 +51,13 @@ angular.module("samples-plugin")
 				$log.info(row,index);
 				if (row.entity.id){
 					if (confirm("Are you sure you want to delete this sample and all associated data?"))
-						row.entity.$remove(function(){$scope.gridOptions.data.splice(index,1);});
+						row.entity.$remove(function(){
+							$scope.gridOptions.data.splice(index,1);
+							updateSampleCount();
+						});
 				}else{
 					$scope.gridOptions.data.splice(index,1);
+					updateSampleCount()
 				}
 
 			};
@@ -85,6 +90,7 @@ angular.module("samples-plugin")
 				$scope.samples = Sample.query({project:$scope.project.id},function() {
 					$scope.gridOptions.data = $scope.samples;
 					console.log($scope.gridOptions);
+					updateSampleCount()
 //					$scope.gridApi.core.refresh(); //gridApi
 				});
 			}
@@ -154,6 +160,7 @@ angular.module("samples-plugin")
 								row.entity = updatedSample;
 							else
 								$scope.samples.push(updatedSample);
+							updateSampleCount()
 						}
 				);
 			}
@@ -173,6 +180,7 @@ angular.module("samples-plugin")
 angular.module("samples-plugin").run(['$templateCache', function($templateCache) {
 	$templateCache.put('template/plugins/samples.html',
 			'<h3>Samples</h3>\
+			<div ng-if="project.id">\
 			<p>\
 			<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import TSV samplesheet</button>\
 			<br><a href="{[sampleDownloadURL()]}">Download</a> template\
@@ -191,7 +199,8 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 				<div ng-show="errors.length==0">There was an error processing the sample file.</div>\
 			</div>\
 			<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>\
-			<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>'
+			<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>\
+			</div>'
 	);
 }]);
 

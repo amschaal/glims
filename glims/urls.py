@@ -8,7 +8,6 @@ admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
 from proteomics import urls as proteomics_urls
-from bioinformatics import urls as bioinformatics_urls
 from extensible import urls as extensible_urls
 from django_compute import urls as compute_urls
 from django_formly import urls as formly_urls
@@ -78,7 +77,7 @@ urlpatterns += patterns('',
     url(r'^permissions/', include(permission_urls.urlpatterns)),
     url(r'^attachments/', include(attachment_urls.urlpatterns)),
     url(r'^proteomics/', include(proteomics_urls.urlpatterns)),
-    url(r'^bioinformatics/', include(bioinformatics_urls.urlpatterns)),
+#     url(r'^bioinformatics/', include(bioinformatics_urls.urlpatterns)),
     url(r'^sample/(?P<pk>[\-\w]+)/$', 'glims.views.sample', name='sample'),
     url(r'^api/add_samples_to_cart/$', 'glims.api.views.add_samples_to_cart', name='add_samples_to_cart'),
     url(r'^api/remove_samples_from_cart/$', 'glims.api.views.remove_samples_from_cart', name='remove_samples_from_cart'),
@@ -91,6 +90,7 @@ urlpatterns += patterns('',
     url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.views.add_pool_samples', name='add_pool_samples'),
     url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.views.project_files', name='get_project_files'),
     url(r'^samples/', include('glims.samples.urls')),
+    url(r'^plugins/', include('plugins.urls')),
     url(r'^extensible/', include(extensible_urls.urlpatterns)),
     url(r'^compute/', include(compute_urls.urlpatterns)),
     url(r'^formly_forms/', include(formly_urls.urlpatterns)),

@@ -25,16 +25,13 @@
 	                </tbody>
 	              </table>
               </tab>
-              <tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-              	{% with sample as object %}
-              		{% include "attachments/partials/notes.html" %}
-              	{% endwith%}
-              	</tab>
-              	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
-              	{% with sample as object %}
-              		{% include "attachments/partials/attached_files.html" %}
-              	{% endwith%}
-              	</tab>
+          	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
+           		<attachment-notes object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></attachment-notes>
+           	</tab>
+           	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
+           		<attachment-files object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></attachment-files>
+           	</tab>
+              
 			</tabset>   
           </div>
         </div>

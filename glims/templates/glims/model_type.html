@@ -3,10 +3,11 @@
 {% block page %}Pools{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'model_types' %}">Model Types</a> / {{model_type.name}} {% endblock %}
 {% block content %}
+<script src="/static/js/resources/plugins.js"></script>
 <script>
 
-
-angular.module('mainapp').controller('DesignerController', function($scope,$http) {
+angular.module('glims.core').requires.push('pluginModels');
+angular.module('mainapp').controller('DesignerController', function($scope,$http,ModelTypePlugin) {
     $scope.field_types = ['text','textarea','file','radio','float','integer','select','checkbox'];
     $scope.fields=[];
     $scope.initialize = function(init){
@@ -21,6 +22,10 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
     	if (init.description)
     		$scope.description = init.description;
     	$scope.urls = init.urls;
+    	$scope.plugins = ModelTypePlugin.query({type:init.id});
+    	$http.get($scope.getURL('available_model_type_plugins',{pk:init.id})).then(function(response){
+    		$scope.available_plugins = response.data;
+    	});
     }
     $scope.save = function(){
     	console.log('posting: ',$scope.id, $scope.fields);
@@ -46,6 +51,31 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
     	if(confirm('Are you sure you want to remove this field?'))
     		$scope.fields.splice(index,1);
     }
+    
+    $scope.savePlugins = function(){
+    	angular.forEach($scope.plugins,function(plugin,index){
+    		if(plugin.id)
+    			plugin.$save();
+        	else
+        		plugin.$create();    		
+    	});
+    }
+    $scope.addPlugin = function(plugin){
+    	$scope.plugins.push(new ModelTypePlugin({type:$scope.id,plugin:plugin,order:1}))
+    }
+    $scope.deletePlugin = function(plugin,index){
+    	console.log('delete',plugin.plugin.name,index);
+    	plugin.$remove(function(){
+    		$scope.plugins.splice($scope.plugins.indexOf(plugin),1);
+    	});
+    }
+    $scope.showPlugin = function( plugin ) {
+    	var using = $scope.plugins.map(function(plugin){return plugin.plugin.id});
+    	  return function( plugin ) {
+    	    return using.indexOf(plugin.id) == -1;
+    	  };
+    	};
+    
   });
 
 </script>
@@ -58,7 +88,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
           </div>
 		<div class="widget-body" ng-controller="DesignerController" ng-init='initialize({{init|safe}})'>
 		<table class="table">
-		<tr><th>Content Type</th><td><input ng-model="content_type"/></td></tr>
+		<tr><th>Content Type</th><td>{[content_type]}</td></tr>
 		<tr><th>Name</th><td><input ng-model="name"/></td></tr>
 		<tr><th>Description</th><td><textarea ng-model="description">{[description]}</textarea></td></tr>
 		</table>
@@ -87,8 +117,31 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 				</td>
 			</tr>
 			</table>
-			<button class="btn btn-sm btn-primary" ng-click="addField()">Add Field</button>
-			<button class="btn btn-sm btn-success" ng-click="save()" ng-if="id != null">Save</button>
+			<button class="btn btn-sm btn-success" ng-click="addField()">Add Field</button>
+			<button class="btn btn-sm btn-primary" ng-click="save()" ng-if="id != null">Save</button>
+			
+			
+			<h3>Plugins</h3>
+			<table class="table">
+			<tr><th>Order</th><th>Name</th><th>Description</th></tr>
+			<tr ng-repeat="plugin in plugins|orderBy:'order' track by $index">
+				<td><input ng-model="plugin.order" type="int"/></td>
+				<td>{[plugin.plugin.name]}</td>
+				<td>{[plugin.plugin.description]} <button class="btn btn-danger pull-right" ng-click="deletePlugin(plugin,$index)">Remove</button></td>
+			</tr>
+			</table>
+			<button class="btn btn-primary" ng-click="savePlugins()">Save Plugins</button>
+			
+			<h3>Available Plugins</h3>
+			<table class="table" ng-show="available_plugins.length > 0">
+			<tr><th>Name</th><th>Description</th></tr>
+			<tr ng-repeat="plugin in available_plugins | filter:showPlugin(plugin)">
+				<td>{[plugin.name]}</td>
+				<td>{[plugin.description]} <button class="btn btn-success pull-right" ng-click="addPlugin(plugin)">Add</button></td>
+			</tr>
+			</table>
+			<h4 ng-if="available_plugins < 1">There are no additional plugins available</h4>
+
 			
 		</div>
 		</div>

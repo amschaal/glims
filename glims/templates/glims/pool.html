@@ -48,16 +48,12 @@
 	              </table>
 				</div>
 			</tab>
-			<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-              	{% with pool as object %}
-              		{% include "attachments/partials/notes.html" %}
-              	{% endwith%}
+          	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
+           		<attachment-notes object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></attachment-notes>
            	</tab>
            	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
-              	{% with pool as object %}
-              		{% include "attachments/partials/attached_files.html" %}
-              	{% endwith%}
-              	</tab>
+           		<attachment-files object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></attachment-files>
+           	</tab>
 			</tabset> 
           </div>
         </div>

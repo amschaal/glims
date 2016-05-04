@@ -17,7 +17,7 @@ table.details th {
 
 <div class="row" ng-cloak>
       <div class="col-lg-12">
-        <div class="widget" ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'});tabs['{{tab}}']=true;">
+        <div class="widget" ng-controller="ProjectController" ng-init="init({project:'{{project.id}}'});tabs['{{tab}}']=true;object_id='{{project.id}}';content_type={{project | content_type_id}};">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> {[project.name]}
             <div class="pull-right" notification-subscription object-id="{{project.id}}" content-type="{{project | content_type_id}}"></div>
@@ -43,17 +43,11 @@ table.details th {
 	                	</tbody>
 		              </table>
 
-					<samples-plugin project="project" ng-if="project.id"></samples-plugin>
 				</tab>
-              	<tab heading="Notes ({[attachments_object.notes]})" active="tabs['notes']">
-              		<attachment-notes object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-notes>
-              	</tab>
-              	<tab heading="Files ({[attachments_object.files]})" active="tabs['files']">
-              		<attachment-files object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-files>
-              	</tab>
-  	           	<tab heading="URLs ({[attachments_object.urls]})" active="tabs['urls']">
-		           <attachment-urls object-id="{{project.id}}" content-type="{{project | content_type_id}}"></attachment-urls>
-	           	</tab>
+				<tab ng-repeat="plugin in plugins">
+					<uib-tab-heading><span bind-unsafe-html="plugin.header"></span></uib-tab-heading>
+					<div bind-unsafe-html="plugin.template"></div>
+				</tab>
 			</tabset> 
           </div>
         </div>

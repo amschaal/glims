@@ -7,26 +7,26 @@ from extensible.models import ModelType
 # from glims.lims import Lab, Sample, Pool, Project
 
     
-class Plugin(models.Model):
-    id = models.CharField(max_length=50,primary_key=True)
-    app = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
-    description = models.TextField()
-    page = models.CharField(max_length=50) #choices= Project, Sample, Experiment
-    template = models.CharField(max_length=250) #template to render
-    model_types = models.ManyToManyField(ModelType,null=True,blank=True, through='ModelTypePlugins',related_name='plugins')
-    def __unicode__(self):
-        return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
-
-class ModelTypePlugins(models.Model):
-    INLINE_LAYOUT = 'inline'
-    TABBED_LAYOUT = 'tabbed'
-    LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
-    type = models.ForeignKey(ModelType)
-    plugin = models.ForeignKey(Plugin)
-    weight = models.IntegerField(default=0)
-    layout = models.CharField(max_length=10,choices=LAYOUTS)
-    header = models.CharField(max_length=30, null=True, blank=True)
+# class Plugin(models.Model):
+#     id = models.CharField(max_length=50,primary_key=True)
+#     app = models.CharField(max_length=50)
+#     name = models.CharField(max_length=50)
+#     description = models.TextField()
+#     page = models.CharField(max_length=50) #choices= Project, Sample, Experiment
+#     template = models.CharField(max_length=250) #template to render
+#     model_types = models.ManyToManyField(ModelType,null=True,blank=True, through='ModelTypePlugins',related_name='plugins')
+#     def __unicode__(self):
+#         return "App: %s, Page: %s, Plugin: %s" % (self.app,self.page,self.name)
+# 
+# class ModelTypePlugins(models.Model):
+#     INLINE_LAYOUT = 'inline'
+#     TABBED_LAYOUT = 'tabbed'
+#     LAYOUTS = ((INLINE_LAYOUT,'Inline'),(TABBED_LAYOUT,'Tab'))
+#     type = models.ForeignKey(ModelType)
+#     plugin = models.ForeignKey(Plugin)
+#     weight = models.IntegerField(default=0)
+#     layout = models.CharField(max_length=10,choices=LAYOUTS)
+#     header = models.CharField(max_length=30, null=True, blank=True)
 
 class Status(models.Model):
 #     id = models.CharField(max_length=20,primary_key=True)

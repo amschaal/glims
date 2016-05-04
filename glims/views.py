@@ -8,7 +8,6 @@ from sendfile import sendfile
 from forms import PoolForm, LabForm, ProjectTypeForm
 import json
 from django_compute.models import Job
-from glims.models import ModelTypePlugins
 
 @login_required
 def home(request):
@@ -17,9 +16,7 @@ def home(request):
 def project(request, pk):
     project = Project.objects.get(pk=pk)
     content_type_id = ContentType.objects.get_for_model(project).id
-    inlines = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='project').order_by('weight')
-    tabs = ModelTypePlugins.objects.filter(type=project.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='project').order_by('weight')
-    return render(request, 'glims/project.html', {'project':project,'inlines':inlines,'tabs':tabs,'content_type_id':content_type_id} ,context_instance=RequestContext(request))
+    return render(request, 'glims/project.html', {'project':project,'content_type_id':content_type_id} ,context_instance=RequestContext(request))
 @login_required
 def project_files(request,pk):
     project = Project.objects.get(pk=pk)
@@ -27,9 +24,7 @@ def project_files(request,pk):
 @login_required
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
-    inlines = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.INLINE_LAYOUT, plugin__page='sample').order_by('weight')
-    tabs = ModelTypePlugins.objects.filter(type=sample.type,layout=ModelTypePlugins.TABBED_LAYOUT, plugin__page='sample').order_by('weight')
-    return render(request, 'glims/sample.html', {'sample':sample,'inlines':inlines,'tabs':tabs} ,context_instance=RequestContext(request))
+    return render(request, 'glims/sample.html', {'sample':sample} ,context_instance=RequestContext(request))
 @login_required
 def pool(request,pk):
     pool = Pool.objects.get(pk=pk)
