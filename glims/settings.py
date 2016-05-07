@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'proteomics',
 #     'bioinformatics',
     'plugins',
+    'tasks',
     'guardian',
     'rest_framework',
     'rest_framework.authtoken',

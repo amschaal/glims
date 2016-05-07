@@ -4,6 +4,7 @@
 {% block page %}Project{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'projects' %}">Projects</a> / <a href="{% url 'lab' pk=project.lab.id %}">{{project.lab}}</a> / {{project.name}} {% endblock %}
 {% block content %}
+
 <style>
 .input-error{
 background-color: pink;

@@ -31,8 +31,10 @@ angular.module("plugins").directive('bindUnsafeHtml', ['$compile', function ($co
 		scope: false,
 		replace: true,
 		controller: function ($scope,$rootScope,$http,$attrs) {
+			$scope.loaded
 			$scope.object_id = $attrs['objectId'];
 			$scope.content_type = $attrs['contentType'];
+//			$scope.loaded = function(){alert('loaded')};
 			console.log('plugin scope',$scope,$attrs);
 			$http.get($rootScope.getURL('object_plugins',{content_type:$scope.content_type,pk:$scope.object_id}))
 				.then(function(response){
@@ -42,14 +44,32 @@ angular.module("plugins").directive('bindUnsafeHtml', ['$compile', function ($co
 			);
 		}
 	}
+})
+.directive('loadOnSelect', function() {
+	return {
+		restrict: 'AE',
+		templateUrl: 'template/plugins/load-on-select.html',
+		scope: false,
+		transclude: true,
+		controller: function ($scope,$rootScope,$http,$attrs) {
+			console.log('load on select',$scope,$attrs);
+			$scope._plugin = $scope.$parent.plugin;
+			
+		}
+	}
 });
 
 angular.module("plugins").run(['$templateCache', function($templateCache) {
 	$templateCache.put('template/plugins/object-plugins.html',
-		'<tab ng-repeat="plugin in plugins">\
+		'<tab ng-repeat="plugin in plugins" select="plugin.load=true;">\
 			<uib-tab-heading><span bind-unsafe-html="plugin.header"></span></uib-tab-heading>\
 			<!--{[plugin.template]}-->\
 			<div bind-unsafe-html="plugin.template"></div>\
 		</tab>'
+	);
+}]);
+angular.module("plugins").run(['$templateCache', function($templateCache) {
+	$templateCache.put('template/plugins/load-on-select.html',
+		'<div ng-if="_plugin.load" ng-transclude></div>'
 	);
 }]);

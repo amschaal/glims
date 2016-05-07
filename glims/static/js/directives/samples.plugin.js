@@ -179,7 +179,8 @@ angular.module("samples-plugin")
 
 angular.module("samples-plugin").run(['$templateCache', function($templateCache) {
 	$templateCache.put('template/plugins/samples.html',
-			'<h3>Samples</h3>\
+			'<load-on-select>\
+			<h3>Samples</h3>\
 			<div ng-if="project.id">\
 			<p>\
 			<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import TSV samplesheet</button>\
@@ -200,7 +201,8 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 			</div>\
 			<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>\
 			<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>\
-			</div>'
+			</div>\
+			</load-on-select>'
 	);
 }]);
 

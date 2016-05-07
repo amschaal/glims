@@ -41,5 +41,6 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
 	
 	$scope.sample_plugin = "<samples-plugin project='project' ng-if='project.id'></samples-plugin>";
 //	$scope.sample_plugin = '<h2>Test</h2>';
+
 }
 

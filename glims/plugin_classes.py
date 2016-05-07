@@ -63,6 +63,8 @@ class FilePlugin(BasePlugin):
     @staticmethod
     def get_header_template(obj):
         return 'Files ({[attachments_object.files]})'
+    
+
 """
 class BiosharePlugin(object):
     id = 'bioshare_plugin'
