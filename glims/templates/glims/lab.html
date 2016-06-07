@@ -18,7 +18,7 @@
           	
           		<table class="table borderless">
           		<tr><th>Name</th><td>{{lab.name}}</td></tr>
-          		<tr><th>URL</th><td>{{lab.url}}</td></tr>
+          		<tr><th>URL</th><td>{% if lab.url%}<a href="{{lab.url}}">{{lab.url}}</a>{% else %}{{lab.url}}{% endif %}</td></tr>
           		<tr><th>Description</th><td style="white-space: pre-wrap;">{{lab.description}}</td></tr>
           		</table>
 				<tabset>
