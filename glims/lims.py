@@ -58,6 +58,7 @@ class MyModelExtended(MyModel):
 class Lab(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    url = models.URLField(blank=True,null=True)
     slug = models.SlugField(max_length=20,unique=True,null=True)
 #     cloudstore = models.ForeignKey(CloudStore,null=True,blank=True,on_delete=models.SET_NULL)
 #     def create_cloudstore(self):
