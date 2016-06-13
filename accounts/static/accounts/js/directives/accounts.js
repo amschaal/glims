@@ -8,9 +8,11 @@ angular.module("accounts-plugin")
 		restrict: 'AE',
 		templateUrl: 'template/accounts/accounts.html',
 		scope: {
-			projectId:'='
+			projectId:'=',
+			types:'='
 		},
 		controller: function ($scope,$rootScope) {
+			console.log('TYPES!!!',$scope.types);
 			$scope.accounts = [];
 			function setAccountsCount(){
 				$rootScope.accounts_count = $scope.accounts.length;
@@ -52,11 +54,16 @@ angular.module("accounts-plugin").run(['$templateCache', function($templateCache
 	<table class="table" ng-if="accounts.length">\
 	<tr class="no-border-top"><th>Type</th><th>Account</th><th>Description</th><td></td></tr>\
 	<tr ng-repeat="account in accounts">\
-	<td ng-if="!account.editing">{[account.type]}</span></td>\
+	<td ng-if="!account.editing">{[types[account.type]]}</span></td>\
 	<td ng-if="account.editing">\
-		<input ng-model="account.type"/>\
+			<p class="error" ng-repeat="error in account.errors.type">{[error]}</p>\
+			<select ng-options="id as label for (id,label) in types" ng-model="account.type"></select>\
 	</td>\
-	<td ng-if="!account.editing">{[account.account]}</td><td ng-if="account.editing"><input ng-model="account.account"/></td>\
+	<td ng-if="!account.editing">\
+			<p class="error" ng-repeat="error in account.errors.account">{[error]}</p>\
+			{[account.account]}\
+	</td>\
+	<td ng-if="account.editing"><input ng-model="account.account"/></td>\
 	<td ng-if="!account.editing">{[account.description]}</td><td ng-if="account.editing"><textarea ng-model="account.description"></textarea></td>\
 	<td>\
 		<button class="btn btn-xs btn-danger pull-right" ng-click="deleteAccount($index)">Delete</button>\
