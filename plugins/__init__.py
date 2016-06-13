@@ -4,6 +4,7 @@ class BasePlugin(object):
     css_files = []
     js_files = []
     allowed_models=[]
+    urls = None
     @classmethod
     def get_content_types(cls):
         from django.contrib.contenttypes.models import ContentType

@@ -57,7 +57,8 @@ INSTALLED_APPS = (
     'django_compute',
     'autocomplete_light',
     'django_cloudstore',
-    'notifications'
+    'notifications',
+    'accounts'
 )
 
 STATICFILES_FINDERS = (

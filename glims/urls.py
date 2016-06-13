@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from glims import views as glims_views
 from django.contrib import admin
+from plugins.utils import PluginManager
 admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
@@ -98,5 +99,8 @@ urlpatterns += patterns('',
     url(r'^notifications/', include(notification_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+plugin_manager = PluginManager()
+urlpatterns += plugin_manager.get_urls()
 
  

@@ -21,4 +21,11 @@ class PluginManager(object):
             self.plugins[plugin.id] = plugin
     def get_plugin(self,id):
         return self.plugins[id]
+    def get_urls(self):
+        urls = []
+        for plugin in self.plugins.values():
+            if plugin.urls:
+                urls.append(plugin.urls)
+        return urls
+            
         
