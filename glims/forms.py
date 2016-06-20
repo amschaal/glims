@@ -239,7 +239,7 @@ class PoolForm(ExtensibleModelForm):
 class LabForm(forms.ModelForm):
     class Meta:
         model = Lab
-        fields = ('name','url','description','slug')
+        fields = ('name','affiliation','url','description','slug')
 
 # class ProcessTemplate(models.Model):
 #     type = models.ForeignKey(ModelType)

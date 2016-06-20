@@ -55,18 +55,14 @@
                     placeholder: 'Search',
                     required: false,
                     options: [],
-//                    url: '/api/get/url',
                     refresh: function(name,field){
                     	if (name.length < field.templateOptions.minSearchChar){
                     		field.templateOptions.options = [];
                     		return;
                     	}
-//                    	console.log(name,field);
                     	var queryParams = {};
                     	queryParams[field.templateOptions.searchParam] = name;
-//                    	return $http.get(field.templateOptions.url,queryParams);
-          			  return  $http.get(field.templateOptions.url,queryParams).then(function(response){
-//          				  console.log('results',response);
+          			  return  $http.get(field.templateOptions.url,{params:queryParams}).then(function(response){
           				  field.templateOptions.options = response.data.results;
           			  });
                     },
