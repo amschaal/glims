@@ -7,7 +7,7 @@
 <script>
 
 angular.module('glims.core').requires.push('pluginModels');
-angular.module('mainapp').controller('DesignerController', function($scope,$http,ModelTypePlugin) {
+angular.module('mainapp').controller('DesignerController', function($scope,$http,ModelTypePlugin,Status) {
     $scope.field_types = ['text','textarea','file','radio','float','integer','select','checkbox'];
     $scope.fields=[];
     $scope.initialize = function(init){
@@ -23,6 +23,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
     		$scope.description = init.description;
     	$scope.urls = init.urls;
     	$scope.plugins = ModelTypePlugin.query({type:init.id});
+    	$scope.statuses = Status.query({model_type:init.id});
     	$http.get($scope.getURL('available_model_type_plugins',{pk:init.id})).then(function(response){
     		$scope.available_plugins = response.data;
     	});
@@ -142,7 +143,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 			</table>
 			<h4 ng-if="available_plugins < 1">There are no additional plugins available</h4>
 
-			
+			{[statuses]}
 		</div>
 		</div>
 	</div>

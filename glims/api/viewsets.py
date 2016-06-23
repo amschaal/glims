@@ -7,10 +7,11 @@ from extensible.drf.viewsets import ExtensibleViewset
 from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
-    LabSerializer, GroupSerializer
+    LabSerializer, GroupSerializer, StatusSerializer
 from glims.lims import Project, Sample, Pool, Lab
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
+from glims.models import Status
 
 
 # from glims.api.permissions import CustomPermission
@@ -31,7 +32,6 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
             return Group.objects.all().order_by('id')
         return self.request.user.groups.all()
 
-
 class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = ModelTypeSerializer
     permission_classes = [IsAuthenticated,AdminOrReadOnlyPermission]
@@ -42,6 +42,14 @@ class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
     queryset = ModelType.objects.all()
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Experiment)
+
+class StatusSerializerViewSet(viewsets.ModelViewSet):
+    serializer_class = StatusSerializer
+    permission_classes = [IsAuthenticated,AdminOrReadOnlyPermission]
+    filter_fields = {'model_type':['exact']}
+#     ordering_fields = ('content_type__model', 'name')
+    model = Status
+    queryset = Status.objects.all()
 
 class ProjectViewSet(ExtensibleViewset):
     serializer_class = ProjectSerializer
@@ -90,7 +98,7 @@ class PoolViewSet(ExtensibleViewset):
     def get_queryset(self):
         return Pool.objects.all()
 #         return get_all_user_objects(self.request.user, ['view'], Pool)
-        
+
 
 class JobViewset(viewsets.ReadOnlyModelViewSet):
     model = Job

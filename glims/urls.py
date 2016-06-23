@@ -24,7 +24,8 @@ urlpatterns = patterns('',)
 #     )
 
 from rest_framework import routers
-from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet
+from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet,\
+    StatusSerializerViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
@@ -36,9 +37,7 @@ router.register(r'pools', PoolViewSet,'Pool')
 router.register(r'jobs', JobViewset,'Job')
 # router.register(r'submissions', JobSubmissionViewset)
 router.register(r'labs', LabViewSet,'Lab')
-
-
-
+router.register(r'statuses', StatusSerializerViewSet,'Status')
 
 urlpatterns += patterns('',
     # Examples:

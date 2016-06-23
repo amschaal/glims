@@ -15,6 +15,15 @@ angular.module('glimsModels', ['ngResource'])
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
   });
 }])
+.factory('Status', ['$resource', function ($resource) {
+  return $resource('/api/statuses/:id/', {id:'@id'}, {
+    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
+    save : { method : 'PUT' },
+    patch : { method : 'PATCH' },
+    create : { method : 'POST' },
+    remove : { method : 'DELETE' }
+  });
+}])
 .factory('User', ['$resource', function ($resource) {
   return $resource('/api/users/:id/', {id:'@id'}, {
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
