@@ -51,20 +51,22 @@ angular.module('utility.directives', [])
             optionId:'@',
             optionLabel: '@',
             onSuccess : '&?',
-            onError : '&?'
+            onError : '&?',
+            orderByField: '&?'
         },
 //        <select ng-change="setStatus(row)" ng-options="option.name for option in row.status_options track by option.id" ng-model="row.new_status" ng-init="row.new_status.id = row.status;"></select>
 //    	<i class="fa fa-folder" ng-if="row.archived" title="Archived"></i>
 //    	<button ng-show="row.new_status.id != row.status" ng-click="saveStatus(row)">Save</button>
-        template: '<div>\
-        			<select ng-options="status[optionId] as status[optionLabel] for status in options" ng-model="resource[field]" ng-change="save()"></select>\
+        template: '<div ng-show="options.length > 0">\
+        				<select ng-options="status[optionId] as status[optionLabel] for status in options | orderBy:orderByField" ng-model="resource[field]" ng-change="save()"></select>\
 		        	</div>',
         link: function($scope, iElement, iAttrs) {
         	var defaults = {
         			'onSuccess': function(){alert($scope.field+' updated');},
         			'onError': function(){alert('Error updating '+$scope.field);},
         			'optionId': 'id',
-        			'optionLabel': 'name'
+        			'optionLabel': 'name',
+        			'orderByField': 'id'
         	}
         	for (var field in defaults)
         		$scope[field] = angular.isDefined($scope[field]) ? $scope[field]: defaults[field];

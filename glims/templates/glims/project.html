@@ -30,7 +30,7 @@ table.details th {
 				<tab heading="Details">
 		              <table class="table details">
 		              	<tbody>
-							<tr><th>Status</th><td><resource-field-select resource="project" field="status" options="project.status_options"></resource-field-select></td></tr>
+							<tr><th>Status</th><td><resource-field-select resource="project" field="status" options="project.status_options" order-by-field="order"></resource-field-select></td></tr>
 							<tr><th>ID</th><td>{[project.project_id]}</td></tr>
 							<tr><th>Type</th><td>{[project.type.name]}</td></tr>
 							<tr><th>Group</th><td>{[project.group.name]}</td></tr>

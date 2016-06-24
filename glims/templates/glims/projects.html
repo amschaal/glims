@@ -23,7 +23,7 @@
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}">
-		        	<resource-field-select resource="row" field="status" options="row.status_options"></resource-field-select>
+		        	<resource-field-select resource="row" field="status" options="row.status_options" order-by-field="order"></resource-field-select>
 		        </td>
 		      </tr>
 		    </table>
