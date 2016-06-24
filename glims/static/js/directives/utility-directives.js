@@ -39,4 +39,38 @@ angular.module('utility.directives', [])
             };
         }
     };
+}])
+.directive('resourceFieldSelect', [function() {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+        	resource: '=',
+        	field: '@',
+        	options: '=',
+            optionId:'@',
+            optionLabel: '@',
+            onSuccess : '&?',
+            onError : '&?'
+        },
+//        <select ng-change="setStatus(row)" ng-options="option.name for option in row.status_options track by option.id" ng-model="row.new_status" ng-init="row.new_status.id = row.status;"></select>
+//    	<i class="fa fa-folder" ng-if="row.archived" title="Archived"></i>
+//    	<button ng-show="row.new_status.id != row.status" ng-click="saveStatus(row)">Save</button>
+        template: '<div>\
+        			<select ng-options="status[optionId] as status[optionLabel] for status in options" ng-model="resource[field]" ng-change="save()"></select>\
+		        	</div>',
+        link: function($scope, iElement, iAttrs) {
+        	var defaults = {
+        			'onSuccess': function(){alert($scope.field+' updated');},
+        			'onError': function(){alert('Error updating '+$scope.field);},
+        			'optionId': 'id',
+        			'optionLabel': 'name'
+        	}
+        	for (var field in defaults)
+        		$scope[field] = angular.isDefined($scope[field]) ? $scope[field]: defaults[field];
+        	$scope.save = function(){
+        		$scope.resource.$save(null,$scope.onSuccess,$scope.onError);
+        	}
+        }
+    };
 }]);

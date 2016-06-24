@@ -1,6 +1,6 @@
 angular.module('glimsServices',['glims.formly','glims.ui'])
 .factory('DRFNgTableParams', ['NgTableParams','$http', function(NgTableParams,$http) {
-	return function(url,ngparams) {
+	return function(url,ngparams,resource) {
 		var params = {
 //				page: 1, // show first page
 //				filter:{foo:'bar'}, //filter stuff
@@ -19,7 +19,10 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 				return $http.get(url,{params:query_params}).then(function(response){
 					console.log(response.data);
 					params.total(response.data.count);
-					return response.data.results;
+					if (resource)
+						return response.data.results.map(function(obj){return new resource(obj);});
+					else
+						return response.data.results;
 				});
 			}
 		});

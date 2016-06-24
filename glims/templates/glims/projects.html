@@ -22,10 +22,8 @@
 		        <td data-title="'Lab'" sortable="'lab__name'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
-		        <td data-title="'Status'" >
-		        	<select ng-change="setStatus(row)" ng-options="option.name for option in row.status_options track by option.id" ng-model="row.new_status" ng-init="row.new_status.id = row.status;"></select>
-		        	<i class="fa fa-folder" ng-if="row.archived" title="Archived"></i>
-		        	<button ng-show="row.new_status.id != row.status" ng-click="saveStatus(row)">Save</button>
+		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}">
+		        	<resource-field-select resource="row" field="status" options="row.status_options"></resource-field-select>
 		        </td>
 		      </tr>
 		    </table>

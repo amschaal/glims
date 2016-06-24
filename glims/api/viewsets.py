@@ -56,10 +56,10 @@ class ProjectViewSet(ExtensibleViewset):
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
-    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact'],'manager__last_name':['icontains']}
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact'],'manager__last_name':['icontains'],'status__name':['icontains']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains']}
-    ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description','manager__last_name')
+    ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description','manager__last_name','status__name')
     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Project).prefetch_related(
           return Project.objects.select_related('type').prefetch_related(  
