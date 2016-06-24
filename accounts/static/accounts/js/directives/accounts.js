@@ -12,7 +12,6 @@ angular.module("accounts-plugin")
 			types:'='
 		},
 		controller: function ($scope,$rootScope) {
-			console.log('TYPES!!!',$scope.types);
 			$scope.accounts = [];
 			function setAccountsCount(){
 				$rootScope.accounts_count = $scope.accounts.length;
@@ -43,7 +42,13 @@ angular.module("accounts-plugin")
 				account.editing=true;
 				$scope.accounts.push(account);
 			};
-			$scope.accounts = Account.query({project:$scope.projectId},function(){setAccountsCount()});
+			
+			$scope.$watch('projectId',function(projectId,oldValue){
+				if (!projectId)
+					return;
+				$scope.accounts = Account.query({project:projectId},function(){setAccountsCount()});
+			});
+			
 		}
 	}
 });

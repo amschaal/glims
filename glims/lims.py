@@ -86,7 +86,7 @@ class Project(ExtensibleModel):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
-    status = models.ForeignKey(Status,null=True,blank=True)
+    status = models.ForeignKey(Status,null=True,blank=True, on_delete=models.SET_NULL)
     manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
     participants = models.ManyToManyField(User,related_name='+')
     related_projects = models.ManyToManyField('self')
