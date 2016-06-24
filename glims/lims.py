@@ -80,14 +80,14 @@ class Lab(models.Model):
 
 class Project(ExtensibleModel):
     project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
-    group = models.ForeignKey(Group)
+    group = models.ForeignKey(Group, on_delete=models.PROTECT)
     created = models.DateTimeField(auto_now_add=True)
     lab = models.ForeignKey(Lab, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
-    sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+")
-    status = models.ForeignKey(Status,null=True,blank=True, on_delete=models.SET_NULL)
-    manager = models.ForeignKey(User,null=True,blank=True,related_name='+')
+    sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+",on_delete=models.PROTECT)
+    status = models.ForeignKey(Status,null=True,blank=True, on_delete=models.PROTECT)
+    manager = models.ForeignKey(User,null=True,blank=True,related_name='+',on_delete=models.PROTECT)
     participants = models.ManyToManyField(User,related_name='+')
     related_projects = models.ManyToManyField('self')
     archived = models.BooleanField(default=False)
@@ -176,7 +176,7 @@ class Sample(ExtensibleModel):
 
 class Pool(ExtensibleModel):
     name = models.CharField(max_length=100)
-    group = models.ForeignKey(Group)
+    group = models.ForeignKey(Group,on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True)
     created = models.DateField(auto_now=True)
     samples = models.ManyToManyField(Sample,related_name='pools',null=True,blank=True)
