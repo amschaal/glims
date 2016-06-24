@@ -38,7 +38,9 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
 		$scope.project.$delete(function(){window.location.href = $scope.getURL('projects');})
 	}
 //	$http.get('/plugins/api/get_plugins/').then(function(response){console.log('plugin data',response.data);$scope.plugins=response.data});
-	
+	$scope.updateStatus = function(){
+		$scope.project.$save(null,function(){alert('status updated');});
+	}
 	$scope.sample_plugin = "<samples-plugin project='project' ng-if='project.id'></samples-plugin>";
 //	$scope.sample_plugin = '<h2>Test</h2>';
 

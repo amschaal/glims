@@ -30,11 +30,11 @@ table.details th {
 				<tab heading="Details">
 		              <table class="table details">
 		              	<tbody>
+							<tr><th>Status</th><td><select ng-options="status.id as status.name for status in project.status_options" ng-model="project.status" ng-change="updateStatus()"></select></td></tr>
 							<tr><th>ID</th><td>{[project.project_id]}</td></tr>
 							<tr><th>Type</th><td>{[project.type.name]}</td></tr>
 							<tr><th>Group</th><td>{[project.group.name]}</td></tr>
 							<tr><th>Lab</th><td>{[project.lab.name]}</td></tr>
-							<tr><th>Status</th><td>{[project.status]}</td></tr>
 							<tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
 							<tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
 							<tr><th>Participants</th><td><span ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}{[$last ? '' : ', ']}</span></td></tr>
