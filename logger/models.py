@@ -13,9 +13,11 @@ class Log(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     text = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
+    url = models.URLField(blank=True,null=True)
+    
 
 def CreateNotificationLog(sender,instance=None,**kwargs):
     if instance:
         ct = ContentType.objects.get_for_model(instance)
-        Log.objects.create(text=kwargs['text'],description=kwargs['description'],content_type=ct,object_id=str(instance.pk))
+        Log.objects.create(text=kwargs['text'],description=kwargs['description'],content_type=ct,object_id=str(instance.pk),url=kwargs['url'])
 notification_created.connect(CreateNotificationLog, Notification)
