@@ -62,7 +62,7 @@ class ProjectViewSet(ExtensibleViewset):
     ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description','manager__last_name','status__name')
     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Project).prefetch_related(
-          return Project.objects.select_related('type','sample_type','manager','lab').prefetch_related(  
+          return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
             Prefetch('type__status_options'),Prefetch('participants'),Prefetch('related_projects'))#, queryset=Status.objects.order_by('order')
 
@@ -81,7 +81,7 @@ class SampleViewSet(ExtensibleViewset):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-        queryset = Sample.objects.all()
+        queryset = Sample.objects.select_related('type','project').all()
         pool = self.request.query_params.get('pool', None)
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)

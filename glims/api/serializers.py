@@ -57,7 +57,6 @@ class FlatProjectSerializer(serializers.ModelSerializer):
         fields = ('id','name','description')
 
 class ProjectSerializer(ExtensibleSerializer):
-    lab__name = serializers.CharField(source='lab.name',read_only=True)
     sample_type = ModelRelatedField(model=ModelType,serializer=FlatModelTypeSerializer,required=False,allow_null=True)
     status_options = StatusSerializer(many=True,read_only=True,source='type.status_options')
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
@@ -69,10 +68,10 @@ class ProjectSerializer(ExtensibleSerializer):
     history = JSONField(read_only=True)
     class Meta:
         model = Project
+        fields = ('id','type','name','sample_type','data','status_options','lab','group','manager','participants','related_projects','history','project_id','created','description','archived','status')
 #         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options','referencing_projects','related_projects','group','participants','manager')
 
 class SampleSerializer(ExtensibleSerializer):
-    project__name = serializers.CharField(source='project.name',read_only=True)
     project = ModelRelatedField(model=Project,serializer=FlatProjectSerializer)
     class Meta:
         model = Sample

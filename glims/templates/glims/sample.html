@@ -19,7 +19,7 @@
 	              	<tbody>
 	              		<tr><th>Type</th><td>{[sample.type.name]}</td></tr>
 	              		<tr><th>Created</th><td>{[sample.created]}</td></tr>
-	              		<tr><th>Project</th><td><a href="{[getURL('project',{'pk':sample.project.id})]}">{[sample.project__name]}</a></td></tr>
+	              		<tr><th>Project</th><td><a href="{[getURL('project',{'pk':sample.project.id})]}">{[sample.project.name]}</a></td></tr>
 	                	<tr><th>Description</th><td>{[sample.description]}</td></tr>
 	                	<tr ng-repeat="field in sample.type.fields"><th>{[field.label]}</th><td>{[sample.data[field.name]]}</td></tr>
 	                </tbody>
