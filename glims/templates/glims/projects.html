@@ -18,7 +18,7 @@
 		        <td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
 		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
 		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
-		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type__name]}</td>
+		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
 		        <td data-title="'Lab'" sortable="'lab__name'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
