@@ -53,11 +53,21 @@ def create_file_notification(sender,**kwargs):
         text = '%s: %s uploaded %s'%(str(obj),str(instance.uploaded_by),str(instance))
         create_notification(url,text,type_id='file_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.uploaded_by)
 
-@receiver(post_save,sender=Project)
-def create_update_notification(sender,**kwargs):
-    if not kwargs['created']:
-        instance = kwargs['instance']
-        url = settings.SITE_URL + instance.get_absolute_url()
-        text = '"%s" has been updated'%(str(instance))
-        create_notification(url,text,type_id='object_updated',description='',instance=instance,importance=Notification.IMPORTANCE_LOW)
-
+@receiver(pre_save,sender=Project)
+def create_update_notification(sender, instance,**kwargs):
+    try:
+        pre_update = sender.objects.get(id=instance.id)
+        changed = []
+        print instance._meta.get_fields()
+        for field in instance._meta.get_fields():
+            if field.name in ['status','history']:
+                continue
+            if getattr(pre_update, field.name,None) != getattr(instance, field.name,None):
+                changed.append(field.name)
+        if len(changed) > 0:
+            url = settings.SITE_URL + instance.get_absolute_url()
+            text = '"%s" has been updated'%(str(instance))
+            description = "The following fields have been modified: %s" % ', '.join(changed)
+            create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW)
+    except sender.DoesNotExist, e:
+        pass
