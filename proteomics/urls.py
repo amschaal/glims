@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from proteomics import views
+from proteomics.views import MZMLBrowser
 urlpatterns = patterns('',)
 
 from rest_framework import routers
@@ -21,6 +22,7 @@ urlpatterns += patterns('',
     url(r'^parameter_files/$', 'proteomics.views.parameter_files', name='proteomics__parameter_files'),
     url(r'^parameter_files/create$', login_required(views.ParameterFileCreate.as_view()), name='proteomics__create_parameter_file'),
     url(r'^parameter_files/(?P<pk>[\d]+)/update/$', login_required(views.ParameterFileUpdate.as_view()), name='proteomics__update_parameter_file'),
+    url(r'^browse/mzml/$', MZMLBrowser.as_view(), name='browse_mzml'),
     url(r'^searchcli/$', 'proteomics.views.searchcli', name='proteomics__searchcli'),
     url(r'^api/run_searchcli/$', 'proteomics.views.run_searchcli', name='proteomics__run_searchcli'),
     url(r'^api/', include(router.urls)),

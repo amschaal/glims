@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from django_compute.utils import sizeof_fmt
 from glims.api.serializers import SampleSerializer, PoolSerializer
 from glims.lims import Sample, Pool, Project
+from django.views.generic.list import ListView
+from rest_framework.views import APIView
 
 
 # @api_view(['POST'])
@@ -267,4 +269,32 @@ def project_files(request,project_id,path):
 #     {'name':file['name'],'size':sizeof_fmt(file['stats'].st_size),'bytes':file['stats'].st_size,'modified':datetime.datetime.fromtimestamp(file['stats'].st_mtime).strftime("%m/%d/%Y %I:%M %p")
     files = [{'name':file['name'], 'size':sizeof_fmt(file['stats'].st_size)} for file in fileinfo]
     return JsonResponse({'project_id':project_id,'path':path,'files':files,'directories':directories})
+
+class FileBrowser(APIView):
+#     authentication_classes = (authentication.TokenAuthentication,)
+#     permission_classes = (permissions.IsAdminUser,)
+    extension_filters = []
+    base_directory = None
+    def get(self, request, format=None):
+        if not self.base_directory:
+            raise Exception("'base_directory' attribute must be set for FileBrowser view")
+        dir = request.query_params.get('dir','')
+        print dir
+        if any(illegal in dir for illegal in ['~','..']):
+            raise Exception("Illegal directory given")
+        path = os.path.join(self.base_directory,dir)
+        list = []
+        for name in os.listdir(path):
+            full_path = os.path.join(path,name)
+            if os.path.isdir(full_path):
+                list.append({'name':name,'is_dir':True})
+            else:
+                extension = os.path.splitext(full_path)[1]
+                print extension
+                if len(self.extension_filters) > 0:
+                    if extension in self.extension_filters:
+                        list.append({'name':name,'is_dir':False,'extension':extension})
+                else:
+                    list.append({'name':name,'is_dir':False,'extension':extension})
+        return Response(list)
         

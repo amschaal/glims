@@ -16,6 +16,7 @@ from proteomics.models import FastaFile, ParameterFile
 # from glims.jobs import JobFactory, DRMAAJob, SGE, JobSubmission, SLURM
 import subprocess, json, shutil, pickle, os
 from django_compute.models import Job
+from glims.api.views import FileBrowser
 
 @login_required
 def fasta_files(request):
@@ -164,3 +165,9 @@ def run_searchcli(request):
         return Response({'job_id':job.id})
         
     return Response({'errors':form.errors})
+
+class MZMLBrowser(FileBrowser):
+#     authentication_classes = (authentication.TokenAuthentication,)
+#     permission_classes = (permissions.IsAdminUser,)
+    extension_filters = ['.mzml','.mzML']
+    base_directory = '/tmp'
