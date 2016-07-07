@@ -63,8 +63,8 @@ overflow-x:scroll;
           	<div ng-repeat="parameter_file in parameter_files">
           		<label><input type="radio" ng-model="data.parameter_file" value="{[parameter_file.id]}">{[parameter_file.name]}</label>
           	</div>
-          	{[parameterFile]}
-          	<parameter-file-picker parameter-file="parameterFile"></parameter-file-picker>
+          	{[parameter_file]}
+          	<button modal-launcher modal-controller="ParameterFileModalController" modal-template="template/proteomics/parameter_file_picker_modal.html" on-return="selectParameterFile">Select parameter file</button>
 	          {% csrf_token %}
 	        <h4>Threads</h4>
 	        <select ng-model="data.threads" ng-options="val for val in [1,2,3,4,5,6,7,8]"></select>

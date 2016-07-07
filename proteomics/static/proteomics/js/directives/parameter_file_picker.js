@@ -3,15 +3,55 @@ angular.module("proteomics",[]);
 //angular.module('plugins').requires.push("proteomics");
 
 angular.module("proteomics")
-.directive('parameterFilePicker', function() {
+
+//This is a generic work in progress and will be moved into a utility library.
+.directive('modalLauncher', function($compile,$modal) {
 	return {
-		restrict: 'AE',
-		templateUrl: 'template/proteomics/parameter_file_picker.html',
+		restrict: 'A',
+		scope: {
+			onReturn:'&',
+			modalTemplate:'@',
+			modalController:'@'
+		},
+	    link: function(scope, elm, attrs, ctrl)
+	    {
+	    	scope.openModal = function () {
+			    var modalInstance = $modal.open({
+			      templateUrl: scope.modalTemplate,
+			      controller: scope.modalController,
+			      size: 'lg',
+//			      resolve: {
+//			    	  onReturn: function () {
+//				          return scope.onReturn;
+//				      },
+////				      scope: function () {
+////				          return scope.parameterFile;
+////				      }
+//			      }
+			    });
+
+			    modalInstance.result.then(function (result) {
+			    	console.log('return',result,scope.onReturn);
+				      scope.onReturn(result);
+			    }, function () {
+				      $log.info('Modal dismissed at: ' + new Date());
+			    });
+			  };
+	      elm.attr("ng-click", "openModal()");
+	      elm.removeAttr("modal-launcher");
+	      $compile(elm)(scope);
+	    }
+	}
+})
+.directive('parameterFilePicker', function($compile,$modal) {
+	return {
+		restrict: 'A',
 		scope: {
 			parameterFile:'='
 		},
-		controller: function ($scope,$rootScope,$modal) {
-			$scope.openModal = function () {
+	    link: function(scope, elm, attrs, ctrl)
+	    {
+	    	scope.openModal = function () {
 			    var modalInstance = $modal.open({
 			      templateUrl: 'template/proteomics/parameter_file_picker_modal.html',
 			      controller: 'ParameterFileModalController',
@@ -21,7 +61,7 @@ angular.module("proteomics")
 //				          return $scope.selectFasta;
 //				      },
 				      scope: function () {
-				          return $scope.parameterFile;
+				          return scope.parameterFile;
 				      }
 			      }
 			    });
@@ -32,18 +72,16 @@ angular.module("proteomics")
 //				      $log.info('Modal dismissed at: ' + new Date());
 			    });
 			  };
-		}
+	      elm.attr("ng-click", "openModal()");
+	      elm.removeAttr("parameter-file-picker");
+	      $compile(elm)(scope);
+	    }
 	}
 })
-.controller('ParameterFileModalController', function FastaModalController($scope, $http,DRFNgTableParams, $modalInstance,scope) {
-	$scope.selectFunc = function(parameter_file){
-		$scope.scope = parameter_file;
-		$modalInstance.dismiss('cancel');
-	}//selectFunc;
-	$scope.scope = scope;
-  $scope.dismiss = function () {
-    $modalInstance.dismiss('cancel');
-  };
+.controller('ParameterFileModalController', function FastaModalController($scope, $http,DRFNgTableParams, $modalInstance) {
+  $scope.select = function(row){
+	  $modalInstance.close(row);
+  }
 	
   $scope.tableParams = DRFNgTableParams('/proteomics/api/parameter_files/',{sorting: { modified: "desc" }});
 
@@ -68,12 +106,12 @@ angular.module("proteomics").run(['$templateCache', function($templateCache) {
 						<td data-title="\'Name\'" sortable="\'name\'"" filter="{name__icontains: \'text\'}">{[ row.name ]}</td>\
 				        <td data-title="\'Type\'" sortable="\'type\'"" filter="{type__icontains: \'text\'}">{[ row.type ]}</td>\
 				        <td data-title="\'Description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td>\
-    			        <td><a class="btn btn-xs btn-success" ng-hide="exists(row)" ng-click="selectFunc(row)">Select</a> </td>\
+    			        <td><a class="btn btn-xs btn-success" ng-hide="exists(row)" ng-click="select(row)">Select</a> </td>\
     			      </tr>\
     		    	</table>\
             </div>\
             <div class="modal-footer">\
-                <button class="btn btn-warning" ng-click="dismiss()">Dismiss</button>\
+              <!--  <button class="btn btn-warning" ng-click="save()">Save</button>-->\
             </div>'
 	);
 }]);

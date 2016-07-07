@@ -97,6 +97,10 @@ function SearchController($scope,$http,ParameterFile,$modal,$filter) {
 //			      $log.info('Modal dismissed at: ' + new Date());
 		    });
 		  };
+	$scope.selectParameterFile = function(parameter_file){
+		console.log('parameter file',parameter_file);
+		$scope.parameter_files = parameter_file;
+	}
 	
 }
 
