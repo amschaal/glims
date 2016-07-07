@@ -1,4 +1,5 @@
 
+angular.module('mainapp').requires.push('proteomics');
 angular.module('mainapp')
 .controller('SearchController', ['$scope','$http','ParameterFile','$modal','$filter',SearchController]);
 

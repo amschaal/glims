@@ -13,4 +13,5 @@ class ParameterFileViewSet(viewsets.ModelViewSet):
     serializer_class = ParameterFileSerializer
     model = ParameterFile
     queryset = ParameterFile.objects.all()
-    search_fields = ('name', 'description')
+    filter_fields = {'name':['exact','icontains'], 'description':['exact','icontains'], 'type':['exact','icontains']}
+    search_fields = ('name', 'description','type')

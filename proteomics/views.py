@@ -92,17 +92,19 @@ class ParameterFileCreate(CreateView):
     template_name = 'proteomics/create_parameter_file.html'
     model = ParameterFile
     success_url = reverse_lazy('proteomics__parameter_files')
-    fields = ['file','name','description']
+    fields = ['file','type','name','description']
     def form_valid(self, form):
         parameter_file = form.save(commit=False)
         parameter_file.created_by = self.request.user
+        parameter_file.save()
         return super(ParameterFileCreate, self).form_valid(form)
 
 class ParameterFileUpdate(UpdateView):
     template_name = 'proteomics/create_parameter_file.html'
     model = ParameterFile
     success_url = reverse_lazy('proteomics__parameter_files')
-    
+    fields = ['file','type','name','description']
+
 def searchcli(request):
 #     from . import GENERATE_TANDEM_QSUB
 #     print GENERATE_TANDEM_QSUB

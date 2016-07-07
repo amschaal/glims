@@ -41,7 +41,10 @@ def run_fastacli(sender, instance, created, **kwargs):
     instance.create_decoys()
 
 class ParameterFile(models.Model):
-    file = models.FileField(upload_to='compomics_parameter_files')
+    TYPE_XTANDEM_DEFAULT = 'xtandem default'
+    TYPE_CHOICES = ((TYPE_XTANDEM_DEFAULT,TYPE_XTANDEM_DEFAULT),)
+    file = models.FileField(upload_to='parameter_files')
+    type = models.CharField(max_length=20,choices=TYPE_CHOICES,null=True,blank=True)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     uploaded_by = models.ForeignKey(User,null=True,blank=True)
