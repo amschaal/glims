@@ -2,10 +2,8 @@
 {% load crispy_forms_tags %}
 {% block page %}Submit Tandem Job {% endblock %}
 {% block content %}
-{% include 'proteomics/partials/sample_modal.html' %}
-{% include 'proteomics/partials/fasta_modal.html' %}
 <script src="/static/proteomics/js/resources/models.js"></script>
-<script src="/static/proteomics/js/directives/parameter_file_picker.js"></script>
+<script src="/static/js/modals/sample_modal.js"></script>
 <script src="/static/proteomics/js/pages/search.js"></script>
 <style>
 .hide-overflow{
@@ -26,7 +24,7 @@ overflow-x:scroll;
           </div>
           <div class="widget-body" ng-controller="SearchController" ng-init="init()">
           <div class="row">
-          	<div class="col-md-8">
+          	<div class="col-md-12">
           	<alert ng-repeat="(key,values) in errors" type="danger">{[key]}: <ul><li ng-repeat="value in values">{[value]}</li></ul></alert>
           	
           	<div ng-repeat="job in jobs" class="alert alert-success"><a href="{[jobLink(job.job_id)]}">Job {[job.job_id]}</a> submitted at {[job.job_date | date:'HH:mm:ss']}</div>
@@ -44,9 +42,8 @@ overflow-x:scroll;
             	</tr>
             </table>
             </div>
-            
-          	<h4>Fasta File <button ng-click="openFastaModal()" class="btn btn-sm btn-success">Select Fasta</button></h4>
-          	<div ng-repeat="fasta in data.fastas">
+          	<h4>Fasta File <button class="btn btn-sm btn-success" modal-launcher modal-controller="FastaModalController" modal-template="fastaModal.html" set-model="fasta">Select Fasta</button></h4>
+          	<div ng-if="fasta">
           	{[fasta.name]} <a ng-click="fasta_details=true;" ng-hide="fasta_details">Show Details</a>
 	          	<div ng-show="fasta_details">
 	          		<table>
@@ -59,66 +56,14 @@ overflow-x:scroll;
 	          	</div>
           	</div>
           	
-          	<h4>Default File</h4>
-          	<div ng-repeat="parameter_file in parameter_files">
-          		<label><input type="radio" ng-model="data.parameter_file" value="{[parameter_file.id]}">{[parameter_file.name]}</label>
-          	</div>
-          	{[parameter_file]}
-          	<button modal-launcher modal-controller="ParameterFileModalController" modal-template="template/proteomics/parameter_file_picker_modal.html" on-return="selectParameterFile">Select parameter file</button>
+          	<h4>Default File <button class="btn btn-sm btn-success" modal-launcher modal-controller="ParameterFileModalController" modal-template="template/proteomics/parameter_file_picker_modal.html" set-model="parameter_file">Select parameter file</button></h4>
+          	{[parameter_file.name]}
+          	
 	          {% csrf_token %}
 	        <h4>Threads</h4>
 	        <select ng-model="data.threads" ng-options="val for val in [1,2,3,4,5,6,7,8]"></select>
-	        </div> <!-- End left column -->
-	        <div class="col-md-4">
-	        <div class="form-group">
-			  <label for="checkboxes">Search engines</label>
-			  
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.xtandem" ng-true-value="1" ng-false-value="0"/>
-			      X!Tandem
-			    </label>
-				</div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.msgf" ng-true-value="1" ng-false-value="0"/>
-			      MS-GF+
-			    </label>
-			  </div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.omssa" ng-true-value="1" ng-false-value="0"/>
-			      OMSSA
-			    </label>
-			  </div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.ms_amanda" ng-true-value="1" ng-false-value="0"/>
-			      MS Amanda
-			    </label>
-			  </div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.myrimatch" ng-true-value="1" ng-false-value="0"/>
-			      MyriMatch
-			    </label>
-			  </div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.comet" ng-true-value="1" ng-false-value="0"/>
-			      Comet
-			    </label>
-			  </div>
-			  <div class="checkbox">
-			    <label>
-			      <input type="checkbox" ng-model="data.engine.tide" ng-true-value="1" ng-false-value="0"/>
-			      Tide
-			    </label>
-			  </div>
-			  
-			  </div>
-			  </div> <!-- End right column -->
-			</div><!-- End row -->
+	        </div>
+			</div>
 	        
 	          <button class="btn btn-default" ng-click="submit()">Submit</button>
 	          </div>

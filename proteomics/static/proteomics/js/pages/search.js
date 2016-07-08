@@ -1,5 +1,5 @@
 
-angular.module('mainapp').requires.push('proteomics');
+//angular.module('mainapp').requires.push('proteomics');
 angular.module('mainapp')
 .controller('SearchController', ['$scope','$http','ParameterFile','$modal','$filter',SearchController]);
 
@@ -65,12 +65,6 @@ function SearchController($scope,$http,ParameterFile,$modal,$filter) {
 		      }
 	      }
 	    });
-
-	    modalInstance.result.then(function (data) {
-//		      $scope.sample_data[String(data.sample.id)] = data.data;
-	    }, function () {
-//		      $log.info('Modal dismissed at: ' + new Date());
-	    });
 	  };
 	  $scope.selectFasta = function(fasta){
 		  $scope.data.fastas.pop()	
@@ -97,10 +91,63 @@ function SearchController($scope,$http,ParameterFile,$modal,$filter) {
 //			      $log.info('Modal dismissed at: ' + new Date());
 		    });
 		  };
-	$scope.selectParameterFile = function(parameter_file){
-		console.log('parameter file',parameter_file);
-		$scope.parameter_files = parameter_file;
-	}
 	
 }
 
+angular.module('mainapp')
+.controller('ParameterFileModalController', function ParameterFileModalController($scope, $http,DRFNgTableParams, $uibModalInstance,model) {
+	  $scope.select = function(row){
+		  $uibModalInstance.close(row);
+	  }
+	  $scope.tableParams = DRFNgTableParams('/proteomics/api/parameter_files/',{sorting: { modified: "desc" }});
+
+	}
+)
+.run(['$templateCache', function($templateCache) {
+		$templateCache.put('template/proteomics/parameter_file_picker_modal.html',
+		'	<div class="modal-header">\
+	            <h3 class="modal-title">Search Fasta Files</h3>\
+	            </div>\
+	            <div class="modal-body">\
+	    			 	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
+	    			      <tr ng-repeat="row in $data track by row.id">\
+							<td data-title="\'Name\'" sortable="\'name\'"" filter="{name__icontains: \'text\'}">{[ row.name ]}</td>\
+					        <td data-title="\'Type\'" sortable="\'type\'"" filter="{type__icontains: \'text\'}">{[ row.type ]}</td>\
+					        <td data-title="\'Description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td>\
+	    			        <td><a class="btn btn-xs btn-success" ng-hide="exists(row)" ng-click="select(row)">Select</a> </td>\
+	    			      </tr>\
+	    		    	</table>\
+	            </div>\
+	            <div class="modal-footer">\
+	              <!--  <button class="btn btn-warning" ng-click="save()">Save</button>-->\
+	            </div>'
+		);
+}])
+.controller('FastaModalController', function FastaModalController($scope, $http,DRFNgTableParams, $uibModalInstance,model) {
+	  $scope.select = function(row){
+		  $uibModalInstance.close(row);
+	  }
+	  $scope.tableParams = DRFNgTableParams('/proteomics/api/fasta_files/',{sorting: { modified: "desc" }});
+	}
+)
+.run(['$templateCache', function($templateCache) {
+		$templateCache.put('fastaModal.html',
+		'	<div class="modal-header">\
+	            <h3 class="modal-title">Search Fasta Files</h3>\
+	            </div>\
+	            <div class="modal-body">\
+	    			 	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
+	    			      <tr ng-repeat="row in $data track by row.id">\
+					        <td data-title="\'Name\'" sortable="\'name\'"" filter="{name__icontains: \'text\'}"><a href="{[ fastaLink(row) ]}" target="_blank">{[ row.name ]}</a></td>\
+					        <td data-title="\'Last Modified\'" sortable="\'modified\'">{[row.modified]}</td>\
+					        <td data-title="\'Description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td>\
+					        <td data-title="\'Count\'" sortable="\'count\'">{[row.count]}</td>\
+	    			        <td><a class="btn btn-xs btn-success" ng-hide="exists(row)" ng-click="select(row)">Select</a> </td>\
+	    			      </tr>\
+	    		    	</table>\
+	            </div>\
+	            <div class="modal-footer">\
+	              <!--  <button class="btn btn-warning" ng-click="save()">Save</button>-->\
+	            </div>'
+		);
+}])

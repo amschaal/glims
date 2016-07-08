@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% load attachment_helpers %}
 {% load crispy_forms_tags %}
+{% load compress %}
 {% block page %}Pools{% endblock %}
 {% block breadcrumbs %}<a href="{% url 'pools' %}">Pools</a> / {{pool.name}} {% endblock %}
 {% block content %}
+{% compress js %}
+<script src="/static/js/modals/sample_modal.js"></script>
 <script src="/static/js/pages/pool.js"></script>
+{% endcompress %}
 <div class="row">
       <div class="col-lg-12">
         <div class="widget" ng-controller="PoolController" ng-init="init({pool_id:{{pool.id}}});tabs['{{tab}}']=true;">
@@ -25,7 +29,6 @@
 	        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>
 	          	</table>
 	
-	    {% include 'glims/partials/sample_modal.html' %}
 		
 	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
 					<h3>Samples <button class="pull-right btn btn-sm btn-success" ng-click="openSampleModal();">Add</button></h3>
