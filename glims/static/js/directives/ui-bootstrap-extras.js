@@ -58,7 +58,8 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 			onCancel:'=?', //optional: call this function on cancel
 			modalSize: '@?', //optional: modify size of modal
 			tableParams: '=',
-			title:'@'
+			title:'@',
+			multi:'@'
 		},
 //		controller: function ($scope, $element, $attrs) {
 //		//  $scope.tableParams = DRFNgTableParams('/proteomics/api/parameter_files/',{sorting: { modified: "desc" }});
@@ -72,19 +73,20 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 	    link: function(scope, elm, attrs, ctrl)
 	    {
 	    	console.log('link',scope);
+	    	console.log('attrs',attrs);
 	    	scope.openModal = function () {
 			    var modalInstance = $uibModal.open({
 			      templateUrl: 'template/modals/select_modal.html',
 			      controller: 'selectModalController',
 			      size: attrs.size ? scope.size : 'lg',
 	    		  resolve: {
-	    		      model: scope.model,
+	    		      setModel: function(){return scope.setModel},
 	    		      tableParams: scope.tableParams,
 	    		      template: function(){
 	    		    	  return scope.modalTemplate;
 	    		      },
 	    		      options: function(){
-	    		    	  return {title:scope.title}
+	    		    	  return {title:scope.title,multi:attrs.multi==null?false:true,id:attrs.id?scope.id:'id'}
 	    		      }
 	    	      }
 			    });
@@ -107,17 +109,53 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 })
 .directive('modalSelectActions', function() {  
   return {  
-    template: '<a class="btn btn-xs btn-success" ng-hide="exists(row)" ng-click="select(row)">Select</a>',  
+    template: '<a class="btn btn-xs btn-success" ng-click="select(row)" ng-if="!options.multi">Select</a><a class="btn btn-xs btn-success" ng-hide="isSelected(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)" ng-click="remove(row)" ng-if="options.multi">Remove</a>',  
     restrict: 'AE',  
   }  
 })
-.controller('selectModalController', function ($scope, $uibModalInstance,model,tableParams,template,options) {
-	  $scope.select = function(row){
-		  $uibModalInstance.close(row);
-	  }
+.controller('selectModalController', function ($scope, $uibModalInstance,setModel,tableParams,template,options) {
+	  $scope.value = angular.copy(setModel);
+	  console.log('model',setModel,$scope.value);
 	  $scope.tableParams = tableParams;
 	  $scope.template = template;
 	  $scope.options = options;
+	  $scope.select = function(row){
+		  $uibModalInstance.close(row);
+	  }
+	  $scope.save = function(){
+		  $uibModalInstance.close($scope.value);
+	  }
+	  $scope.cancel = function(){
+		  $uibModalInstance.dismiss();
+	  }
+	  $scope.add = function(row){
+		  if(!angular.isArray($scope.value))
+			  $scope.value = [row];
+		  else
+			  $scope.value.push(row);
+	  }
+	  $scope.remove = function(row){
+		  if(!angular.isArray($scope.value))
+			  $scope.value=null;
+		  else{
+			  for(var i in $scope.value){
+				  if ($scope.value[i][options.id] == row[options.id]){
+					  $scope.value.splice(i,1);
+					  return;
+				  }
+			  }
+		  }
+	  }
+	  $scope.isSelected = function(row){
+		  if(!angular.isArray($scope.value))
+			  return false;
+		  for(var i in $scope.value){
+			  if ($scope.value[i][options.id] == row[options.id])
+				  return true;
+		  }
+		  return false;
+	  }
+	  
 	}
 )
 .run(['$templateCache', function($templateCache) {
@@ -129,7 +167,7 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 							<ng-include src="template"></ng-include>\
 	            </div>\
 	            <div class="modal-footer">\
-	              <!--  <button class="btn btn-warning" ng-click="save()">Save</button>-->\
+	              <button ng-if="options.multi" class="btn btn-success" ng-click="save()">Save</button><button class="btn btn-warning" ng-click="cancel()">Cancel</button>\
 	            </div>'
 		);
 }])
