@@ -29,7 +29,7 @@ overflow-x:scroll;
           	
           	<div ng-repeat="job in jobs" class="alert alert-success"><a href="{[jobLink(job.job_id)]}">Job {[job.job_id]}</a> submitted at {[job.job_date | date:'HH:mm:ss']}</div>
             
-            <h4>Samples <button ng-click="openSampleModal()" class="btn btn-sm btn-success">Add Sample</button></h4>
+            <h4>Samples <button class="btn btn-sm btn-success" modal-select multi table-params="sampleTableParams"  modal-template="template/modals/sample_modal.html" set-model="data.samples" title="Select samples">Select Samples</button></h4>
             <div class="scroll-x" ng-show="data.samples.length > 0">
             <table class="table" >
             	<tr><th>Created</th><th>Name</th><th>Description</th><th>MZML</th><th></th></tr>
@@ -56,7 +56,7 @@ overflow-x:scroll;
 	          	</div>
           	</div>
           	
-          	<h4>Default File <button class="btn btn-sm btn-success" modal-select table-params="defaultFileTableParams" multi modal-template="template/proteomics/parameter_modal.html" set-model="parameter_file" title="Select parameter file">Select parameter file</button></h4>
+          	<h4>Default File <button class="btn btn-sm btn-success" modal-select table-params="defaultFileTableParams" modal-template="template/proteomics/parameter_modal.html" set-model="parameter_file" title="Select parameter file">Select parameter file</button></h4>
           	{[parameter_file]}
           	
 	          {% csrf_token %}

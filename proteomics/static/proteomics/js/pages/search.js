@@ -1,5 +1,5 @@
 
-//angular.module('mainapp').requires.push('proteomics');
+angular.module('mainapp').requires.push('select-modals');
 angular.module('mainapp')
 .controller('SearchController', ['$scope','$http','ParameterFile','$modal','$filter','DRFNgTableParams',SearchController]);
 
@@ -63,6 +63,7 @@ function SearchController($scope,$http,ParameterFile,$modal,$filter,DRFNgTablePa
 	      }
 	    });
 	  };
+	  $scope.sampleTableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }});
 	  $scope.fastaTableParams = DRFNgTableParams('/proteomics/api/fasta_files/',{sorting: { modified: "desc" }});
 	  $scope.defaultFileTableParams = DRFNgTableParams('/proteomics/api/parameter_files/',{sorting: { modified: "desc" }});
 }
@@ -77,4 +78,5 @@ angular.module('mainapp')
 		$templateCache.put('template/proteomics/fasta_modal.html',
 				'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Name\'" sortable="\'name\'"" filter="{name__icontains: \'text\'}">{[ row.name ]}</td><td data-title="\'Last Modified\'" sortable="\'modified\'">{[row.modified]}</td><td data-title="\'Description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td data-title="\'Count\'" sortable="\'count\'">{[row.count]}</td><td modal-select-actions></td></tr></table>'
 		);
-}])
+}]);
+

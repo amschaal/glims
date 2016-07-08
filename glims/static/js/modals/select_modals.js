@@ -1,0 +1,6 @@
+angular.module('select-modals',[])
+.run(['$templateCache', function($templateCache) {
+	$templateCache.put('template/modals/sample_modal.html',
+			'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Created\'" sortable="\'created\'"">{[row.created|date]}</td><td data-title="\'ID\'" sortable="\'sample_id\'" filter="{sample_id__icontains: \'text\'}"><a target="_blank" href="{[ sampleLink(row) ]}">{[row.sample_id]}</a></td><td data-title="\'Name\'" sortable="\'name\'" filter="{name__icontains: \'text\'}">{[row.name]}</td><td data-title="\'Type\'" sortable="\'type__name\'" filter="{type__name__icontains: \'text\'}">{[row.type__name]}</td><td data-title="\'Project\'" sortable="\'project__name\'" filter="{project__name__icontains: \'text\'}"><a target="_blank" href="{[ projectLink(row) ]}">{[row.project__name]}</a></td><td data-title="\'Description\'" sortable="\'description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td modal-select-actions></td></tr></table>'
+	);
+}]);

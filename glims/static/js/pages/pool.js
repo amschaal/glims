@@ -1,5 +1,5 @@
 
-angular.module('mainapp').requires.push('glims.formly');
+angular.module('mainapp').requires.push('glims.formly','select-modals');
 angular.module('mainapp').controller('PoolController', ['$scope','$http','Pool','growl','poolService', PoolController]);
 
 function PoolController($scope,$http,$Pool,growl,poolService) {
@@ -25,11 +25,10 @@ function PoolController($scope,$http,$Pool,growl,poolService) {
 	    	);
 	}
 }
-
 angular.module('mainapp')
-.controller('SamplesController', ['$scope','Sample','Pool','$http','$modal', SamplesController]);
+.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams', SamplesController]);
 
-function SamplesController($scope,$Sample,$Pool,$http,$modal) {
+function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams) {
 //	var sampleURL = django_js_utils.urls.resolve('sample-list');
 	$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
 	var pool_id = null;
@@ -106,44 +105,7 @@ function SamplesController($scope,$Sample,$Pool,$http,$modal) {
 //	      $log.info('Modal dismissed at: ' + new Date());
 	    });
 	  };
-	  $scope.addSample = function(sample){
-			var url = django_js_utils.urls.resolve('add_pool_samples',{ pk: pool_id });
-			$http.post(url,{'sample_ids':[sample.id]})
-			.success(function(){
-				$scope.samples.push(sample);
-			})
-			.error(function(){
-				alert('Failed to add sample');
-			});
-	  };
-	  $scope.openSampleModal = function () {
-		  	console.log('wtf?');
-		    var modalInstance = $modal.open({
-		      templateUrl: 'sampleModal.html',
-		      controller: 'SampleModalController',
-		      size: 'lg',
-		      resolve: {
-		    	  addFunc: function () {
-			          return $scope.addSample;
-			      },
-			      scope: function () {
-			          return $scope.samples;
-			      }
-//			      sample_data: function(){
-//			        	return $scope.sample_data[String(sample.id)] ? $scope.sample_data[String(sample.id)] : {};
-//			      }
-//		        items: function () {
-//		          return $scope.items;
-//		        }
-		      }
-		    });
-
-		    modalInstance.result.then(function (data) {
-//		      $scope.sample_data[String(data.sample.id)] = data.data;
-		    }, function () {
-//		      $log.info('Modal dismissed at: ' + new Date());
-		    });
-		  };
+	  $scope.sampleTableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }});
 	
 	
 }
