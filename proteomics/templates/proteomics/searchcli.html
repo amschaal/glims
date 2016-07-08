@@ -42,7 +42,7 @@ overflow-x:scroll;
             	</tr>
             </table>
             </div>
-          	<h4>Fasta File <button class="btn btn-sm btn-success" modal-launcher modal-controller="FastaModalController" modal-template="fastaModal.html" set-model="fasta">Select Fasta</button></h4>
+          	<h4>Fasta File <button class="btn btn-sm btn-success" modal-select table-params="fastaTableParams" modal-template="template/proteomics/fasta_modal.html" set-model="fasta" title="Select fasta file">Select Fasta</button></h4>
           	<div ng-if="fasta">
           	{[fasta.name]} <a ng-click="fasta_details=true;" ng-hide="fasta_details">Show Details</a>
 	          	<div ng-show="fasta_details">
@@ -56,7 +56,7 @@ overflow-x:scroll;
 	          	</div>
           	</div>
           	
-          	<h4>Default File <button class="btn btn-sm btn-success" modal-launcher modal-controller="ParameterFileModalController" modal-template="template/proteomics/parameter_file_picker_modal.html" set-model="parameter_file">Select parameter file</button></h4>
+          	<h4>Default File <button class="btn btn-sm btn-success" modal-select table-params="defaultFileTableParams" modal-template="template/proteomics/parameter_modal.html" set-model="parameter_file" title="Select parameter file">Select parameter file</button></h4>
           	{[parameter_file.name]}
           	
 	          {% csrf_token %}
