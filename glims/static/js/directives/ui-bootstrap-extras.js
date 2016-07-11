@@ -46,7 +46,7 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 	    }
 	}
 })
-.directive('modalSelect', function($compile,$uibModal) {
+/*.directive('modalSelect', function($compile,$uibModal) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -171,3 +171,4 @@ IE: <button class="btn"  modal-launcher modal-controller="GroupModalController" 
 	            </div>'
 		);
 }])
+*/

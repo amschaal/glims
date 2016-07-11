@@ -1,5 +1,5 @@
 
-angular.module('mainapp').requires.push('glims.formly','select-modals');
+angular.module('mainapp').requires.push('glims.formly','selectModals');
 angular.module('mainapp').controller('PoolController', ['$scope','$http','Pool','growl','poolService', PoolController]);
 
 function PoolController($scope,$http,$Pool,growl,poolService) {
@@ -26,9 +26,9 @@ function PoolController($scope,$http,$Pool,growl,poolService) {
 	}
 }
 angular.module('mainapp')
-.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams', SamplesController]);
+.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams','selectModalService', SamplesController]);
 
-function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams) {
+function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,selectModalService) {
 //	var sampleURL = django_js_utils.urls.resolve('sample-list');
 	$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
 	var pool_id = null;
@@ -106,7 +106,7 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams) {
 	    });
 	  };
 	  $scope.sampleTableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }});
-	
+	  $scope.selectSamples = selectModalService.selectSamples;
 	
 }
 
