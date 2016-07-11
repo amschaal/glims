@@ -31,8 +31,7 @@
 		
 	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
 	             {[samples]}
-					<h3>Samples <button class="btn btn-sm btn-success pull-right" modal-select multi table-params="sampleTableParams"  modal-template="template/modals/sample_modal.html" set-model="samples" title="Select samples">Select Samples</button></h3>
-					<button ng-click="selectSamples(samples,{multi:true})" class="btn btn-sm btn-success pull-right">Select</button>
+					<h3>Samples <button ng-click="selectSamples()" class="btn btn-sm btn-success pull-right">Select</button></h3>
 					<h4 ng-hide="samples.length">There are no samples associated with this pool</h4>
 					<table class="table" ng-show="samples.length">
 	              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>

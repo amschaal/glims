@@ -105,8 +105,9 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,selectMod
 //	      $log.info('Modal dismissed at: ' + new Date());
 	    });
 	  };
-	  $scope.sampleTableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }});
-	  $scope.selectSamples = selectModalService.selectSamples;
+	  $scope.selectSamples = function(){
+		  selectModalService.selectSamples({multi:true,initial:$scope.samples}).result.then(function(samples){$scope.samples=samples});
+	  }
 	
 }
 

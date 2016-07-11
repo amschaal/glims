@@ -3,7 +3,7 @@
 {% block page %}Submit Tandem Job {% endblock %}
 {% block content %}
 <script src="/static/proteomics/js/resources/models.js"></script>
-<script src="/static/js/modals/sample_modal.js"></script>
+<script src="/static/proteomics/js/services/select_modals.js"></script>
 <script src="/static/proteomics/js/pages/search.js"></script>
 <style>
 .hide-overflow{
@@ -29,7 +29,7 @@ overflow-x:scroll;
           	
           	<div ng-repeat="job in jobs" class="alert alert-success"><a href="{[jobLink(job.job_id)]}">Job {[job.job_id]}</a> submitted at {[job.job_date | date:'HH:mm:ss']}</div>
             
-            <h4>Samples <button class="btn btn-sm btn-success" modal-select multi table-params="sampleTableParams"  modal-template="template/modals/sample_modal.html" set-model="data.samples" title="Select samples">Select Samples</button></h4>
+            <h4>Samples <button ng-click="selectSamples()" class="btn btn-sm btn-success">Select</button></h4>
             <div class="scroll-x" ng-show="data.samples.length > 0">
             <table class="table" >
             	<tr><th>Created</th><th>Name</th><th>Description</th><th>MZML</th><th></th></tr>
@@ -42,7 +42,7 @@ overflow-x:scroll;
             	</tr>
             </table>
             </div>
-          	<h4>Fasta File <button class="btn btn-sm btn-success" modal-select table-params="fastaTableParams"  modal-template="template/proteomics/fasta_modal.html" set-model="fasta" title="Select fasta file">Select Fasta</button></h4>
+          	<h4>Fasta File <button ng-click="selectFastaFile()" class="btn btn-sm btn-success">Select</button></h4>
           	<div ng-if="fasta">
           	{[fasta.name]} <a ng-click="fasta_details=true;" ng-hide="fasta_details">Show Details</a>
 	          	<div ng-show="fasta_details">
@@ -56,7 +56,7 @@ overflow-x:scroll;
 	          	</div>
           	</div>
           	
-          	<h4>Default File <button class="btn btn-sm btn-success" modal-select table-params="defaultFileTableParams" modal-template="template/proteomics/parameter_modal.html" set-model="parameter_file" title="Select parameter file">Select parameter file</button></h4>
+          	<h4>Default File <button ng-click="selectDefaultFile()" class="btn btn-sm btn-success">Select</button></h4>
           	{[parameter_file]}
           	
 	          {% csrf_token %}

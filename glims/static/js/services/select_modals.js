@@ -1,53 +1,41 @@
 angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
-.service('selectModalService', function($rootScope,$http,$uibModal,DRFNgTableParams) {
+.service('selectModalService', function($uibModal,DRFNgTableParams) {
 	 return {
 		 openSelectModal: openSelectModal,
 		 selectSamples: selectSamples
 	 };
-	 function openSelectModal (model,template,tableParams,options) { 
-		 console.log('openSelectModal',model,template,tableParams,options)	;
+	 function openSelectModal (template,tableParams,options) { 
+		 console.log('openSelectModal',template,tableParams,options)	;
 		    var modalInstance = $uibModal.open({
-			      templateUrl: 'template/select_modals/select_modal.html',
+			      templateUrl: 'glims/select_modals/select_modal.html',
 			      controller: options.controller ? options.controller : 'selectModalController',
 			      size: options.size ? options.size : 'lg',
 	    		  resolve: {
-	    		      setModel: function(){return model},
+	    		      initial: function(){return options.initial},
 	    		      tableParams: tableParams,
 	    		      template: function(){
 	    		    	  return template;
 	    		      },
 	    		      options: function(){
-	    		    	  return {title:options.title,multi:options.multi?false:true,id:options.id?options.id:'id'}
+	    		    	  return {title:options.title,multi:options.multi,id:options.id?options.id:'id'}
 	    		      }
 	    	      }
 			    });
-
-			    modalInstance.result.then(function (result) {
-			    	console.log(model,result);
-//				    if (attrs.setModel)
-				    	model = result;
-				    if (options.onReturn)
-				    	options.onReturn(result);
-			    }, function () {
-			    	if (options.onCancel)
-			    	  options.onCancel();
-			    });
 			    return modalInstance;
 	  }
-	  function selectSamples(model,options){ 
+	  function selectSamples(options){ 
 		  var defaultOptions = {
 				  title: 'Search Samples',
 				  tableParams: DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }}),
-				  template: 'template/select_modals/sample_modal.html'
+				  template: 'glims/select_modals/sample_modal.html'
 		  }
 		  angular.extend(defaultOptions,options?options:{});
-		  return openSelectModal(model,defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+		  return openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
 	  } 
 	  
 })
-.controller('selectModalController', function ($scope, $uibModalInstance,setModel,tableParams,template,options) {
-	  $scope.value = angular.copy(setModel);
-	  console.log('model',setModel,$scope.value);
+.controller('selectModalController', function ($scope, $uibModalInstance,initial,tableParams,template,options) {
+	  $scope.value = angular.copy(initial);
 	  $scope.tableParams = tableParams;
 	  $scope.template = template;
 	  $scope.options = options;
@@ -97,7 +85,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
   }  
 })
 .run(['$templateCache', function($templateCache) {
-		$templateCache.put('template/select_modals/select_modal.html',
+		$templateCache.put('glims/select_modals/select_modal.html',
 		'	<div class="modal-header">\
 	            <h3 class="modal-title">{[options.title]}</h3>\
 	            </div>\
@@ -111,7 +99,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 }])
 
 .run(['$templateCache', function($templateCache) {
-	$templateCache.put('template/select_modals/sample_modal.html',
+	$templateCache.put('glims/select_modals/sample_modal.html',
 			'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Created\'" sortable="\'created\'"">{[row.created|date]}</td><td data-title="\'ID\'" sortable="\'sample_id\'" filter="{sample_id__icontains: \'text\'}"><a target="_blank" href="{[ sampleLink(row) ]}">{[row.sample_id]}</a></td><td data-title="\'Name\'" sortable="\'name\'" filter="{name__icontains: \'text\'}">{[row.name]}</td><td data-title="\'Type\'" sortable="\'type__name\'" filter="{type__name__icontains: \'text\'}">{[row.type__name]}</td><td data-title="\'Project\'" sortable="\'project__name\'" filter="{project__name__icontains: \'text\'}"><a target="_blank" href="{[ projectLink(row) ]}">{[row.project__name]}</a></td><td data-title="\'Description\'" sortable="\'description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td modal-select-actions></td></tr></table>'
 	);
 }]);
