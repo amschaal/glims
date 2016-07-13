@@ -184,4 +184,6 @@ NOTIFICATION_TYPES = (
 
 NOTIFICATION_EMAIL_FREQUENCY_HOURS=1
 
+ATTACHMENT_UPLOAD_TO_FUNCTION = 'glims.attachments_config.attachment_upload_to'
+
 from config import *

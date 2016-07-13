@@ -18,8 +18,6 @@ from glims.models import Status
 from datetime import datetime
 from attachments.models import delete_attachments
 from django.contrib.auth.models import Group, User
-from notifications.models import Notification
-from notifications.utils import create_notification
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -202,16 +200,10 @@ def handle_status(sender,instance,**kwargs):
         old = Project.objects.get(id=instance.id)
         if old.status != instance.status:
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-            url = settings.SITE_URL + instance.get_absolute_url()
-            text = '"%s": status set to "%s"'%(str(instance),instance.status.name)
-            create_notification(url,text,type_id='object_updated',description='',instance=instance,importance=Notification.IMPORTANCE_LOW)
     except Project.DoesNotExist, e:
         if instance.status:
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-            if instance.status:
-                url = settings.SITE_URL + instance.get_absolute_url()
-                text = '"%s": status set to "%s"'%(str(instance),instance.status.name)
-                create_notification(url,text,type_id='object_updated',description='',instance=instance,importance=Notification.IMPORTANCE_LOW)
+            
 post_delete.connect(delete_attachments, sender=Project)
 post_delete.connect(delete_attachments, sender=Sample)
 post_delete.connect(delete_attachments, sender=Pool)
