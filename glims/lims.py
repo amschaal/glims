@@ -95,7 +95,8 @@ class Project(ExtensibleModel):
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
     @property
     def directory(self):
-        return os.path.join(self.lab.directory,self.project_id)
+        return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
+#         return os.path.join(self.lab.directory,self.project_id)
     def create_directory(self):
         if not os.path.exists(self.directory):
             os.makedirs(self.directory, mode=0774)
@@ -140,6 +141,9 @@ class Sample(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('sample', args=[str(self.id)])
+    @property
+    def directory(self):
+        return '{0}/labs/{1}/projects/{2}/samples/{3}/files/'.format(self.project.group.name.replace(' ','_'),self.project.lab.slug,self.project.project_id,self.sample_id)
     def get_group(self):
         if not self.project:
             return None
