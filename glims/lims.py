@@ -16,8 +16,12 @@ from django_cloudstore.models import CloudStore
 from django_cloudstore.engines.bioshare import BioshareStorageEngine
 from glims.models import Status
 from datetime import datetime
-from attachments.models import delete_attachments
+from attachments.models import delete_attachments, File
 from django.contrib.auth.models import Group, User
+from django.core.validators import RegexValidator
+from glims.settings import FILES_ROOT
+import shutil
+from django.contrib.contenttypes.models import ContentType
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -40,7 +44,7 @@ def generate_sample_id(project):#last_id='A00'
     return "%s%s" % (project.project_id,prefix+suffix)
 
 
-
+file_directory_validator = RegexValidator(r'^[0-9a-zA-Z_]*$','Directories should only contain alphanumeric characters and underscores.')
 
 """
         
@@ -92,14 +96,16 @@ class Project(ExtensibleModel):
     related_projects = models.ManyToManyField('self')
     archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
+#     file_directory = models.CharField(null=True,blank=True,validators=[file_directory_validator])
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
-    @property
     def directory(self):
+#         return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.file_directory or self.project_id)
         return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
 #         return os.path.join(self.lab.directory,self.project_id)
     def create_directory(self):
-        if not os.path.exists(self.directory):
-            os.makedirs(self.directory, mode=0774)
+        directory = os.path.join(FILES_ROOT,self.directory)
+        if not os.path.exists(directory):
+            os.makedirs(directory, mode=0774)
     def save(self, *args, **kwargs):
         super(Project, self).save(*args, **kwargs) # Call the "real" save() method.
         self.create_directory()
@@ -123,6 +129,7 @@ class Project(ExtensibleModel):
             ('admin', 'Administer Project'),
             ('pi', 'Can PI a Project'),
         )
+        unique_together = (('lab','file_directory'),)
 
 # class ProjectStatus(models.Model):
 #     project = models.ForeignKey(Project,related_name="statuses")
@@ -143,7 +150,10 @@ class Sample(ExtensibleModel):
         return reverse('sample', args=[str(self.id)])
     @property
     def directory(self):
-        return '{0}/labs/{1}/projects/{2}/samples/{3}/files/'.format(self.project.group.name.replace(' ','_'),self.project.lab.slug,self.project.project_id,self.sample_id)
+        dir = self.sample_id
+        if self.name:
+            dir = self.name.replace(' ','_')
+        return os.path.join(self.project.directory,'samples/{0}/'.format(dir))
     def get_group(self):
         if not self.project:
             return None
@@ -157,6 +167,7 @@ class Sample(ExtensibleModel):
             ('view', 'View Sample'),
             ('admin', 'Administer Sample'),
         )
+        unique_together = (('sample_id','project'),('name','project'),)
     def inherit_from(self):
         return [self.project]
     inherited_classes = [Project]
@@ -207,7 +218,28 @@ def handle_status(sender,instance,**kwargs):
     except Project.DoesNotExist, e:
         if instance.status:
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-            
+
+#This could be avoided if the directory structures only depended on immutable values!!!
+@receiver(pre_save,sender=Project)
+def update_project_directory(sender,instance,**kwargs):
+    if not hasattr(instance, 'id'):
+        return
+    try:
+        old = sender.objects.get(id=instance.id)
+        old_directory = os.path.join(FILES_ROOT,old.directory)
+        new_directory = os.path.join(FILES_ROOT,instance.directory)
+        if old_directory != new_directory and os.path.isdir(old_directory):
+            shutil.move(old_directory, new_directory)
+            for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
+                file.file.name = file.file.name.replace(old_directory,new_directory)
+                file.save()
+#             File.objects.filter(file__startswith=old_directory)
+    except sender.DoesNotExist, e:
+        pass
+
+# pre_save.connect(update_files_directory, sender=Project)
+# pre_save.connect(update_files_directory, sender=Sample)
+    
 post_delete.connect(delete_attachments, sender=Project)
 post_delete.connect(delete_attachments, sender=Sample)
 post_delete.connect(delete_attachments, sender=Pool)
