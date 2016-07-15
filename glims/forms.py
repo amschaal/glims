@@ -241,15 +241,6 @@ class LabForm(forms.ModelForm):
         model = Lab
         fields = ('name','affiliation','url','description','slug')
 
-# class ProcessTemplate(models.Model):
-#     type = models.ForeignKey(ModelType)
-#     name = models.CharField(max_length=100)
-#     description = models.TextField(null=True,blank=True)
-# 
-# class WorkflowTemplate(models.Model):
-#     type = models.ForeignKey(ModelType)
-#     name = models.CharField(max_length=100)
-#     description = models.TextField(null=True,blank=True)
-#     process_templates = models.ManyToManyField(ProcessTemplate,through="WorkflowProcess")
-
-
+class UploadFileForm(forms.Form):
+    subdir = forms.CharField(max_length=200)
+    file = forms.FileField()

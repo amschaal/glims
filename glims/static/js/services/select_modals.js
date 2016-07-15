@@ -23,6 +23,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 			    });
 			    return modalInstance;
 	  }
+	  //example: selectModalService.selectSamples({multi:true,initial:$scope.samples}).result.then(function(samples){$scope.samples=samples});
 	  function selectSamples(options){ 
 		  var defaultOptions = {
 				  title: 'Search Samples',

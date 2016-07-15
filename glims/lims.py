@@ -8,7 +8,7 @@ import operator, os
 from django.conf import settings
 import string
 import random
-from django.db.models.signals import pre_save, post_delete
+from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
 from django.db import transaction
@@ -72,13 +72,13 @@ class Lab(models.Model):
 #             self.save()
 #     def get_absolute_url(self):
 #         return reverse('lab', args=[str(self.id)])
-    @property
-    def directory(self):
-        return os.path.join(settings.LAB_DATA_DIRECTORY,self.slug)
-    def create_directory(self):
-        if self.slug:
-            if not os.path.exists(self.directory):
-                os.makedirs(self.directory, mode=0774)
+#     @property
+#     def directory(self):
+#         return os.path.join(settings.LAB_DATA_DIRECTORY,self.slug)
+#     def create_directory(self):
+#         if self.slug:
+#             if not os.path.exists(self.directory):
+#                 os.makedirs(self.directory, mode=0774)
     def __unicode__(self):
         return self.name
 
@@ -98,17 +98,32 @@ class Project(ExtensibleModel):
     history = JSONField(null=True,blank=True,default={})
 #     file_directory = models.CharField(null=True,blank=True,validators=[file_directory_validator])
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
+    @property
     def directory(self):
 #         return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.file_directory or self.project_id)
-        return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
+        return '{0}/labs/{1}/projects/ID/{2}/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
+    @property
+    def symlink_path(self):
+        return '{0}/labs/{1}/projects/NAME/{2}'.format(self.group.name.replace(' ','_'),self.lab.slug,self.name.replace(' ','_'))
 #         return os.path.join(self.lab.directory,self.project_id)
-    def create_directory(self):
-        directory = os.path.join(FILES_ROOT,self.directory)
-        if not os.path.exists(directory):
-            os.makedirs(directory, mode=0774)
-    def save(self, *args, **kwargs):
-        super(Project, self).save(*args, **kwargs) # Call the "real" save() method.
-        self.create_directory()
+    def create_directories(self):
+        dir = os.path.join(FILES_ROOT,self.directory)
+        symlink = os.path.join(FILES_ROOT,self.symlink_path)
+        symlink_directory = os.path.normpath(os.path.join(symlink,'../'))
+        if not os.path.exists(symlink_directory):
+            os.makedirs(symlink_directory)
+    #     os.unlink(alias_dir)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        if not os.path.lexists(symlink):
+            target = '../ID/{0}'.format(self.project_id)
+            os.symlink(target,symlink)
+#         directory = os.path.join(FILES_ROOT,self.directory)
+#         if not os.path.exists(directory):
+#             os.makedirs(directory, mode=0774)
+#     def save(self, *args, **kwargs):
+#         super(Project, self).save(*args, **kwargs) # Call the "real" save() method.
+#         self.create_directories()
 #     def limit_sample_type_choices(self):
 #         return {'content_type_id': 16}
     def statuses(self):
@@ -129,7 +144,7 @@ class Project(ExtensibleModel):
             ('admin', 'Administer Project'),
             ('pi', 'Can PI a Project'),
         )
-        unique_together = (('lab','file_directory'),)
+#         unique_together = (('lab','file_directory'),)
 
 # class ProjectStatus(models.Model):
 #     project = models.ForeignKey(Project,related_name="statuses")
@@ -236,6 +251,18 @@ def update_project_directory(sender,instance,**kwargs):
 #             File.objects.filter(file__startswith=old_directory)
     except sender.DoesNotExist, e:
         pass
+
+@receiver(post_save,sender=Project)
+def create_project_directories(sender,instance,**kwargs):
+    instance.create_directories()
+
+# @receiver(pre_save,sender=Project)
+# def create_sample_alias(sender,instance,**kwargs):
+#     dir = os.path.join(FILES_ROOT,instance.directory)
+#     alias_dir = os.path.join(FILES_ROOT,instance.alias_directory)
+#     os.unlink(alias_dir)
+#     os.symlink(alias_dir, '../{0}'.format(instance.))
+
 
 # pre_save.connect(update_files_directory, sender=Project)
 # pre_save.connect(update_files_directory, sender=Sample)

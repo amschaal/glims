@@ -116,7 +116,9 @@ angular.module("samples-plugin")
 			                		  enableColumnMenu: false,
 			                		  enableFiltering: false
 			                  },
-			                  {displayName: "ID", name: "sample_id", pinnedLeft:true, minWidth: 150},
+			                  {displayName: "ID", name: "sample_id", pinnedLeft:true, minWidth: 150,
+			                	cellTemplate:   '<div class="ui-grid-cell-contents"><a href="{[grid.appScope.getURL(\'sample\',{pk:row.entity.id})]}">{{COL_FIELD}}</a></div>'
+			                  },
 			                  {displayName: "Type", name: "type.name", minWidth: 150,
 			                	  cellTemplate: '<div class="ui-grid-cell-contents" ng-class="{\'error\':grid.appScope.project.sample_type.id != row.entity.type.id}">{{COL_FIELD}}</div>'
 			                  },
