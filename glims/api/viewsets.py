@@ -14,9 +14,9 @@ from rest_framework.permissions import IsAuthenticated
 from glims.models import Status
 from rest_framework.decorators import detail_route
 from glims.forms import UploadFileForm
-from glims.settings import FILES_ROOT
 import os
 from rest_framework.response import Response
+from glims.api.mixins import FileMixin
 
 
 # from glims.api.permissions import CustomPermission
@@ -71,15 +71,7 @@ class ProjectViewSet(ExtensibleViewset):
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
             Prefetch('type__status_options'),Prefetch('participants'),Prefetch('related_projects'))#, queryset=Status.objects.order_by('order')
 
-def handle_uploaded_file(f,path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    upload_to = os.path.join(path,f.name)
-    with open(upload_to, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-class SampleViewSet(ExtensibleViewset):
+class SampleViewSet(ExtensibleViewset,FileMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
@@ -102,19 +94,19 @@ class SampleViewSet(ExtensibleViewset):
     #Make this a mixin
     #/api/samples/191/upload_file/
     #curl -X POST -H "Content-Type:multipart/form-data" -H 'Authorization: Token 12345' -F "file=@{filename};" -F "subdir=subdir_name" http://localhost/api/samples/191/upload_file/
-    @detail_route(methods=['post'])
-    def upload_file(self, request, pk=None):
-        obj = self.get_object()
-        if not hasattr(obj, 'directory'):
-            raise Exception('%s does not have a directory property'%str(obj))
-        form = UploadFileForm(request.POST,request.FILES)
-        if form.is_valid():
-            path = os.path.join(FILES_ROOT,obj.directory,'files',form.cleaned_data['subdir'])
-            handle_uploaded_file(request.FILES['file'],path)
-            return Response({'status': 'success'})
-        else:
-            return Response(form.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+#     @detail_route(methods=['post'])
+#     def upload_file(self, request, pk=None):
+#         obj = self.get_object()
+#         if not hasattr(obj, 'directory'):
+#             raise Exception('%s does not have a directory property'%str(obj))
+#         form = UploadFileForm(request.POST,request.FILES)
+#         if form.is_valid():
+#             path = os.path.join(FILES_ROOT,obj.directory,'files',form.cleaned_data['subdir'])
+#             handle_uploaded_file(request.FILES['file'],path)
+#             return Response({'status': 'success'})
+#         else:
+#             return Response(form.errors,
+#                             status=status.HTTP_400_BAD_REQUEST)
     
 class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer

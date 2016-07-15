@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load attachment_helpers %}
 {% block page %}Sample Details{% endblock %}
-{% block breadcrumbs %}<a href="{% url 'samples' %}">Samples</a> / {{sample.name}} {% endblock %}
+{% block breadcrumbs %}Projects / <a href="{% url 'project' pk=sample.project.id %}">{{sample.project.name}}</a> / <a href="{% url 'samples' %}">Samples</a> / {{sample.name}} {% endblock %}
 {% block content %}
 <script src="/static/js/pages/sample.js"></script>
 <div class="row">
       <div class="col-lg-12">
         <div class="widget" ng-controller="SampleController" ng-init="init({sample:'{{sample.id}}'});tabs['{{tab}}']=true;">
           <div class="widget-header">
-            <i class="fa fa-flask"></i> {[sample.name]} 
+            <i class="fa fa-flask"></i> {[sample.sample_id]}
             <div class="pull-right" notification-subscription object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></div>
             <a ng-click="editSample()" class="btn btn-sm btn-default pull-right">Edit</a>
           </div>
@@ -18,6 +18,7 @@
 	              <table class="table">
 	              	<tbody>
 	              		<tr><th>Type</th><td>{[sample.type.name]}</td></tr>
+	              		<tr><th>Name</th><td>{[sample.name]}</td></tr>
 	              		<tr><th>Created</th><td>{[sample.created]}</td></tr>
 	              		<tr><th>Project</th><td><a href="{[getURL('project',{'pk':sample.project.id})]}">{[sample.project.name]}</a></td></tr>
 	                	<tr><th>Description</th><td>{[sample.description]}</td></tr>
