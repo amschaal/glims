@@ -3,3 +3,4 @@ media
 /data/
 files
 */migrations/backup*
+STATIC
