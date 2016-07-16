@@ -16,7 +16,7 @@ from rest_framework.decorators import detail_route
 from glims.forms import UploadFileForm
 import os
 from rest_framework.response import Response
-from glims.api.mixins import FileMixin
+from glims.api.mixins import FileMixin, FileBrowserMixin
 
 
 # from glims.api.permissions import CustomPermission
@@ -56,7 +56,7 @@ class StatusSerializerViewSet(viewsets.ModelViewSet):
     model = Status
     queryset = Status.objects.all()
 
-class ProjectViewSet(ExtensibleViewset):
+class ProjectViewSet(ExtensibleViewset,FileMixin,FileBrowserMixin):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
@@ -71,7 +71,7 @@ class ProjectViewSet(ExtensibleViewset):
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
             Prefetch('type__status_options'),Prefetch('participants'),Prefetch('related_projects'))#, queryset=Status.objects.order_by('order')
 
-class SampleViewSet(ExtensibleViewset,FileMixin):
+class SampleViewSet(ExtensibleViewset,FileMixin,FileBrowserMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]

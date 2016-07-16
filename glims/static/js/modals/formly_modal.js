@@ -23,7 +23,7 @@ angular.module('formly.modal',[])
 	          <h3 class="modal-title">{[title]}</h3>\
 	          </div>\
 	          <div class="modal-body">\
-	    	  <!--{[model]}-->\
+	    	  {[model]}\
 	      {[foo]}\
 	  			<form ng-submit="onSubmit()" name="form" novalidate>\
 	  		        <formly-form model="model" ng-model-options="{ allowInvalid: true }" fields="fields" options="options" form="form">\
@@ -196,7 +196,6 @@ angular.module('formly.modal',[])
 				$scope.fields = $scope.original_fields;//angular.copy($scope.original_fields);
 			}
 		);
-		
 	}
 	
 	$scope.fields = $scope.original_fields;//angular.copy($scope.original_fields);//angular.copy($scope.original_fields).push(type_field);
@@ -226,6 +225,7 @@ angular.module('formly.modal',[])
 				setExtraFields(fields);
 			});
 	});
-//	$scope.model.type = 9; //test
+	if (options.postInit)
+		options.postInit($scope);
 }
 );

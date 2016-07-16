@@ -51,6 +51,7 @@
   <script src="/static/js/resources/notifications.js"></script>
   <script src="/static/js/directives/notification-directives.js"></script>
   <script src="/static/js/directives/utility-directives.js"></script>
+  <script src="/static/js/directives/files-directives.js"></script>
   <script src="/static/js/services/glims_services.js"></script>
   <script src="/static/js/services/project_service.js"></script>
   <script src="/static/js/services/sample_service.js"></script>
@@ -99,7 +100,7 @@
 		  uiSelectConfig.theme = 'bootstrap';
 		});
   angular.module('glims.formly',['formly','formlyBootstrap','ngMessages','formly.widgets','formly.modal']);
-  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','notifications','utility.directives']);//, 'ui.router', 'ngCookies'
+  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','notifications','utility.directives','files.directives']);//, 'ui.router', 'ngCookies'
   angular.module('glims.core',['ngResource', 'glimsModels','glimsServices','glims.samplecart']);
   angular.module('mainapp', ['glims.ui','glims.core','attachments','plugins'])
   	.config(['$httpProvider', function($httpProvider) {

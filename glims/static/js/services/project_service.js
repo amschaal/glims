@@ -14,7 +14,18 @@ angular.module('glimsServices')
 					   labelProp: 'name',
 					   url: '/api/groups/',
 					   options: []
-					 }
+					 },
+					 watcher: {
+			          listener: function(field, newValue, oldValue, scope, stopWatching) {
+			        	  if (newValue && newValue != oldValue){
+				    			console.log('model.group changed',newValue);
+					    		angular.forEach(scope.fields,function(field,index){
+					    			if (field.key=='participants')
+					    				field.templateOptions.options = User.query({id__gte:1,groups__name:newValue.name});//;
+					    		});
+			        	  }
+			          }
+			        }
 				 },
 				 {
 		   			 key: 'related_projects',
@@ -76,7 +87,21 @@ angular.module('glimsServices')
 	 };
 
 	 function update(project,options) {
-		    options = angular.extend({model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController'},options||{});
+		    var postInit = function(scope){
+		    	console.log('INITIALIZING SCOPE!!',scope);
+//		    	scope.$watch('model.group',function(newValue,oldValue){
+//			    		if (newValue && newValue != oldValue){
+//			    			console.log('model.group changed',newValue);
+//				    		angular.forEach(scope.fields,function(field,index){
+//				    			if (field.key=='participants')
+//				    				field.templateOptions.options = User.query({id__gte:1,groups__name:newValue.name});//;
+//				    		});
+//			    		}
+//			    			
+//	    		});
+	    	}
+		    
+		    options = angular.extend({model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController',postInit:postInit},options||{});
 			return FormlyModal.create(fields,project || new Project({}),options);
 			
 	 }
