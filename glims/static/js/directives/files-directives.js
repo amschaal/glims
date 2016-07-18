@@ -39,7 +39,7 @@ angular.module('files.directives', ["ngTable"])
 	  }
 	}).run(['$templateCache', function($templateCache) {
 	  $templateCache.put('template/files/list.html',
-	'<span ng-repeat="dir in directories"> <a ng-click="goToDirectoryIndex($index)" ng-if="!$last">{[dir]}</a><span ng-if="$last">{[dir]}</span> /</span>\
+	'<a ng-click="getFiles([])" ng-if="directories.length > 0">/</a> <span ng-repeat="dir in directories"> <a ng-click="goToDirectoryIndex($index)" ng-if="!$last">{[dir]}</a><span ng-if="$last">{[dir]}</span> /</span>\
 	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
       <tr ng-repeat="row in $data track by row.name">\
 	      <td data-title="\'Name\'" sortable="\'name\'" filter="{name: \'text\'}"><a ng-if="row.is_dir" ng-click="getFiles(row.name)">{[row.name]}</a><a href="{[download(row.name)]}" ng-if="!row.is_dir">{[row.name]}</a></td>\
