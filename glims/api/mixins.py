@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import detail_route
 from django.utils._os import safe_join
+from sendfile import sendfile
 
 class FileMixinBase(object):
     directory = None
@@ -59,3 +60,13 @@ class FileMixin(FileMixinBase):
             return Response({'status': 'success'})
         else:
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FileDownloadMixin(FileMixinBase):
+    @detail_route(methods=['get'])
+    def download(self, request, pk=None):
+        subpath = request.query_params.get('subpath')
+        path = safe_join(self.get_directory(),subpath)
+        return sendfile(request, path)
+
+class FileManagerMixin(FileDownloadMixin,FileMixin,FileBrowserMixin):
+    pass

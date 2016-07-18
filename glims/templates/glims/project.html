@@ -49,8 +49,8 @@ table.details th {
 					<div bind-unsafe-html="plugin.template"></div>
 				</tab>
 				-->
-				 <tab heading="Files">
-	              	<list-files list-url="{% url 'Project-detail' pk=project.id  %}list_files/"></list-files>
+				 <tab heading="Data">
+	              	<list-files base-url="{% url 'Project-detail' pk=project.id  %}"></list-files>
 	              </tab>
 				<object-plugins object-id="{{project.id}}" content-type="{{project | content_type_id}}"></object-plugins>
 				<!--  <object-plugins ng-init="objectId={{project.id}};contentType={{project | content_type_id}};"></object-plugins> -->

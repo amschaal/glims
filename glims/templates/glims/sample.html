@@ -26,8 +26,8 @@
 	                </tbody>
 	              </table>
               </tab>
-              <tab heading="Files">
-              	<list-files list-url="{% url 'Sample-detail' pk=sample.id  %}list_files/"></list-files>
+              <tab heading="Data">
+              	<list-files base-url="{% url 'Sample-detail' pk=sample.id  %}"></list-files>
               </tab>
 			  <object-plugins object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></object-plugins>              
 			</tabset>   
