@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import detail_route
 from django.utils._os import safe_join
 from sendfile import sendfile
+from datetime import datetime
 
 class FileMixinBase(object):
     directory = None
@@ -27,6 +28,8 @@ class FileBrowserMixin(FileMixinBase):
     def list_files(self, request, pk=None):
         subdir = request.query_params.get('subdir','')
         path = safe_join(self.get_directory(),subdir)
+        
+#             file={'name':name,'extension':name.split('.').pop() if '.' in name else None,'size':sizeof_fmt(size),'bytes':size,'modified':datetime.datetime.fromtimestamp(mtime).strftime("%m/%d/%Y %I:%M %p"),'metadata':metadata,'isText':istext(path)}
         list = []
         for name in os.listdir(path):
             full_path = os.path.join(path,name)
@@ -34,13 +37,10 @@ class FileBrowserMixin(FileMixinBase):
                 list.append({'name':name,'is_dir':True})
             else:
                 extension = os.path.splitext(full_path)[1]
-                print extension
-                if len(self.extension_filters) > 0:
-                    if extension in self.extension_filters:
-                        list.append({'name':name,'is_dir':False,'extension':extension})
-                else:
-                    list.append({'name':name,'is_dir':False,'extension':extension})
-        return Response(list)
+                if len(self.extension_filters) == 0 or extension in self.extension_filters:
+                    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(full_path)
+                    list.append({'name':name,'is_dir':False,'extension':extension,'bytes':size,'modified':datetime.fromtimestamp(mtime).strftime("%m/%d/%Y %I:%M %p")})
+        return Response({"basedir":self.get_directory(),"subdir":subdir,"files":list})
 
 class FileMixin(FileMixinBase):
     def handle_uploaded_file(self,f,path):

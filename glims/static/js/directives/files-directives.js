@@ -21,8 +21,9 @@ angular.module('files.directives', ["ngTable"])
 	    				subdir.push(directory);
 	    		}
 	    		$http.get(listUrl,{params:{subdir:subdir.join('/')}}).then(function(response){
+	    			$scope.basedir = response.data.basedir;
     				$scope.directories = subdir;
-	    			$scope.files=response.data;
+	    			$scope.files=response.data.files;
 	    			$scope.tableParams.settings({dataset:$scope.files});
 	    		});
 	    	};
@@ -37,13 +38,24 @@ angular.module('files.directives', ["ngTable"])
 	    	
 	    }
 	  }
-	}).run(['$templateCache', function($templateCache) {
+	})
+	.filter('bytes', function() {
+	return function(bytes, precision) {
+		if (bytes==0 || isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+		if (typeof precision === 'undefined') precision = 1;
+		var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+			number = Math.floor(Math.log(bytes) / Math.log(1024));
+		return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+	}
+	})
+	.run(['$templateCache', function($templateCache) {
 	  $templateCache.put('template/files/list.html',
-	'<a ng-click="getFiles([])" ng-if="directories.length > 0">/</a> <span ng-repeat="dir in directories"> <a ng-click="goToDirectoryIndex($index)" ng-if="!$last">{[dir]}</a><span ng-if="$last">{[dir]}</span> /</span>\
+	'<a ng-click="getFiles([])" ng-if="directories.length > 0">{[basedir]}</a><span ng-if="directories.length < 1">{[basedir]}</span>/<span ng-repeat="dir in directories"><a ng-click="goToDirectoryIndex($index)" ng-if="!$last">{[dir]}</a><span ng-if="$last">{[dir]}</span>/</span>\
 	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
       <tr ng-repeat="row in $data track by row.name">\
-	      <td data-title="\'Name\'" sortable="\'name\'" filter="{name: \'text\'}"><a ng-if="row.is_dir" ng-click="getFiles(row.name)">{[row.name]}</a><a href="{[download(row.name)]}" ng-if="!row.is_dir">{[row.name]}</a></td>\
+	      <td data-title="\'Name\'" sortable="\'name\'" filter="{name: \'text\'}"><a ng-if="row.is_dir" ng-click="getFiles(row.name)"><i class="glyphicon glyphicon-folder-open"> </i> {[row.name]}</a><a href="{[download(row.name)]}" ng-if="!row.is_dir">{[row.name]}</a></td>\
 		  <td data-title="\'Extension\'" sortable="\'extension\'" filter="{extension: \'text\'}">{[row.extension]}</td>\
+		  <td data-title="\'Size\'" sortable="\'bytes\'">{[row.bytes|bytes]}</td>\
 	   </tr>\
 	 </table>'
 	  );

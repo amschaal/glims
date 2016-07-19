@@ -9,6 +9,19 @@ var transformDjangoRestResponse = function(data, headers){
     return {};
 }
 
+var standard_methods = {
+	    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
+	    save : { method : 'PUT' },
+	    patch : { method : 'PATCH' },
+	    create : { method : 'POST' },
+	    remove : { method : 'DELETE' }
+	  };
+//	function file_manager_methods(baseURL){
+//		var file_manager_methods  = {
+//				list_files : { method : 'PUT', url: baseURL+'' },
+//			    download : { method : 'PATCH' },
+//			}
+//	}
 angular.module('glimsModels', ['ngResource'])
 .factory('ModelType', ['$resource', function ($resource) {
   return $resource('/api/model_types/:id/', {id:'@id'}, {
@@ -16,13 +29,7 @@ angular.module('glimsModels', ['ngResource'])
   });
 }])
 .factory('Status', ['$resource', function ($resource) {
-  return $resource('/api/statuses/:id/', {id:'@id'}, {
-    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
-    save : { method : 'PUT' },
-    patch : { method : 'PATCH' },
-    create : { method : 'POST' },
-    remove : { method : 'DELETE' }
-  });
+  return $resource('/api/statuses/:id/', {id:'@id'}, standard_methods);
 }])
 .factory('User', ['$resource', function ($resource) {
   return $resource('/api/users/:id/', {id:'@id'}, {
@@ -30,33 +37,11 @@ angular.module('glimsModels', ['ngResource'])
   });
 }])
 .factory('Sample', ['$resource', function ($resource) {
-  return $resource('/api/samples/:id/', {id:'@id'}, {
-    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
-//    save : { method : 'POST', url: '/samples/api_update/'},
-//  create : { method : 'POST', url: '/samples/api_create/' },
-    save : { method : 'PUT' },
-    patch : { method : 'PATCH' },
-    create : { method : 'POST' },
-
-    remove : { method : 'DELETE' }
-  });
+  return $resource('/api/samples/:id/', {id:'@id'}, standard_methods);
 }])
 .factory('Project', ['$resource', function ($resource) {
-  return $resource('/api/projects/:id/', {id:'@id'}, {
-    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
-    save : { method : 'PUT' },
-    patch : { method : 'PATCH' },
-    create : { method : 'POST' },
-    remove : { method : 'DELETE' }
-  });
+  return $resource('/api/projects/:id/', {id:'@id'}, standard_methods);
 }])
 .factory('Pool', ['$resource', function ($resource) {
-  return $resource('/api/pools/:id/', {id:'@id'}, {
-    query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
-    save : { method : 'PUT' },
-    patch : { method : 'PATCH' },
-    create : { method : 'POST' },
-    remove : { method : 'DELETE' }
-  });
+  return $resource('/api/pools/:id/', {id:'@id'}, standard_methods);
 }]);
-
