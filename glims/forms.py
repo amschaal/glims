@@ -243,4 +243,6 @@ class LabForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     subdir = forms.CharField(max_length=200)
+    filename = forms.CharField(max_length=200,required=False)
+    overwrite = forms.BooleanField(required=False)
     file = forms.FileField()

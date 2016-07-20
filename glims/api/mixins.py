@@ -43,10 +43,11 @@ class FileBrowserMixin(FileMixinBase):
         return Response({"basedir":self.get_directory(),"subdir":subdir,"files":list})
 
 class FileMixin(FileMixinBase):
-    def handle_uploaded_file(self,f,path):
+    def handle_uploaded_file(self,f,path,filename=None):
         if not os.path.exists(path):
             os.makedirs(path)
-        upload_to = os.path.join(path,f.name)
+        filename = filename or f.name
+        upload_to = safe_join(path,filename)
         with open(upload_to, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
@@ -56,7 +57,11 @@ class FileMixin(FileMixinBase):
         form = UploadFileForm(request.POST,request.FILES)
         if form.is_valid():
             path = os.path.join(self.get_directory(),'files',form.cleaned_data['subdir'])
-            self.handle_uploaded_file(request.FILES['file'],path)
+            file = request.FILES['file']
+            filename = form.cleaned_data['filename'] or file.name
+            if not form.cleaned_data['overwrite'] and os.path.exists(safe_join(path,filename)):
+                return Response({'file':['File "%s" exists at path "%s"'%(filename,path)]}, status=status.HTTP_400_BAD_REQUEST)
+            self.handle_uploaded_file(file,path,filename)
             return Response({'status': 'success'})
         else:
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -66,7 +71,7 @@ class FileDownloadMixin(FileMixinBase):
     def download(self, request, pk=None):
         subpath = request.query_params.get('subpath')
         path = safe_join(self.get_directory(),subpath)
-        return sendfile(request, path)
+        return sendfile(request, path, attachment=True)
 
 class FileManagerMixin(FileDownloadMixin,FileMixin,FileBrowserMixin):
     pass
