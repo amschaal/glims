@@ -76,6 +76,7 @@ angular.module('files.directives', ["ngTable"])
 	      <td data-title="\'Name\'" sortable="\'name\'" filter="{name: \'text\'}"><a ng-if="row.is_dir" ng-click="getFiles(row.name)"><i class="glyphicon glyphicon-folder-open"> </i> {[row.name]}</a><a href="{[download(row.name)]}" ng-if="!row.is_dir"><i class="glyphicon glyphicon-download"> </i> {[row.name]}</a></td>\
 		  <td data-title="\'Extension\'" sortable="\'extension\'" filter="{extension: \'text\'}">{[row.extension]}</td>\
 		  <td data-title="\'Size\'" sortable="\'bytes\'">{[row.bytes|bytes]}</td>\
+		  <td data-title="\'Modified\'" sortable="\'modified\'">{[row.modified]}</td>\
 		  <td data-title="\'Actions\'" ng-if="selection"><button ng-if="!selected(row.name)" ng-click="select(row.name)" class="btn">Select</button><button ng-click="deselect(getPath(row.name))" ng-if="selected(row.name)" class="btn btn-danger">Deselect</button></td>\
 	   </tr>\
 	 </table>'

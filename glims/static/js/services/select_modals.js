@@ -2,7 +2,8 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 .service('selectModalService', function($uibModal,DRFNgTableParams) {
 	 return {
 		 openSelectModal: openSelectModal,
-		 selectSamples: selectSamples
+		 selectSamples: selectSamples,
+		 selectFiles: selectFiles
 	 };
 	 function openSelectModal (template,tableParams,options) { 
 		 console.log('openSelectModal',template,tableParams,options)	;
@@ -32,7 +33,21 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 		  }
 		  angular.extend(defaultOptions,options?options:{});
 		  return openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
-	  } 
+	  }
+	  function selectFiles(baseUrl,options){
+		  var modalInstance = $uibModal.open({
+		      templateUrl: options.template || 'glims/select_modals/select_files_modal.html',
+		      controller: options.controller || 'selectFilesModalController',
+		      size: options.size || 'lg',
+    		  resolve: {
+    		      baseUrl: function(){return baseUrl},
+    		      options: function(){
+    		    	  return options;
+    		      }
+    	      }
+		    });
+		    return modalInstance;
+	  }
 	  
 })
 .controller('selectModalController', function ($scope, $uibModalInstance,initial,tableParams,template,options) {
@@ -79,6 +94,18 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	  
 	}
 )
+.controller('selectFilesModalController', function ($scope, $uibModalInstance,baseUrl,options) {
+	  $scope.options = angular.copy(options);
+	  $scope.selection = options.selection || [];
+	  $scope.baseUrl = baseUrl;
+	  $scope.done = function(){
+		  $uibModalInstance.close($scope.selection);
+	  }
+	  $scope.cancel = function(){
+		  $uibModalInstance.dismiss();
+	  }
+	}
+)
 .directive('modalSelectActions', function() {  
   return {  
     template: '<a class="btn btn-xs btn-success" ng-click="select(row)" ng-if="!options.multi">Select</a><a class="btn btn-xs btn-success" ng-hide="isSelected(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)" ng-click="remove(row)" ng-if="options.multi">Remove</a>',  
@@ -102,5 +129,18 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 .run(['$templateCache', function($templateCache) {
 	$templateCache.put('glims/select_modals/sample_modal.html',
 			'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Created\'" sortable="\'created\'"">{[row.created|date]}</td><td data-title="\'ID\'" sortable="\'sample_id\'" filter="{sample_id__icontains: \'text\'}"><a target="_blank" href="{[ sampleLink(row) ]}">{[row.sample_id]}</a></td><td data-title="\'Name\'" sortable="\'name\'" filter="{name__icontains: \'text\'}">{[row.name]}</td><td data-title="\'Type\'" sortable="\'type__name\'" filter="{type__name__icontains: \'text\'}">{[row.type__name]}</td><td data-title="\'Project\'" sortable="\'project__name\'" filter="{project__name__icontains: \'text\'}"><a target="_blank" href="{[ projectLink(row) ]}">{[row.project__name]}</a></td><td data-title="\'Description\'" sortable="\'description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td modal-select-actions></td></tr></table>'
+	);
+}])
+.run(['$templateCache', function($templateCache) {
+	$templateCache.put('glims/select_modals/select_files_modal.html',
+	'	<div class="modal-header">\
+            <h3 class="modal-title">{[options.title]}</h3>\
+            </div>\
+            <div class="modal-body">\
+				<list-files base-url="{[baseUrl]}" selection="selection"></list-files>\
+            </div>\
+            <div class="modal-footer">\
+              <button class="btn btn-success" ng-click="done()">Done</button><button class="btn btn-warning" ng-click="cancel()">Cancel</button>\
+            </div>'
 	);
 }]);
