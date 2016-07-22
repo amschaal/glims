@@ -10,4 +10,4 @@ class ProjectShareSerializer(serializers.ModelSerializer):
     directory = serializers.CharField(read_only=True)
     class Meta:
         model = ProjectShare
-
+#         read_only_fields = ('project','labshare','directory')

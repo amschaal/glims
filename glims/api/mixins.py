@@ -1,7 +1,7 @@
 import os
 
 from glims.forms import UploadFileForm
-from glims.settings import FILES_ROOT
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import detail_route
@@ -16,7 +16,7 @@ class FileMixinBase(object):
             return self.directory
         obj = self.get_object()
         if hasattr(obj, 'directory'):
-            return safe_join(FILES_ROOT,obj.directory)
+            return safe_join(settings.FILES_ROOT,obj.directory)
         raise Exception('No base directory was specified for "%s"'%str(obj))
 
 class FileBrowserMixin(FileMixinBase):

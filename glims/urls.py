@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from glims import views as glims_views
 from django.contrib import admin
 from plugins.utils import PluginManager
+from bioshare import urls as bioshare_urls
 admin.autodiscover()
 from permissions import urls as permission_urls
 from attachments import urls as attachment_urls
@@ -96,6 +97,7 @@ urlpatterns += patterns('',
     url(r'^compute/', include(compute_urls.urlpatterns)),
     url(r'^formly_forms/', include(formly_urls.urlpatterns)),
     url(r'^notifications/', include(notification_urls.urlpatterns)),
+    url(r'^bioshare/', include(bioshare_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
