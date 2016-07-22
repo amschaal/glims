@@ -59,7 +59,8 @@ INSTALLED_APPS = (
     'django_cloudstore',
     'notifications',
     'accounts',
-    'logger'
+    'logger',
+    'bioshare'
 )
 
 STATICFILES_FINDERS = (
