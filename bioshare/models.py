@@ -6,15 +6,35 @@ import os
 from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 import shutil
+import urllib2
+import json
 
 class BioshareAccount(models.Model):
     group = models.OneToOneField(Group, related_name="bioshare_account")
     auth_token = models.CharField(max_length=100)
-    def create_share(self, name, directory, description=''):
+    def __unicode__(self):
+        return 'Bioshare account: %s'%self.group.name
+    def create_share(self, name, directory, description=None):
 #         @todo: replace with real API call
-        import string, random
-        return ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(15))
-
+#         import string, random
+#         return ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(15))
+        description = description or 'Genome Center LIMS generated share'
+        req = urllib2.Request(settings.BIOSHARE_SETTINGS['CREATE_URL'])
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Authorization', 'Token %s'%self.auth_token)
+        filesystem = settings.BIOSHARE_SETTINGS['DEFAULT_FILESYSTEM']
+        params = {"name":name,"notes":description,"filesystem":filesystem,"link_to_path":directory,'read_only':True}
+        try:
+            response = urllib2.urlopen(req, json.dumps(params))
+            if response.getcode() == 200:
+                data = json.load(response)
+                return data['id']
+            else:
+                raise Exception('Unable to create Bioshare share')
+        except urllib2.HTTPError as e:
+            error_message = e.read()
+            print error_message
+            raise Exception('Unable to create share: %s'%error_message)
 class LabShare(models.Model):
     lab = models.ForeignKey(Lab)
     group = models.ForeignKey(Group)
@@ -25,7 +45,7 @@ class LabShare(models.Model):
         if not self.bioshare_id:
             if not os.path.exists(self.directory(full=True)):
                 os.makedirs(self.directory(full=True))
-            self.bioshare_id = self.group.bioshare_account.create_share('%s - %s'%(self.lab.name,self.group.name),self.directory)
+            self.bioshare_id = self.group.bioshare_account.create_share('%s - %s'%(self.lab.name,self.group.name),self.directory())
         return super(LabShare, self).save(*args, **kwargs)
 #         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
     def directory(self,full=True):
