@@ -16,7 +16,10 @@ class FileMixinBase(object):
             return self.directory
         obj = self.get_object()
         if hasattr(obj, 'directory'):
-            return safe_join(settings.FILES_ROOT,obj.directory)
+            if callable(obj.directory):
+                return obj.directory()
+            else:
+                return safe_join(settings.FILES_ROOT,obj.directory)
         raise Exception('No base directory was specified for "%s"'%str(obj))
 
 class FileBrowserMixin(FileMixinBase):

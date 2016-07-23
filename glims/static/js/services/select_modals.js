@@ -1,5 +1,5 @@
 angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
-.service('selectModalService', function($uibModal,DRFNgTableParams) {
+.service('SelectModalService', function($uibModal,DRFNgTableParams) {
 	 return {
 		 openSelectModal: openSelectModal,
 		 selectSamples: selectSamples,

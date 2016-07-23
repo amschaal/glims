@@ -22,6 +22,8 @@ from django.core.validators import RegexValidator
 from glims.settings import FILES_ROOT
 import shutil
 from django.contrib.contenttypes.models import ContentType
+from django.utils.text import slugify
+from django.utils._os import safe_join
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -98,16 +100,19 @@ class Project(ExtensibleModel):
     history = JSONField(null=True,blank=True,default={})
 #     file_directory = models.CharField(null=True,blank=True,validators=[file_directory_validator])
 #     sub_directory = models.CharField(max_length=50,null=True,blank=True)
-    @property
-    def directory(self):
+    def directory(self,full=True):
 #         return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.file_directory or self.project_id)
-        return '{0}/labs/{1}/projects/ID/{2}/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
+#         return '{0}/labs/{1}/projects/ID/{2}/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
+        path =  os.path.join(self.group.name.replace(' ','_'),'labs',self.lab.slug,'projects','ID',self.project_id)
+        if full:
+            path = safe_join(FILES_ROOT,path)
+        return path
     @property
     def symlink_path(self):
         return '{0}/labs/{1}/projects/NAME/{2}'.format(self.group.name.replace(' ','_'),self.lab.slug,self.name.replace(' ','_'))
 #         return os.path.join(self.lab.directory,self.project_id)
     def create_directories(self):
-        dir = os.path.join(FILES_ROOT,self.directory)
+        dir = self.directory(full=True)
         symlink = os.path.join(FILES_ROOT,self.symlink_path)
         symlink_directory = os.path.normpath(os.path.join(symlink,'../'))
         if not os.path.exists(symlink_directory):
@@ -134,6 +139,8 @@ class Project(ExtensibleModel):
         return reverse('project', args=[str(self.id)])
     def get_group(self):
         return self.group
+    def slugify_name(self):
+        return slugify(self.name.replace(' ','_'))
     @staticmethod
     def user_queryset(user):
         Project.objects.filter(group__in=user.groups)
@@ -163,12 +170,11 @@ class Sample(ExtensibleModel):
         return self.name
     def get_absolute_url(self):
         return reverse('sample', args=[str(self.id)])
-    @property
-    def directory(self):
+    def directory(self,full=True):
         dir = self.sample_id
         if self.name:
             dir = self.name.replace(' ','_')
-        return os.path.join(self.project.directory,'samples/{0}/'.format(dir))
+        return  os.path.join(self.project.directory(full=full),'samples',dir)
     def get_group(self):
         if not self.project:
             return None
@@ -241,8 +247,8 @@ def update_project_directory(sender,instance,**kwargs):
         return
     try:
         old = sender.objects.get(id=instance.id)
-        old_directory = os.path.join(FILES_ROOT,old.directory)
-        new_directory = os.path.join(FILES_ROOT,instance.directory)
+        old_directory = old.directory(full=True)
+        new_directory = instance.directory(full=True)
         if old_directory != new_directory and os.path.isdir(old_directory):
             shutil.move(old_directory, new_directory)
             for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
