@@ -3,12 +3,14 @@ from glims.lims import Lab, Project
 from django.contrib.auth.models import Group
 from django.utils._os import safe_join
 import os
-from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 import shutil
 import urllib2
 import json
 from bioshare.utils import get_real_files, get_symlinks
+from bioshare import CREATE_URL, VIEW_URL
+from django.conf import settings
+
 
 class BioshareAccount(models.Model):
     group = models.OneToOneField(Group, related_name="bioshare_account")
@@ -20,7 +22,7 @@ class BioshareAccount(models.Model):
 #         import string, random
 #         return ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(15))
         description = description or 'Genome Center LIMS generated share'
-        req = urllib2.Request(settings.BIOSHARE_SETTINGS['CREATE_URL'])
+        req = urllib2.Request(CREATE_URL)
         req.add_header('Content-Type', 'application/json')
         req.add_header('Authorization', 'Token %s'%self.auth_token)
         filesystem = settings.BIOSHARE_SETTINGS['DEFAULT_FILESYSTEM']
@@ -55,6 +57,9 @@ class LabShare(models.Model):
         if full:
             path = safe_join(settings.FILES_ROOT,path)
         return path
+    @property
+    def url(self):
+        return VIEW_URL.format(id=self.bioshare_id)
 
 class ProjectShare(models.Model):
     project = models.OneToOneField(Project)
@@ -69,6 +74,9 @@ class ProjectShare(models.Model):
         return get_real_files(self.directory(full=True),relpath)
     def symlinks(self,relpath=True):
         return get_symlinks(self.directory(full=True),relpath)
+    @property
+    def url(self):
+        return self.labshare.url + self.folder
 
 def create_project_share_directory(sender,instance,**kwargs):
     if hasattr(instance, 'id'):

@@ -16,7 +16,7 @@ angular.module("bioshare-plugin")
 			}
 			$scope.createShare = function(){
 				var share = new ProjectShare({project:$scope.project.id});
-				share.$create()
+				share.$create(function(share){$scope.share = share;})
 			}
 			$scope.addFiles = function(){
 				SelectModalService.selectFiles('/api/projects/'+$scope.project.id+'/',{selection:$scope.share.symlinks}).result.then(function(files){
@@ -33,9 +33,9 @@ angular.module("bioshare-plugin")
 	'<load-on-select>\
 			<div ng-init="init()">\
 				<button ng-if="share===null" ng-click="createShare()" class="btn btn-success">Create Share</button>\
-				{[share]}\
 				<div ng-if="share.id">\
-				<button ng-click="addFiles()" class="btn btn-success">Add files</button>\
+				<p><a href="{[share.url]}" target="_blank">View on Bioshare</a></p>\
+				<button ng-click="addFiles()" class="btn btn-success pull-right">Add files</button>\
 				<list-files base-url="/bioshare/api/project_shares/{[share.id]}/" selection="share.symlinks"></list-files>\
 				</div>\
 			</div>\
