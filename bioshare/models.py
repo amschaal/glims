@@ -8,6 +8,7 @@ from django.db.models.signals import post_save, pre_save
 import shutil
 import urllib2
 import json
+from bioshare.utils import get_real_files, get_symlinks
 
 class BioshareAccount(models.Model):
     group = models.OneToOneField(Group, related_name="bioshare_account")
@@ -63,6 +64,11 @@ class ProjectShare(models.Model):
         unique_together = (('labshare','folder'),('project','labshare'))
     def directory(self,full=True):
         return safe_join(self.labshare.directory(full=full),self.folder)
+    #This should always return an empty array.  We don't want actual data, just a view on the data!
+    def real_files(self,relpath=True):
+        return get_real_files(self.directory(full=True),relpath)
+    def symlinks(self,relpath=True):
+        return get_symlinks(self.directory(full=True),relpath)
 
 def create_project_share_directory(sender,instance,**kwargs):
     if hasattr(instance, 'id'):
