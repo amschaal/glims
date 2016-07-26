@@ -96,10 +96,14 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 )
 .controller('selectFilesModalController', function ($scope, $uibModalInstance,baseUrl,options) {
 	  $scope.options = angular.copy(options);
-	  $scope.selection = options.selection || [];
+	  $scope.selection = options.selection ? angular.copy(options.selection) : [];
+	  $scope.actions = options.actions;
 	  $scope.baseUrl = baseUrl;
 	  $scope.done = function(){
-		  $uibModalInstance.close($scope.selection);
+		  var old_selection = options.selection || []
+		  var added = _.difference($scope.selection,old_selection)
+		  var removed = _.difference(old_selection,$scope.selection)
+		  $uibModalInstance.close({'selection':$scope.selection,'added':added,'removed':removed});
 	  }
 	  $scope.cancel = function(){
 		  $uibModalInstance.dismiss();
@@ -137,7 +141,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
             <h3 class="modal-title">{[options.title]}</h3>\
             </div>\
             <div class="modal-body">\
-				<list-files base-url="{[baseUrl]}" selection="selection"></list-files>\
+				<list-files base-url="{[baseUrl]}" selection="selection" actions="actions"></list-files>\
             </div>\
             <div class="modal-footer">\
               <button class="btn btn-success" ng-click="done()">Done</button><button class="btn btn-warning" ng-click="cancel()">Cancel</button>\

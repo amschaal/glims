@@ -34,16 +34,18 @@ class ProjectShareViewSet(viewsets.ModelViewSet,FileBrowserMixin,FileDownloadMix
     def link_paths(self, request, pk=None):
         obj = self.get_object()
         paths = request.data.get('paths',[])
-        pruned_paths = remove_sub_paths(paths)
-        for path in pruned_paths:
-            link_path = safe_join(obj.directory(full=True),path)
-            target_path = safe_join(obj.project.directory(),path)
-            if not os.path.exists(link_path):
-                if os.path.islink(link_path):
-                    os.unlink(link_path)
-                parent_dir = os.path.abspath(os.path.join(link_path, os.pardir))
-                if not os.path.exists(parent_dir):
-                    os.makedirs(parent_dir)
-                os.symlink(target_path,link_path)
-        return Response({'status': 'success','paths':pruned_paths})
+        stats = obj.link_paths(paths)
+        return Response({'status': 'success','stats':stats,'symlinks':obj.symlinks(recalculate=True)})
 #             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+    @detail_route(methods=['post'])
+    def unlink_paths(self, request, pk=None):
+        obj = self.get_object()
+        paths = request.data.get('paths',[])
+        stats = obj.unlink_paths(paths)
+        return Response({'status': 'success','stats':stats,'symlinks':obj.symlinks(recalculate=True)})
+    @detail_route(methods=['post'])
+    def set_paths(self, request, pk=None):
+        obj = self.get_object()
+        paths = request.data.get('paths',[])
+        stats = obj.set_paths(paths)
+        return Response({'status': 'success','stats':stats,'symlinks':obj.symlinks(recalculate=True)})

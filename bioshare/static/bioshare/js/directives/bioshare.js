@@ -19,10 +19,13 @@ angular.module("bioshare-plugin")
 				share.$create(function(share){$scope.share = share;})
 			}
 			$scope.addFiles = function(){
-				SelectModalService.selectFiles('/api/projects/'+$scope.project.id+'/',{selection:$scope.share.symlinks}).result.then(function(files){
-					console.log('selected',files);
+				SelectModalService.selectFiles('/api/projects/'+$scope.project.id+'/',{selection:$scope.share.symlinks,actions:{select:true,deselect:true}}).result.then(function(result){
+					console.log('selected',result.selection,result.added,result.removed);
 //					$scope.share.link_paths({paths:files});
-					$http.post('/bioshare/api/project_shares/'+$scope.share.id+'/link_paths/',{paths:files})
+					$http.post('/bioshare/api/project_shares/'+$scope.share.id+'/set_paths/',{paths:result.selection})
+						.then(function(response){
+								$scope.share.symlinks = response.data.symlinks;
+						});
 				});
 			}
 		}

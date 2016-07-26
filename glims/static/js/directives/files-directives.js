@@ -6,7 +6,8 @@ angular.module('files.directives', ["ngTable"])
 	    scope: {
 	    	baseUrl:'@',
 	    	subdir: '@',
-	    	selection: '='
+	    	selection: '=',
+	    	actions: '='
 	    },
 	    controller: function($scope, $http, $element,NgTableParams){
 	    	var listUrl = $scope.baseUrl + 'list_files/';
@@ -77,7 +78,7 @@ angular.module('files.directives', ["ngTable"])
 		  <td data-title="\'Extension\'" sortable="\'extension\'" filter="{extension: \'text\'}">{[row.extension]}</td>\
 		  <td data-title="\'Size\'" sortable="\'bytes\'">{[row.bytes|bytes]}</td>\
 		  <td data-title="\'Modified\'" sortable="\'modified\'">{[row.modified]}</td>\
-		  <td data-title="\'Actions\'" ng-if="selection"><button ng-if="!selected(row.name)" ng-click="select(row.name)" class="btn">Select</button><button ng-click="deselect(getPath(row.name))" ng-if="selected(row.name)" class="btn btn-danger">Deselect</button></td>\
+		  <td data-title="\'Actions\'" ng-if="actions"><button ng-if="!selected(row.name) && actions.select" ng-click="select(row.name)" class="btn">Select</button><button ng-click="deselect(getPath(row.name))" ng-if="selected(row.name) && actions.deselect" class="btn btn-danger">Deselect</button></td>\
 	   </tr>\
 	 </table>'
 	  );

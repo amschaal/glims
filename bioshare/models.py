@@ -7,7 +7,7 @@ from django.db.models.signals import post_save, pre_save
 import shutil
 import urllib2
 import json
-from bioshare.utils import get_real_files, get_symlinks
+from bioshare.utils import get_real_files, get_symlinks, remove_sub_paths
 from bioshare import CREATE_URL, VIEW_URL
 from django.conf import settings
 
@@ -70,14 +70,56 @@ class ProjectShare(models.Model):
     def directory(self,full=True):
         return safe_join(self.labshare.directory(full=full),self.folder)
     #This should always return an empty array.  We don't want actual data, just a view on the data!
-    def real_files(self,relpath=True):
-        return get_real_files(self.directory(full=True),relpath)
-    def symlinks(self,relpath=True):
-        return get_symlinks(self.directory(full=True),relpath)
+    def real_files(self,relpath=True,recalculate=False):
+        if not hasattr(self, '_real_files') or recalculate: #only run once
+            self._real_files = get_real_files(self.directory(full=True),relpath)
+        return self._real_files
+    def symlinks(self,relpath=True,recalculate=False):
+        if not hasattr(self, '_symlinks') or recalculate: #only run once
+            self._symlinks = get_symlinks(self.directory(full=True),relpath)
+        return self._symlinks
     @property
     def url(self):
         return self.labshare.url + self.folder
-
+    def link_paths(self,paths):
+        current_links = self.symlinks(relpath=True,recalculate=True)
+        new_paths = list(set(remove_sub_paths(paths+current_links)) - set(current_links))
+        ignored = list(set(paths) - set(new_paths))
+        failed = []
+        linked = []
+        for path in new_paths:
+            link_path = safe_join(self.directory(full=True),path)
+            target_path = safe_join(self.project.directory(full=True),path)
+            if os.path.exists(link_path) or os.path.lexists(link_path): #does the path exist as a symlink or otherwise?
+                if os.path.isdir(link_path) and not os.path.islink(link_path):#if it is an empty directory (aside from symlinks and directories), delete it
+                    if len(get_real_files(link_path))==0:
+                        shutil.rmtree(link_path)
+                    else:
+                        failed.append(path)
+                        continue
+            parent_dir = os.path.abspath(os.path.join(link_path, os.pardir))
+            if not os.path.exists(parent_dir):
+                os.makedirs(parent_dir)
+            os.symlink(target_path,link_path)
+            linked.append(path)
+        return {'linked':linked,'ignored':ignored,'failed':failed}
+    def unlink_paths(self,paths):
+        failed = []
+        removed = []
+        for path in paths:
+            link_path = safe_join(self.directory(full=True),path)
+            if os.path.lexists(link_path) and os.path.islink(link_path): #does the path exist as a symlink or otherwise?
+                os.unlink(link_path)
+                removed.append(path)
+            else:
+                failed.append(path)
+        return {'removed':removed,'failed':failed}
+    def set_paths(self,paths):
+        current_links = self.symlinks(relpath=True,recalculate=True)
+        remove_paths = list(set(current_links)-set(paths))
+        remove_stats = self.unlink_paths(remove_paths)
+        link_stats =self.link_paths(paths)
+        return {'linked':link_stats['linked'],'ignored':link_stats['ignored'],'removed':remove_stats['removed'],'failed':remove_stats['failed']+link_stats['failed']}
 def create_project_share_directory(sender,instance,**kwargs):
     if hasattr(instance, 'id'):
         try:
