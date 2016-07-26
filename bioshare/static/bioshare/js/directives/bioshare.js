@@ -25,6 +25,7 @@ angular.module("bioshare-plugin")
 					$http.post('/bioshare/api/project_shares/'+$scope.share.id+'/set_paths/',{paths:result.selection})
 						.then(function(response){
 								$scope.share.symlinks = response.data.symlinks;
+								$scope.$broadcast('refresh-files');
 						});
 				});
 			}
@@ -38,7 +39,8 @@ angular.module("bioshare-plugin")
 				<button ng-if="share===null" ng-click="createShare()" class="btn btn-success">Create Share</button>\
 				<div ng-if="share.id">\
 				<p><a href="{[share.url]}" target="_blank">View on Bioshare</a></p>\
-				<button ng-click="addFiles()" class="btn btn-success pull-right">Add files</button>\
+				<button ng-click="addFiles()" class="btn btn-success pull-right">Change selection</button>\
+				<h3>Linked project files</h3>\
 				<list-files base-url="/bioshare/api/project_shares/{[share.id]}/" selection="share.symlinks"></list-files>\
 				</div>\
 			</div>\

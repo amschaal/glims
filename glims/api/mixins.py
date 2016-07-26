@@ -31,7 +31,8 @@ class FileBrowserMixin(FileMixinBase):
     def list_files(self, request, pk=None):
         subdir = request.query_params.get('subdir','')
         path = safe_join(self.get_directory(),subdir)
-        
+        if not os.path.isdir(path):
+            return Response({'errors':['Sub directory "%s" is not a valid directory'%subdir]}, status=status.HTTP_400_BAD_REQUEST)
 #             file={'name':name,'extension':name.split('.').pop() if '.' in name else None,'size':sizeof_fmt(size),'bytes':size,'modified':datetime.datetime.fromtimestamp(mtime).strftime("%m/%d/%Y %I:%M %p"),'metadata':metadata,'isText':istext(path)}
         list = []
         for name in os.listdir(path):

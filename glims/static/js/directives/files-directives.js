@@ -25,12 +25,17 @@ angular.module('files.directives', ["ngTable"])
 	    			else
 	    				subdir.push(directory);
 	    		}
-	    		$http.get(listUrl,{params:{subdir:subdir.join('/')}}).then(function(response){
-	    			$scope.basedir = response.data.basedir;
-    				$scope.directories = subdir;
-	    			$scope.files=response.data.files;
-	    			$scope.tableParams.settings({dataset:$scope.files});
-	    		});
+	    		$http.get(listUrl,{params:{subdir:subdir.join('/')}}).then(
+	    				function(response){
+			    			$scope.errors = null;
+			    			$scope.basedir = response.data.basedir;
+		    				$scope.directories = subdir;
+			    			$scope.files=response.data.files;
+			    			$scope.tableParams.settings({dataset:$scope.files});
+	    				},function(response){
+	    					$scope.errors = response.data.errors || ['There was an error retrieving the directory listing.'];
+	    				}
+	    		);
 	    	};
 	    	$scope.goToDirectoryIndex = function(index){
 	    		$scope.getFiles($scope.directories.splice(0,index+1));
@@ -55,7 +60,9 @@ angular.module('files.directives', ["ngTable"])
 	    			$scope.selection.splice(index,1);
 	    	};
 	    	$scope.getFiles();
-	    	
+	    	$scope.$on('refresh-files', function () {
+	    	     $scope.getFiles();
+	    	});
 	    }
 	  }
 	})
@@ -71,8 +78,9 @@ angular.module('files.directives', ["ngTable"])
 	.run(['$templateCache', function($templateCache) {
 	  $templateCache.put('template/files/list.html',
 	'<a ng-click="getFiles([])" ng-if="directories.length > 0">{[basedir]}</a><span ng-if="directories.length < 1">{[basedir]}</span>/<span ng-repeat="dir in directories"><a ng-click="goToDirectoryIndex($index)" ng-if="!$last">{[dir]}</a><span ng-if="$last">{[dir]}</span>/</span>\
-	<div ng-if="selection.length > 0" title="{[selection.join(\', \')]}">{[selection.length]} selected</div>\
-	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
+	<div ng-if="selection.length > 0" title="{[selection.join(\'\n\')]}">{[selection.length]} selected</div>\
+	<div class="alert alert-danger" ng-repeat="error in errors">{[error]}</div>\
+	<table ng-show="!errors" ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
       <tr ng-repeat="row in $data track by row.name">\
 	      <td data-title="\'Name\'" sortable="\'name\'" filter="{name: \'text\'}"><a ng-if="row.is_dir" ng-click="getFiles(row.name)"><i class="glyphicon glyphicon-folder-open"> </i> {[row.name]}</a><a href="{[download(row.name)]}" ng-if="!row.is_dir"><i class="glyphicon glyphicon-download"> </i> {[row.name]}</a></td>\
 		  <td data-title="\'Extension\'" sortable="\'extension\'" filter="{extension: \'text\'}">{[row.extension]}</td>\
