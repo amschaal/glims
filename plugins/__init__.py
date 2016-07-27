@@ -4,6 +4,7 @@ class BasePlugin(object):
     css_files = []
     js_files = []
     allowed_models=[]
+    models=[]
     urls = None
     @classmethod
     def get_content_types(cls):

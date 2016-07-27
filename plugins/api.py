@@ -28,6 +28,8 @@ def object_plugins(request,pk,content_type):
     plugins = []
     manager = PluginManager()
     configured_plugins = ModelTypePlugin.objects.filter(type=instance.type).order_by('order')
+    for plugin in manager.get_model_plugins(ct_class):
+        plugins.append({'header':plugin.get_header_template(instance),'template':plugin.get_template(instance)})
 #     for p in [SamplePlugin,NotePlugin,FilePlugin,URLPlugin]:
     for p in configured_plugins:
         plugin = manager.get_plugin(p.plugin_id)

@@ -6,12 +6,12 @@ class BioshareProjectPlugin(BasePlugin):
     name = 'Bioshare Project Plugin'
     description = 'Share project data via Bioshare'
     js_files = ['bioshare/js/resources/models.js','bioshare/js/directives/bioshare.js']
-    allowed_models = [Project]
+    models = [Project]
 #     urls = url(r'^accounts/', include('accounts.urls'))
     @staticmethod
     def get_template(obj):
         return '<project-share project="project" ng-if="project.id"></project-share>'
     @staticmethod
     def get_header_template(obj):
-        return 'Sharing'
+        return 'Bioshare'
 

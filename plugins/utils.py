@@ -16,11 +16,24 @@ class PluginManager(object):
     def __init__(self):
         PLUGINS = getattr(settings,'PLUGINS')
         self.plugins = {}
+        self.model_plugins = {}
         for plugin_string in PLUGINS:
             plugin = import_string(plugin_string)
             self.plugins[plugin.id] = plugin
+            for model in plugin.models:
+                if not self.model_plugins.has_key(model.__name__):
+                    self.model_plugins[model.__name__] = [plugin] 
+                else:
+                    self.model_plugins[model.__name__] += plugin
     def get_plugin(self,id):
         return self.plugins[id]
+    def get_model_plugins(self,model):
+        if self.model_plugins.has_key(model.__name__):
+            return self.model_plugins[model.__name__]
+        else:
+            return []
+#     def get_plugins_by_class(self,klass):
+#         
     def get_urls(self):
         urls = []
         for plugin in self.plugins.values():
