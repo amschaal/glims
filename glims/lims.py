@@ -24,6 +24,7 @@ import shutil
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.utils._os import safe_join
+from notifications.signals import object_updated, object_updated_callback
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -241,38 +242,25 @@ def handle_status(sender,instance,**kwargs):
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
 
 #This could be avoided if the directory structures only depended on immutable values!!!
-@receiver(pre_save,sender=Project)
-def update_project_directory(sender,instance,**kwargs):
-    if not hasattr(instance, 'id'):
-        return
-    try:
-        old = sender.objects.get(id=instance.id)
-        old_directory = old.directory(full=True)
-        new_directory = instance.directory(full=True)
-        if old_directory != new_directory and os.path.isdir(old_directory):
-            shutil.move(old_directory, new_directory)
-            for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
-                file.file.name = file.file.name.replace(old_directory,new_directory)
-                file.save()
-#             File.objects.filter(file__startswith=old_directory)
-    except sender.DoesNotExist, e:
-        pass
+@receiver(object_updated,sender=Project)
+def update_project_directory(sender,instance,old_instance,**kwargs):
+    old_directory = old_instance.directory(full=True)
+    new_directory = instance.directory(full=True)
+    if old_directory != new_directory and os.path.isdir(old_directory):
+        shutil.move(old_directory, new_directory)
+        for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
+            file.file.name = file.file.name.replace(old_directory,new_directory)
+            file.save()
+
 
 @receiver(post_save,sender=Project)
 def create_project_directories(sender,instance,**kwargs):
     instance.create_directories()
 
-# @receiver(pre_save,sender=Project)
-# def create_sample_alias(sender,instance,**kwargs):
-#     dir = os.path.join(FILES_ROOT,instance.directory)
-#     alias_dir = os.path.join(FILES_ROOT,instance.alias_directory)
-#     os.unlink(alias_dir)
-#     os.symlink(alias_dir, '../{0}'.format(instance.))
+pre_save.connect(object_updated_callback, sender=Project)
+pre_save.connect(object_updated_callback, sender=Sample)
+pre_save.connect(object_updated_callback, sender=Pool)
 
-
-# pre_save.connect(update_files_directory, sender=Project)
-# pre_save.connect(update_files_directory, sender=Sample)
-    
 post_delete.connect(delete_attachments, sender=Project)
 post_delete.connect(delete_attachments, sender=Sample)
 post_delete.connect(delete_attachments, sender=Pool)

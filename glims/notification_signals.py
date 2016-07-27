@@ -11,8 +11,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 
 from notifications.utils import create_notification
-from notifications.models import Notification
+from notifications.models import Notification, UserSubscription
 from glims.lims import Project
+from notifications.signals import object_updated
 
 
 
@@ -71,3 +72,23 @@ def create_update_notification(sender, instance,**kwargs):
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW)
     except sender.DoesNotExist, e:
         pass
+
+@receiver(object_updated,sender=Project)
+def update_project_subscribers(sender,instance,old_instance,**kwargs):
+    old_users = [p for p in old_instance.participants.all()]
+    if old_instance.manager:
+        old_users.append(old_instance.manager)
+    new_users = [p for p in instance.participants.all()]
+    if instance.manager:
+        new_users.append(instance.manager)
+    added_users = list(set(new_users)-set(old_users))
+    print new_users
+    print old_users
+    print added_users
+    if len(added_users) > 0:
+        print 'SUBSCRIBE'
+        print added_users
+        project_type = ContentType.objects.get_for_model(Project)
+        for u in added_users:
+            subscription, created = UserSubscription.objects.get_or_create(user=u,content_type=project_type,object_id=instance.id)
+
