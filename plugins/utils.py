@@ -24,7 +24,7 @@ class PluginManager(object):
                 if not self.model_plugins.has_key(model.__name__):
                     self.model_plugins[model.__name__] = [plugin] 
                 else:
-                    self.model_plugins[model.__name__] += plugin
+                    self.model_plugins[model.__name__] += [plugin]
     def get_plugin(self,id):
         return self.plugins[id]
     def get_model_plugins(self,model):

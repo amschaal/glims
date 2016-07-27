@@ -34,7 +34,7 @@ class NotePlugin(BasePlugin):
     def get_header_template(obj):
         return 'Notes ({[attachments_object.notes]})'
     #
-    allowed_models = [Project,Sample,Pool]
+    models = [Project,Sample,Pool]
 class URLPlugin(BasePlugin):
     id = 'url-plugin'
     name = 'URL Plugin'
@@ -57,6 +57,7 @@ class FilePlugin(BasePlugin):
     js_files = ['attachments/js/resources/models.js','attachments/js/vendor/ng-file-upload/ng-file-upload-shim.min.js','attachments/js/vendor/ng-file-upload/ng-file-upload.min.js','attachments/js/directives/files.js']
     css_files = ['attachments/css/attachments.css']
     allowed_models = [Project,Sample,Pool]
+    models = [Project,Sample,Pool]
     @staticmethod
     def get_template(obj):
         return '<attachment-files object-id="object_id" content-type="content_type"></attachment-files>'
