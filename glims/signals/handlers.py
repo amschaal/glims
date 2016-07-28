@@ -1,15 +1,57 @@
+from datetime import datetime
+import os
+import shutil
 from django.conf import settings
-from django.db.models.signals import post_save, pre_save,\
-    m2m_changed
 from django.contrib.auth.models import User
-from attachments.models import Note, File
-from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
-from notifications.utils import create_notification
-from notifications.models import Notification, UserSubscription
-from glims.lims import Project
-from glims.signals import object_updated
+from django.db.models.signals import post_save, pre_save, \
+    m2m_changed, post_delete
+from django.dispatch import receiver
 
+from attachments.models import Note, File, delete_attachments
+from glims.lims import Project, Sample, Pool
+from glims.signals.signals import object_updated, object_updated_callback
+from notifications.models import Notification, UserSubscription
+from notifications.utils import create_notification
+
+
+@receiver(pre_save,sender=Project)
+def handle_status(sender,instance,**kwargs):
+    if not hasattr(instance, 'id'):
+        return
+    if not instance.history.has_key('statuses'):
+        instance.history['statuses'] = []
+    try:
+        old = Project.objects.get(id=instance.id)
+        if old.status != instance.status:
+            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
+    except Project.DoesNotExist, e:
+        if instance.status:
+            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
+
+#This could be avoided if the directory structures only depended on immutable values!!!
+@receiver(object_updated,sender=Project)
+def update_project_directory(sender,instance,old_instance,**kwargs):
+    old_directory = old_instance.directory(full=True)
+    new_directory = instance.directory(full=True)
+    if old_directory != new_directory and os.path.isdir(old_directory):
+        shutil.move(old_directory, new_directory)
+        for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
+            file.file.name = file.file.name.replace(old_directory,new_directory)
+            file.save()
+
+
+@receiver(post_save,sender=Project)
+def create_project_directories(sender,instance,**kwargs):
+    instance.create_directories()
+
+pre_save.connect(object_updated_callback, sender=Project)
+pre_save.connect(object_updated_callback, sender=Sample)
+pre_save.connect(object_updated_callback, sender=Pool)
+
+post_delete.connect(delete_attachments, sender=Project)
+post_delete.connect(delete_attachments, sender=Sample)
+post_delete.connect(delete_attachments, sender=Pool)
 
 @receiver(m2m_changed,sender=Project.participants.through)
 def update_participant_subscriptions(sender,instance,pk_set,**kwargs):

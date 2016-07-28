@@ -8,23 +8,13 @@ import operator, os
 from django.conf import settings
 import string
 import random
-from django.db.models.signals import pre_save, post_delete, post_save
-from django.dispatch.dispatcher import receiver
-
 from django.db import transaction
-from django_cloudstore.models import CloudStore
-from django_cloudstore.engines.bioshare import BioshareStorageEngine
 from glims.models import Status
-from datetime import datetime
-from attachments.models import delete_attachments, File
 from django.contrib.auth.models import Group, User
 from django.core.validators import RegexValidator
 from glims.settings import FILES_ROOT
-import shutil
-from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.utils._os import safe_join
-from glims.signals import object_updated, object_updated_callback
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -68,20 +58,6 @@ class Lab(models.Model):
     description = models.TextField()
     url = models.URLField(blank=True,null=True)
     slug = models.SlugField(max_length=20,unique=True,null=True)
-#     cloudstore = models.ForeignKey(CloudStore,null=True,blank=True,on_delete=models.SET_NULL)
-#     def create_cloudstore(self):
-#         if not self.cloudstore:
-#             self.cloudstore = BioshareStorageEngine.create(self.name, self.description, {'link_to_path':self.directory})
-#             self.save()
-#     def get_absolute_url(self):
-#         return reverse('lab', args=[str(self.id)])
-#     @property
-#     def directory(self):
-#         return os.path.join(settings.LAB_DATA_DIRECTORY,self.slug)
-#     def create_directory(self):
-#         if self.slug:
-#             if not os.path.exists(self.directory):
-#                 os.makedirs(self.directory, mode=0774)
     def __unicode__(self):
         return self.name
 
@@ -99,11 +75,7 @@ class Project(ExtensibleModel):
     related_projects = models.ManyToManyField('self')
     archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
-#     file_directory = models.CharField(null=True,blank=True,validators=[file_directory_validator])
-#     sub_directory = models.CharField(max_length=50,null=True,blank=True)
     def directory(self,full=True):
-#         return '{0}/labs/{1}/projects/{2}/files/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.file_directory or self.project_id)
-#         return '{0}/labs/{1}/projects/ID/{2}/'.format(self.group.name.replace(' ','_'),self.lab.slug,self.project_id)
         path =  os.path.join(self.group.name.replace(' ','_'),'labs',self.lab.slug,'projects','ID',self.project_id)
         if full:
             path = safe_join(FILES_ROOT,path)
@@ -111,7 +83,6 @@ class Project(ExtensibleModel):
     @property
     def symlink_path(self):
         return '{0}/labs/{1}/projects/NAME/{2}'.format(self.group.name.replace(' ','_'),self.lab.slug,self.name.replace(' ','_'))
-#         return os.path.join(self.lab.directory,self.project_id)
     def create_directories(self):
         dir = self.directory(full=True)
         symlink = os.path.join(FILES_ROOT,self.symlink_path)
@@ -124,14 +95,6 @@ class Project(ExtensibleModel):
         if not os.path.lexists(symlink):
             target = '../ID/{0}'.format(self.project_id)
             os.symlink(target,symlink)
-#         directory = os.path.join(FILES_ROOT,self.directory)
-#         if not os.path.exists(directory):
-#             os.makedirs(directory, mode=0774)
-#     def save(self, *args, **kwargs):
-#         super(Project, self).save(*args, **kwargs) # Call the "real" save() method.
-#         self.create_directories()
-#     def limit_sample_type_choices(self):
-#         return {'content_type_id': 16}
     def statuses(self):
         return Status.objects.filter(model_type=self.model_type).order_by('order')
     def __unicode__(self):
@@ -227,40 +190,3 @@ class Pool(ExtensibleModel):
     @staticmethod
     def user_queryset(user):
         Pool.objects.filter(group__in=user.groups)
-@receiver(pre_save,sender=Project)
-def handle_status(sender,instance,**kwargs):
-    if not hasattr(instance, 'id'):
-        return
-    if not instance.history.has_key('statuses'):
-        instance.history['statuses'] = []
-    try:
-        old = Project.objects.get(id=instance.id)
-        if old.status != instance.status:
-            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-    except Project.DoesNotExist, e:
-        if instance.status:
-            instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
-
-#This could be avoided if the directory structures only depended on immutable values!!!
-@receiver(object_updated,sender=Project)
-def update_project_directory(sender,instance,old_instance,**kwargs):
-    old_directory = old_instance.directory(full=True)
-    new_directory = instance.directory(full=True)
-    if old_directory != new_directory and os.path.isdir(old_directory):
-        shutil.move(old_directory, new_directory)
-        for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
-            file.file.name = file.file.name.replace(old_directory,new_directory)
-            file.save()
-
-
-@receiver(post_save,sender=Project)
-def create_project_directories(sender,instance,**kwargs):
-    instance.create_directories()
-
-pre_save.connect(object_updated_callback, sender=Project)
-pre_save.connect(object_updated_callback, sender=Sample)
-pre_save.connect(object_updated_callback, sender=Pool)
-
-post_delete.connect(delete_attachments, sender=Project)
-post_delete.connect(delete_attachments, sender=Sample)
-post_delete.connect(delete_attachments, sender=Pool)

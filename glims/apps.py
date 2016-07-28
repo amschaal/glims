@@ -4,4 +4,4 @@ class GlimsConfig(AppConfig):
     name = 'glims'
     verbose_name = "GLIMS"
     def ready(self):
-        import signal_handlers
+        from glims.signals import handlers
