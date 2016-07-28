@@ -99,7 +99,7 @@ angular.module('formly.modal',[])
 	}
 })
 .controller('FormlyModalController', function FormlyModalController($scope, $http, $modalInstance, fields, model, options) {
-	$scope.model = model;
+	$scope.model = angular.copy(model);
 	$scope.options = {};
 	fields = angular.copy(fields);
 	$scope.title = options.title ? options.title : 'Edit';
@@ -156,6 +156,7 @@ angular.module('formly.modal',[])
 		});
 	}
 	$scope.onSubmit = function() {
+		console.log('save model',$scope.model)
 		var method = $scope.model.id ? '$save' : '$create';
 		$scope.model[method](
 				function(){
@@ -225,7 +226,7 @@ angular.module('formly.modal',[])
 				setExtraFields(fields);
 			});
 	});
-	if (options.postInit)
-		options.postInit($scope);
+//	if (options.postInit)
+//		options.postInit($scope);
 }
 );

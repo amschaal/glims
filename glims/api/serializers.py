@@ -62,7 +62,7 @@ class ProjectSerializer(ExtensibleSerializer):
     lab = ModelRelatedField(model=Lab,serializer=LabSerializer)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     manager = ModelRelatedField(model=User,serializer=FlatUserSerializer,queryset=User.objects.filter(groups__id=1), required=False, allow_null=True)
-    participants = ModelRelatedField(model=User,serializer=FlatUserSerializer,many=True,queryset=User.objects.filter(groups__id=1),required=False,allow_null=True)
+    participants = ModelRelatedField(model=User,serializer=FlatUserSerializer,many=True,queryset=User.objects.filter(),required=False,allow_null=True)
     related_projects = ModelRelatedField(model=Project,serializer=FlatProjectSerializer,many=True,required=False,allow_null=True)
 #     referencing_projects = BasicProjectSerializer(many=True)
     history = JSONField(read_only=True)

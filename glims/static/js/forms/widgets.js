@@ -11,28 +11,18 @@
 		formlyConfig.setType({
 	        name: 'ui-select-multiple',
 	        extends: 'select',
-	        templateUrl: 'ui-select-multiple.html'
+	        template:'<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" on-remove="to.updateSelect($item,$model)" on-select="to.updateSelect($item,$model)" theme="bootstrap">\
+    			<ui-select-match placeholder="{[to.placeholder]}" >{[to.labelFunc($item,to)]}</ui-select-match>\
+		        <ui-select-choices data-repeat="{[to.options]}">\
+		          <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
+		        </ui-select-choices>\
+		      </ui-select><a ng-click="model[options.key]=null;">Clear</a>'
 	      });
-//		formlyConfig.setType({
-//	        name: 'ui-select-multiple-search',
-//	        extends: 'select',
-//	        template: '{[::options.validation.messages.length]}<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" on-remove="console.log($item,$model)" on-select="console.log($item,$model)" theme="bootstrap">\
-//	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
-//	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
-//	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
-//	            </ui-select-choices>\
-//	          </ui-select>'
-//	      });
-//		formlyConfig.setType({
-//	        name: 'ui-select-multiple-search',
-//	        extends: 'select',
-//	        template: '<ui-select multiple data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
-//	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
-//	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
-//	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
-//	            </ui-select-choices>\
-//	          </ui-select>'
-//	      });
+		formlyConfig.setType({
+            name: 'multiSelect',
+            extends: 'select',
+            template: '<select multiple class="form-control" ng-model="model[options.key]" ng-options="{[to.ngOptions]}"></select>'
+        });
 		formlyConfig.setType({
 	        name: 'ui-select-search',
 	        extends: 'select',
@@ -72,7 +62,6 @@
 //	        controller: function ($scope) {
 //	        	alert('bingo');
 //	        },
-//	        template: '{[to]}',
 	        wrapper: ['validation','bootstrapLabel','bootstrapHasError'],
 	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" on-remove="to.updateSelect($item,$model)" on-select="to.updateSelect($item,$model)" theme="bootstrap">\
 				        <ui-select-match placeholder="{[to.placeholder]}" >{[to.labelFunc($select.selected,to)]}</ui-select-match>\
@@ -80,12 +69,6 @@
 				          <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
 				        </ui-select-choices>\
 				      </ui-select><a ng-click="model[options.key]=null;">Clear</a>'
-//	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
-//	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
-//	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
-//	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
-//	            </ui-select-choices>\
-//	          </ui-select>'
 	      });
 		
 		
@@ -140,12 +123,6 @@
 				          <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
 				        </ui-select-choices>\
 				      </ui-select><a ng-click="model[options.key]=null;">Clear</a>'
-//	        template: '<ui-select data-ng-model="model[options.key]" data-required="{[to.required]}" data-disabled="{[to.disabled]}" theme="bootstrap">\
-//	            <ui-select-match placeholder="{[to.placeholder]}">{[to.labelFunc($item,to)]}</ui-select-match>\
-//	            <ui-select-choices data-repeat="{[to.ngOptions]}" data-refresh="to.refresh($select.search, options)" data-refresh-delay="{[to.refreshDelay]}">\
-//	              <div ng-bind-html="to.labelFunc(option,to) | highlight: $select.search"></div>\
-//	            </ui-select-choices>\
-//	          </ui-select>'
 	      });
 		
 		

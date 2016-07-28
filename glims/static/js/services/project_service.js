@@ -14,18 +14,7 @@ angular.module('glimsServices')
 					   labelProp: 'name',
 					   url: '/api/groups/',
 					   options: []
-					 },
-					 watcher: {
-			          listener: function(field, newValue, oldValue, scope, stopWatching) {
-			        	  if (newValue && newValue != oldValue){
-				    			console.log('model.group changed',newValue);
-					    		angular.forEach(scope.fields,function(field,index){
-					    			if (field.key=='participants')
-					    				field.templateOptions.options = User.query({id__gte:1,groups__name:newValue.name});//;
-					    		});
-			        	  }
-			          }
-			        }
+					 }
 				 },
 				 {
 		   			 key: 'related_projects',
@@ -65,8 +54,17 @@ angular.module('glimsServices')
 	   			 }
 	   			},
 	   			{
-	   				"templateOptions": {"required": false, "options": userOptions, "description": "", "label": "Manager","valueProp":"id","labelProp":"name" }
-				, "type": "select", "key": "manager.id", data:{"error_key":"manager"}
+   				"templateOptions": {
+   					"required": false, 
+   					"options": userOptions, 
+   					"description": "", 
+   					"label": "Manager",
+   					"valueProp":"id",
+   					"labelProp":"name" 
+   					}, 
+   					"type": "select", 
+   					"key": "manager.id", 
+   					"data":{"error_key":"manager"}
 				}, 
 	             {
 	            	  key: 'participants',
@@ -79,6 +77,18 @@ angular.module('glimsServices')
 	            	    required: false
 	            	  }
 	        	},
+//				{
+//	            	  key: 'participants',
+//	            	  type: 'multiSelect',
+//	            	  templateOptions: {
+//	            	    label: 'Participants',
+//	            	    options: userOptions,
+//	            	    ngOptions: "option as option.name for option in to.options track by option.id",
+//	            	    valueProp: 'id',
+//	            	    labelProp: 'name',
+//	            	    required: false
+//	            	  }
+//	        	},
 	        	{"templateOptions": {"required": false, "description": "", "label": "Archived"}, "type": "checkbox", "key": "archived"}
 	   			];
 	 return {
@@ -87,21 +97,7 @@ angular.module('glimsServices')
 	 };
 
 	 function update(project,options) {
-		    var postInit = function(scope){
-		    	console.log('INITIALIZING SCOPE!!',scope);
-//		    	scope.$watch('model.group',function(newValue,oldValue){
-//			    		if (newValue && newValue != oldValue){
-//			    			console.log('model.group changed',newValue);
-//				    		angular.forEach(scope.fields,function(field,index){
-//				    			if (field.key=='participants')
-//				    				field.templateOptions.options = User.query({id__gte:1,groups__name:newValue.name});//;
-//				    		});
-//			    		}
-//			    			
-//	    		});
-	    	}
-		    
-		    options = angular.extend({model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController',postInit:postInit},options||{});
+		    options = angular.extend({model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController'},options||{});
 			return FormlyModal.create(fields,project || new Project({}),options);
 			
 	 }

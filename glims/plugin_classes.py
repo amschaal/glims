@@ -56,7 +56,7 @@ class FilePlugin(BasePlugin):
 #     template = 'glims/plugins/notes.html'
     js_files = ['attachments/js/resources/models.js','attachments/js/vendor/ng-file-upload/ng-file-upload-shim.min.js','attachments/js/vendor/ng-file-upload/ng-file-upload.min.js','attachments/js/directives/files.js']
     css_files = ['attachments/css/attachments.css']
-    allowed_models = [Project,Sample,Pool]
+#     allowed_models = [Project,Sample,Pool]
     models = [Project,Sample,Pool]
     @staticmethod
     def get_template(obj):

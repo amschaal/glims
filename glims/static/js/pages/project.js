@@ -28,7 +28,8 @@ function ProjectController($scope , $log, $http, FormlyModal, ModelType, Project
 		projectService.update($scope.project)
 		.result.then(
 				function (project) {
-				    $scope.project = project;
+					console.log('Participants',project.participants); //this is coming back with old value for participants?  For now doing inefficient request to server for new project.
+				    $scope.project = Project.get({id:$scope.project_id}); //@todo: Get modal to return the selected participants!!
 				}
 				);
 	}

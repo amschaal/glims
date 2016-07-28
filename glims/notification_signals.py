@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db.models.signals import pre_delete, post_delete, post_save, pre_save
+from django.db.models.signals import pre_delete, post_delete, post_save, pre_save,\
+    m2m_changed
 # from models import Order, Invoice, Account, Core, BillingGroup, Service, OrderStatus, Status, OrderItem
 from django.contrib.auth.models import Group, User
 from attachments.models import Note, File
@@ -73,22 +74,19 @@ def create_update_notification(sender, instance,**kwargs):
     except sender.DoesNotExist, e:
         pass
 
-@receiver(object_updated,sender=Project)
-def update_project_subscribers(sender,instance,old_instance,**kwargs):
-    old_users = [p for p in old_instance.participants.all()]
-    if old_instance.manager:
-        old_users.append(old_instance.manager)
-    new_users = [p for p in instance.participants.all()]
-    if instance.manager:
-        new_users.append(instance.manager)
-    added_users = list(set(new_users)-set(old_users))
-    print new_users
-    print old_users
-    print added_users
-    if len(added_users) > 0:
-        print 'SUBSCRIBE'
-        print added_users
+@receiver(m2m_changed,sender=Project.participants.through)
+def update_participant_subscriptions(sender,instance,pk_set,**kwargs):
+    print 'update participant subscriptions'
+    print kwargs
+    if kwargs.pop('action',None) == 'post_add': 
         project_type = ContentType.objects.get_for_model(Project)
-        for u in added_users:
-            subscription, created = UserSubscription.objects.get_or_create(user=u,content_type=project_type,object_id=instance.id)
+        for user in User.objects.filter(pk__in=pk_set):
+            subscription, created = UserSubscription.objects.get_or_create(user=user,content_type=project_type,object_id=instance.id)
+    
+@receiver(object_updated,sender=Project)
+def update_manager_subscription(sender,instance,old_instance,**kwargs):
+    if instance.manager != old_instance.manager:
+        project_type = ContentType.objects.get_for_model(Project)
+        subscription, created = UserSubscription.objects.get_or_create(user=instance.manager,content_type=project_type,object_id=instance.id)
+
 
