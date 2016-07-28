@@ -14,7 +14,7 @@ from django.db.models import Q
 from notifications.utils import create_notification
 from notifications.models import Notification, UserSubscription
 from glims.lims import Project
-from notifications.signals import object_updated
+from glims.signals import object_updated 
 
 
 

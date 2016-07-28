@@ -24,7 +24,7 @@ import shutil
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.utils._os import safe_join
-from notifications.signals import object_updated, object_updated_callback
+from glims.signals import object_updated, object_updated_callback
 
 def generate_pk():
     return str(uuid4())[:15]
