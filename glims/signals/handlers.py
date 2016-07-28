@@ -9,7 +9,7 @@ from django.db.models.signals import post_save, pre_save, \
 from django.dispatch import receiver
 
 from attachments.models import Note, File, delete_attachments
-from glims.lims import Project, Sample, Pool
+from glims.models import Project, Sample, Pool
 from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification

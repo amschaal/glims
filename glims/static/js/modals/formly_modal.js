@@ -23,8 +23,6 @@ angular.module('formly.modal',[])
 	          <h3 class="modal-title">{[title]}</h3>\
 	          </div>\
 	          <div class="modal-body">\
-	    	  {[model]}\
-	      {[foo]}\
 	  			<form ng-submit="onSubmit()" name="form" novalidate>\
 	  		        <formly-form model="model" ng-model-options="{ allowInvalid: true }" fields="fields" options="options" form="form">\
 	  		          <button type="submit" class="btn btn-primary submit-button">Submit</button>\

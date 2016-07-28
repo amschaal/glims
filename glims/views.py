@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from lims import *
+from glims.models import *
 from django.contrib.auth.decorators import login_required
 from sendfile import sendfile
-from forms import PoolForm, LabForm, ProjectTypeForm
-import json
+from forms import LabForm
+import json 
 from django_compute.models import Job
 
 @login_required

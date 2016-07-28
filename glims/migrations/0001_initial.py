@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import django.contrib.postgres.fields.hstore
 from django.db import migrations, models
 import django.db.models.deletion
-import glims.lims
+import glims.models
 import jsonfield.fields
 
 
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data', django.contrib.postgres.fields.hstore.HStoreField(blank=True, default=dict, null=True)),
-                ('project_id', models.CharField(blank=True, default=glims.lims.generate_project_id, max_length=4, null=True, unique=True)),
+                ('project_id', models.CharField(blank=True, default=glims.models.generate_project_id, max_length=4, null=True, unique=True)),
                 ('created', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True, null=True)),

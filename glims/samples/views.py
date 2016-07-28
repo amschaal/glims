@@ -1,10 +1,10 @@
 import csv
 from django.http.response import HttpResponse
 from extensible.models import ModelType
-from glims.lims import Project, Sample
+from glims.models import Project, Sample
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from glims.forms import SampleForm, FullSampleForm
+# from glims.forms import SampleForm, FullSampleForm
 from glims.api.serializers import SampleSerializer
 from rest_framework import status
 from django.db import transaction 
@@ -12,6 +12,7 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.template.context import RequestContext
+from glims.forms import FullSampleForm
 
 
 def generate_template_rows(model_type):
@@ -111,34 +112,34 @@ def import_samplesheet(request, project_id):
         print e
         return Response({'errors':[]},status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def create_update_sample(request):
-    id = request.data.get('id',False)
-    if id:
-        instance = Sample.objects.get(id=id)
-        print instance
-        form = FullSampleForm(request.data,instance=instance)
-    else:
-        form = FullSampleForm(request.data)
-    if form.is_valid():
-        print 
-        sample = form.save()
-        return Response(SampleSerializer(sample).data)
-    else:
-        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class SampleUpdate(UpdateView):
-    template_name = 'glims/create_sample.html'
-    model = Sample
-    form_class = FullSampleForm
-    
-@login_required
-def create_sample(request):
-    if request.method == 'GET':
-        form = FullSampleForm()
-    elif request.method == 'POST':
-        form = FullSampleForm(request.POST)
-        if form.is_valid():
-            sample = form.save()
-            return redirect(sample.get_absolute_url()) 
-    return render(request, 'glims/create_sample.html', {'form':form} ,context_instance=RequestContext(request))
+# @api_view(['POST'])
+# def create_update_sample(request):
+#     id = request.data.get('id',False)
+#     if id:
+#         instance = Sample.objects.get(id=id)
+#         print instance
+#         form = FullSampleForm(request.data,instance=instance)
+#     else:
+#         form = FullSampleForm(request.data)
+#     if form.is_valid():
+#         print 
+#         sample = form.save()
+#         return Response(SampleSerializer(sample).data)
+#     else:
+#         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+#     
+# class SampleUpdate(UpdateView):
+#     template_name = 'glims/create_sample.html'
+#     model = Sample
+#     form_class = FullSampleForm
+#     
+# @login_required
+# def create_sample(request):
+#     if request.method == 'GET':
+#         form = FullSampleForm()
+#     elif request.method == 'POST':
+#         form = FullSampleForm(request.POST)
+#         if form.is_valid():
+#             sample = form.save()
+#             return redirect(sample.get_absolute_url()) 
+#     return render(request, 'glims/create_sample.html', {'form':form} ,context_instance=RequestContext(request))

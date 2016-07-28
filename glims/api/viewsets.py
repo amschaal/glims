@@ -8,7 +8,7 @@ from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer, GroupSerializer, StatusSerializer
-from glims.lims import Project, Sample, Pool, Lab
+from glims.models import Project, Sample, Pool, Lab
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
 from glims.models import Status

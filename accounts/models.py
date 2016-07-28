@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from glims.lims import Project
+from glims.models import Project
 from django.conf import settings
 
 """

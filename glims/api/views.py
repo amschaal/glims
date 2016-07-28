@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from django_compute.utils import sizeof_fmt
 from glims.api.serializers import SampleSerializer, PoolSerializer
-from glims.lims import Sample, Pool, Project
+from glims.models import Sample, Pool, Project
 from django.views.generic.list import ListView
 from rest_framework.views import APIView
 
@@ -243,7 +243,7 @@ class FormView(FormMixin,View):
 #         from glims.forms import ProcessForm
 #         return ProcessForm
 #     def get_instance(self, request, **kwargs):
-#         from glims.lims import Process
+#         from glims.models import Process
 #         return Process.objects.get(pk=kwargs['pk'])
 #         
 #     

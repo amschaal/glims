@@ -1,6 +1,6 @@
 from django.conf import settings
 from plugins import BasePlugin
-from glims.lims import Project
+from glims.models import Project
 from django.conf.urls import url, include
 import json
 

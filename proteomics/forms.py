@@ -1,7 +1,7 @@
 from django.conf import settings
 from django import forms
 from proteomics.models import FastaFile, ParameterFile
-from glims.lims import Sample
+from glims.models import Sample
 
 class FastaFileForm(forms.ModelForm):
     file_url = forms.URLField(required=False)

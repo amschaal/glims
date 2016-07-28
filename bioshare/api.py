@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 # from models import 
 from bioshare.serializers import ProjectShareSerializer
 from bioshare.models import ProjectShare, LabShare
-from glims.lims import Project
+from glims.models import Project
 from rest_framework.response import Response
 from glims.api.mixins import FileBrowserMixin, FileDownloadMixin
 from bioshare.utils import remove_sub_paths

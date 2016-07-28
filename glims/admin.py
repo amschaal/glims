@@ -1,8 +1,8 @@
 from django.contrib import admin
 from models import EmailTemplate
-from lims import Project, Sample, ModelType
+from glims.models import Project, Sample, ModelType
 from guardian.admin import GuardedModelAdmin
-from glims.lims import Lab
+from glims.models import Lab
 from glims.models import Status
 
 

@@ -1,2 +1,2 @@
-# from glims.lims import *
+# from glims.models import *
 # from glims.jobs import *

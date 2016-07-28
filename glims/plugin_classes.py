@@ -1,4 +1,4 @@
-from glims.lims import Project, Sample, Pool
+from glims.models import Project, Sample, Pool
 from django.conf import settings
 from plugins import BasePlugin
 

@@ -1,6 +1,6 @@
 import os
 def attachment_upload_to(instance, filename):
-#     from glims.lims import Project, Sample
+#     from glims.models import Project, Sample
     obj = instance.content_object
     if hasattr(obj, 'directory'):
         return os.path.join(obj.directory(full=False),'uploads',filename)

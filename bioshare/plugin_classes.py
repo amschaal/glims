@@ -1,5 +1,5 @@
 from plugins import BasePlugin
-from glims.lims import Project
+from glims.models import Project
 
 class BioshareProjectPlugin(BasePlugin):
     id = 'bioshare-project-plugin' #Name of directive

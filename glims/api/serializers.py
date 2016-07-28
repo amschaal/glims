@@ -6,7 +6,7 @@ from django_compute.models import Job
 from extensible.drf.serializers import ExtensibleSerializer, ModelTypeSerializer,\
     FlatModelTypeSerializer
 from glims.api.fields import JSONField, ModelRelatedField
-from glims.lims import Project, Sample, ModelType, Pool, Lab
+from glims.models import Project, Sample, ModelType, Pool, Lab
 from glims.models import Status
 
 
@@ -73,11 +73,13 @@ class ProjectSerializer(ExtensibleSerializer):
 
 class SampleSerializer(ExtensibleSerializer):
     project = ModelRelatedField(model=Project,serializer=FlatProjectSerializer)
+    def get_validators(self):
+        #remove any validators having to do with sample_id
+        serializers =  ExtensibleSerializer.get_validators(self)
+        return [s for s in serializers if 'sample_id' not in s.fields] 
     class Meta:
         model = Sample
         read_only_fields = ('sample_id',)
-#         fields = ('id','sample_id','project_id','name','description','project'lab','lab__name','data')
-#         fields = ('id','sample_id','project_id','name','description','project__name')
 
 class PoolSerializer(ExtensibleSerializer):
     sample_data = DictField(default={},required=False)

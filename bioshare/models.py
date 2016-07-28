@@ -1,5 +1,5 @@
 from django.db import models
-from glims.lims import Lab, Project
+from glims.models import Lab, Project
 from django.contrib.auth.models import Group
 from django.utils._os import safe_join
 import os
