@@ -41,6 +41,9 @@ class StatusSerializer(serializers.ModelSerializer):
 #         fields = ('id','name','order')
          
 class LabSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    def get_name(self, lab):
+        return lab.name
     class Meta:
         model = Lab
 

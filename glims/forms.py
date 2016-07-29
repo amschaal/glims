@@ -16,7 +16,8 @@ class FullSampleForm(ExtensibleModelForm):
 class LabForm(forms.ModelForm):
     class Meta:
         model = Lab
-        fields = ('name','affiliation','url','description','slug')
+        labels = {'last_name':'Last Name or Company Name'}
+        fields = ('last_name','first_name','affiliation','url','description')
 
 class UploadFileForm(forms.Form):
     subdir = forms.CharField(max_length=200)

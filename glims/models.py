@@ -14,6 +14,7 @@ from django.core.validators import RegexValidator
 from glims.settings import FILES_ROOT
 from django.utils.text import slugify
 from django.utils._os import safe_join
+from django.utils.decorators import classproperty
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -52,11 +53,18 @@ class MyModelExtended(MyModel):
         ...
 """
 class Lab(models.Model):
-    name = models.CharField(max_length=100)
-    affiliation = models.CharField(max_length=20,choices=((affiliation,affiliation) for affiliation in settings.LAB_AFFILIATIONS),null=True,blank=True)
+    first_name = models.CharField(max_length=30,null=True,blank=True)
+    last_name = models.CharField(max_length=30)
+    affiliation = models.CharField(max_length=50,choices=((affiliation,affiliation) for affiliation in settings.LAB_AFFILIATIONS),null=True,blank=True)
     description = models.TextField()
     url = models.URLField(blank=True,null=True)
-    slug = models.SlugField(max_length=20,unique=True,null=True)
+    slug = models.SlugField(max_length=50,unique=True,null=True)
+    @property
+    def name(self):
+        return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name
+    def get_lab_directory(self):
+        parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
+        return slugify('-'.join(parts)).replace('-', '_').upper()
     def __unicode__(self):
         return self.name
 

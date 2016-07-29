@@ -17,28 +17,30 @@
           	{{lab.cloudstore.attributes}}
           	
           		<table class="table borderless">
-          		<tr><th>Name</th><td>{{lab.name}}</td></tr>
+          		<tr><th>First Name</th><td>{{lab.first_name}}</td></tr>
+          		<tr><th>Last Name</th><td>{{lab.last_name}}</td></tr>
           		<tr><th>Affiliation</th><td>{{lab.get_affiliation_display}}</td></tr>
           		<tr><th>URL</th><td>{% if lab.url%}<a href="{{lab.url}}">{{lab.url}}</a>{% else %}{{lab.url}}{% endif %}</td></tr>
           		<tr><th>Description</th><td style="white-space: pre-wrap;">{{lab.description}}</td></tr>
+          		<tr><th>Directory</th><td>{{lab.slug}}</td></tr>
           		</table>
 				<tabset>
 					<tab heading="Projects">
-					<div ng-controller="ProjectController" ng-init="init({lab__name:'{{lab.name}}'},{{lab.id}});">
+					<div ng-controller="ProjectController" ng-init="init({lab:{{lab.id}}},{{lab.id}});">
 					<button ng-click="createProject()" class="btn btn-success pull-right">Create</button>
 							<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 						      <tr ng-repeat="row in $data track by row.id">
 						        <td data-title="'Created'" sortable="'created'"><a href="{[ projectLink(row) ]}">{[row.created|date]}</a></td>
 						        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
 						        <td data-title="'Type'" sortable="'type'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
-						        <td data-title="'Lab'" sortable="'lab'" filter="{lab__name__icontains: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab__name]}</a></td>
+						        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
 						        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
 						      </tr>
 						    </table>
 					    </div>
 					</tab>
 					<tab heading="Samples">
-						<div ng-controller="SampleController" ng-init="init({project__lab__name:'{{lab.name}}'});">
+						<div ng-controller="SampleController" ng-init="init({project__lab:{{lab.id}}});">
 						<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 					      <tr ng-repeat="row in $data track by row.id">
 					        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>

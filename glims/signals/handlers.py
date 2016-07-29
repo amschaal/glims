@@ -9,7 +9,7 @@ from django.db.models.signals import post_save, pre_save, \
 from django.dispatch import receiver
 
 from attachments.models import Note, File, delete_attachments
-from glims.models import Project, Sample, Pool
+from glims.models import Project, Sample, Pool, Lab
 from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification
@@ -68,7 +68,15 @@ def update_manager_subscription(sender,instance,old_instance,**kwargs):
         project_type = ContentType.objects.get_for_model(Project)
         subscription, created = UserSubscription.objects.get_or_create(user=instance.manager,content_type=project_type,object_id=instance.id)
 
-
+@receiver(pre_save,sender=Lab)
+def set_lab_slug(sender,instance,**kwargs):
+    if not instance.slug:
+        instance.slug = instance.get_lab_directory()
+        
+        
+    
+    
+    
 """
 Signal handlers for notifications below
 """

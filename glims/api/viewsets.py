@@ -59,10 +59,10 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
-    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact'],'manager__last_name':['icontains'],'status__name':['icontains']}
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact'],'manager__last_name':['icontains'],'status__name':['icontains']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
-    multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains']}
-    ordering_fields = ('created', 'id','project_id','name','type','type__name','lab','lab__name','description','manager__last_name','status__name')
+    multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
+    ordering_fields = ('created', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name')
     def get_queryset(self):
         return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
@@ -72,7 +72,8 @@ class SampleViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
-    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'project__lab__name':['exact', 'icontains'],'type__name':['exact', 'icontains'],'data':['contains']}
+    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains'],'data':['contains'],'project__lab':['exact']}
+    multi_field_filters = {'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('id','sample_id','name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
     model = Sample
@@ -164,8 +165,9 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
 class LabViewSet(viewsets.ModelViewSet):
     serializer_class = LabSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = {'name':['exact', 'icontains'],'affiliation':['exact', 'icontains'],'description':['icontains']} #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
-    search_fields=('name','description')
+    filter_fields = {'affiliation':['exact', 'icontains'],'description':['icontains']} #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
+    multi_field_filters = {'name':['first_name__icontains','last_name__icontains']}
+    search_fields=('first_name','last_name','description')
     model = Lab
     def get_queryset(self):
         return Lab.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)
