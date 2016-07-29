@@ -13,9 +13,8 @@ angular.module("tasks-plugin")
 			getURL:'&'
 		},
 		controller: function ($scope,$rootScope,$http,$log,$uibModal) {
-			console.log('task plugin',$scope);
 			$scope.getURL = $rootScope.getURL;
-			$scope.tasks = Task.query({});
+			$scope.init = function(){$scope.tasks = Task.query({});};
 			$scope.saveTasks = function(){
 				angular.forEach($scope.tasks,function(task,index){
 					if (!task.create)
@@ -104,10 +103,8 @@ angular.module("tasks-plugin")
 
 angular.module("tasks-plugin").run(['$templateCache', function($templateCache) {
 	$templateCache.put('template/plugins/tasks.html',
-			'<div class="blah">\
-			{[tasks]}\
-			<load-on-select>\
-			<div gantt data="tasks">\
+			'<load-on-select>\
+			<div gantt data="tasks" ng-init="init()">\
 			  <gantt-table></gantt-table>\
 			  <gantt-movable></gantt-movable>\
 			  <gantt-tooltips></gantt-tooltips>\
@@ -127,7 +124,7 @@ angular.module("tasks-plugin").run(['$templateCache', function($templateCache) {
 			<input ng-model="task.name"/>\
 			<button ng-click="addTask(task)">Add</button>\
 			</p>\
-			</load-on-select></div>'
+			</load-on-select>'
 	);
 }]);
 

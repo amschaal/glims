@@ -19,13 +19,15 @@ angular.module("logger-plugin")
 
 angular.module("logger-plugin").run(['$templateCache', function($templateCache) {
 	$templateCache.put('template/logger/logs.html',
-	'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
+	'<load-on-select>\
+		<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
 		<tr ng-repeat="row in $data track by row.id">\
 			<td data-title="\'Created\'" sortable="\'created\'">{[row.created|date:\'short\']}</td>\
 			<td data-title="\'Text\'" filter="{text__icontains: \'text\'}"><a href="{[row.url]}" ng-if="row.url">{[row.text]}</a><span ng-if="!row.url">{[row.text]}</span></td>\
 			<td data-title="\'Description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td>\
 		</tr>\
-    </table>');
+		</table>\
+	</load-on-select>');
 }]);
 
 

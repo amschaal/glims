@@ -9,7 +9,7 @@ class AccountsPlugin(BasePlugin):
     name = 'Accounts Plugin'
     description = 'Manage project accounts'
     js_files = ['accounts/js/resources/models.js','accounts/js/directives/accounts.js']
-    allowed_models = [Project]
+    models = [Project]
     urls = url(r'^accounts/', include('accounts.urls'))
 #     def get_attributes(self, obj):
 #         return {'project':'project', 'ng-if':'project.id'}
