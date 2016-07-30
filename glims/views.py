@@ -18,10 +18,6 @@ def project(request, pk):
     content_type_id = ContentType.objects.get_for_model(project).id
     return render(request, 'glims/project.html', {'project':project,'content_type_id':content_type_id} ,context_instance=RequestContext(request))
 @login_required
-def project_files(request,pk):
-    project = Project.objects.get(pk=pk)
-    return render(request, 'glims/project_files.html', {'project':project} ,context_instance=RequestContext(request))
-@login_required
 def sample(request,pk):
     sample = Sample.objects.get(pk=pk)
     return render(request, 'glims/sample.html', {'sample':sample} ,context_instance=RequestContext(request))
@@ -54,9 +50,6 @@ def samples(request):
 @login_required
 def pools(request):
     return render(request, 'glims/pools.html', {} ,context_instance=RequestContext(request))
-@login_required
-def workflows(request):
-    return render(request, 'glims/workflows.html', {} ,context_instance=RequestContext(request))
 @login_required
 def jobs(request):
     return render(request, 'glims/jobs.html', {} ,context_instance=RequestContext(request))
@@ -110,20 +103,6 @@ def choose_project_type(request):
     form = ProjectTypeForm(initial={'lab':request.GET.get('lab',None)})
     return render(request, 'glims/choose_project_type.html', {'form':form} ,context_instance=RequestContext(request))
 
-
-@login_required
-def create_pool(request):
-    if request.method == 'GET':
-        form = PoolForm()
-    elif request.method == 'POST':
-        form = PoolForm(request.POST)
-        if form.is_valid():
-            pool = form.save()
-            sample_ids = request.session.get('sample_cart', [])
-            pool.samples = Sample.objects.filter(pk__in=sample_ids)
-            pool.save()
-            return redirect(pool.get_absolute_url()) 
-    return render(request, 'glims/create_pool.html', {'form':form} ,context_instance=RequestContext(request))
 @login_required
 def delete_pool(request,pk):
     pool = Pool.objects.get(pk=pk)

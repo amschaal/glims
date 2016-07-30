@@ -2,7 +2,6 @@ angular.module('glimsServices')
  .service('projectService', function($rootScope,$http,FormlyModal,Project,User,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
 	 var userOptions = User.query({id__gte:1});//groups__name:'Bioinformatics Core'
-	 var projectOptions = Project.query({id__gte:1});
 	 var fields =  [
 	            {
 					 key: 'group',

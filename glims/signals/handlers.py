@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import shutil
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, pre_save, \
     m2m_changed, post_delete
@@ -36,9 +36,27 @@ def update_project_directory(sender,instance,old_instance,**kwargs):
     new_directory = instance.directory(full=True)
     if old_directory != new_directory and os.path.isdir(old_directory):
         shutil.move(old_directory, new_directory)
-        for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
-            file.file.name = file.file.name.replace(old_directory,new_directory)
-            file.save()
+#         for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
+#             file.file.name = file.file.name.replace(old_directory,new_directory)
+#             file.save()
+
+@receiver(object_updated,sender=Lab)
+def update_lab_directories(sender,instance,old_instance,**kwargs):
+    for g in Group.objects.all():
+        old_directory = old_instance.get_group_directory(g,full=True)
+        new_directory = instance.get_group_directory(g,full=True)
+        if old_directory != new_directory and os.path.isdir(old_directory):
+            shutil.move(old_directory, new_directory)
+#             for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
+#                 file.file.name = file.file.name.replace(old_directory,new_directory)
+#                 file.save()
+
+@receiver(object_updated,sender=Sample)
+def update_sample_directory(sender,instance,old_instance,**kwargs):
+    old_directory = old_instance.directory(full=True)
+    new_directory = instance.directory(full=True)
+    if old_directory != new_directory and os.path.isdir(old_directory):
+        shutil.move(old_directory, new_directory)
 
 
 @receiver(post_save,sender=Project)
@@ -48,6 +66,7 @@ def create_project_directories(sender,instance,**kwargs):
 pre_save.connect(object_updated_callback, sender=Project)
 pre_save.connect(object_updated_callback, sender=Sample)
 pre_save.connect(object_updated_callback, sender=Pool)
+pre_save.connect(object_updated_callback, sender=Lab)
 
 post_delete.connect(delete_attachments, sender=Project)
 post_delete.connect(delete_attachments, sender=Sample)
@@ -71,7 +90,7 @@ def update_manager_subscription(sender,instance,old_instance,**kwargs):
 @receiver(pre_save,sender=Lab)
 def set_lab_slug(sender,instance,**kwargs):
     if not instance.slug:
-        instance.slug = instance.get_lab_directory()
+        instance.slug = instance.get_directory_name()
         
         
     

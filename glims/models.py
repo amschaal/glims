@@ -12,9 +12,9 @@ from django.db import transaction
 from django.contrib.auth.models import Group, User
 from django.core.validators import RegexValidator
 from glims.settings import FILES_ROOT
-from django.utils.text import slugify
 from django.utils._os import safe_join
 from django.utils.decorators import classproperty
+from glims.files.utils import make_directory_name
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -62,9 +62,14 @@ class Lab(models.Model):
     @property
     def name(self):
         return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name
-    def get_lab_directory(self):
+    def get_directory_name(self):
         parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
-        return slugify('-'.join(parts)).replace('-', '_').upper()
+        return make_directory_name('_'.join(parts))
+    def get_group_directory(self,group,full=True):
+        path = os.path.join(make_directory_name(group.name),'labs',self.get_directory_name())#self.slug
+        if full:
+            path = safe_join(FILES_ROOT,path)
+        return path
     def __unicode__(self):
         return self.name
 
@@ -83,16 +88,13 @@ class Project(ExtensibleModel):
     archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
     def directory(self,full=True):
-        path =  os.path.join(self.group.name.replace(' ','_'),'labs',self.lab.slug,'projects','ID',self.project_id)
-        if full:
-            path = safe_join(FILES_ROOT,path)
+        path =  os.path.join(self.lab.get_group_directory(self.group,full=full),'projects','ID',self.project_id)
         return path
-    @property
-    def symlink_path(self):
-        return '{0}/labs/{1}/projects/NAME/{2}'.format(self.group.name.replace(' ','_'),self.lab.slug,self.name.replace(' ','_'))
+    def symlink_path(self,full=True):
+        return os.path.join(self.lab.get_group_directory(self.group,full=full),'projects','NAME',self.get_directory_name())
     def create_directories(self):
         dir = self.directory(full=True)
-        symlink = os.path.join(FILES_ROOT,self.symlink_path)
+        symlink = self.symlink_path(full=True)
         symlink_directory = os.path.normpath(os.path.join(symlink,'../'))
         if not os.path.exists(symlink_directory):
             os.makedirs(symlink_directory)
@@ -110,8 +112,8 @@ class Project(ExtensibleModel):
         return reverse('project', args=[str(self.id)])
     def get_group(self):
         return self.group
-    def slugify_name(self):
-        return slugify(self.name.replace(' ','_'))
+    def get_directory_name(self):
+        return make_directory_name(self.name)
     @staticmethod
     def user_queryset(user):
         Project.objects.filter(group__in=user.groups)
@@ -144,7 +146,7 @@ class Sample(ExtensibleModel):
     def directory(self,full=True):
         dir = self.sample_id
         if self.name:
-            dir = self.name.replace(' ','_')
+            dir = make_directory_name(self.name)
         return  os.path.join(self.project.directory(full=full),'samples',dir)
     def get_group(self):
         if not self.project:
