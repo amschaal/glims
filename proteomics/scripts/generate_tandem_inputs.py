@@ -83,7 +83,6 @@ module load tandem
 tandem.exe $INPUT_FILE
 """
 	script.write(script_text % {'number_of_jobs':number_of_jobs,'threads':threads,'directory':directory})
-	
 
 def generate_files(options):
 	if not os.path.exists(options.directory):
