@@ -60,7 +60,8 @@ INSTALLED_APPS = (
     'notifications',
     'accounts',
     'logger',
-    'bioshare'
+    'bioshare',
+    'afs.apps.AFSConfig'
 )
 
 STATICFILES_FINDERS = (

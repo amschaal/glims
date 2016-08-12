@@ -1,5 +1,6 @@
 from django.dispatch import Signal
 object_updated = Signal(providing_args=["instance","old_instance"])
+directory_created = Signal(providing_args=["instance","directory"])
 
 def object_updated_callback(sender,instance,**kwargs):
     if not hasattr(instance, 'id'):

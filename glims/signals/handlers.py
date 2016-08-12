@@ -60,8 +60,10 @@ def update_sample_directory(sender,instance,old_instance,**kwargs):
 
 
 @receiver(post_save,sender=Project)
-def create_project_directories(sender,instance,**kwargs):
-    instance.create_directories()
+def create_project_directories(sender,instance,created,**kwargs):
+    if created:
+        print "Create project directories"
+        instance.create_directories()
 
 pre_save.connect(object_updated_callback, sender=Project)
 pre_save.connect(object_updated_callback, sender=Sample)

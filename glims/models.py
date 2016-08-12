@@ -15,6 +15,7 @@ from glims.settings import FILES_ROOT
 from django.utils._os import safe_join
 from django.utils.decorators import classproperty
 from glims.files.utils import make_directory_name
+from glims.signals.signals import directory_created
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -101,6 +102,7 @@ class Project(ExtensibleModel):
     #     os.unlink(alias_dir)
         if not os.path.exists(dir):
             os.makedirs(dir)
+            directory_created.send(sender=self.__class__,instance=self, directory=dir)
         if not os.path.lexists(symlink):
             target = '../ID/{0}'.format(self.project_id)
             os.symlink(target,symlink)
