@@ -190,4 +190,13 @@ ATTACHMENT_UPLOAD_TO_FUNCTION = 'glims.attachments_config.attachment_upload_to'
 
 FILES_ROOT = MEDIA_ROOT
 
+DIRECTORY_FUNCTIONS = {
+    'get_project_directory':'glims.files.directories.get_project_directory',
+    'create_project_directories':'glims.files.directories.create_project_directories',
+    'get_group_lab_directory':'glims.files.directories.get_group_lab_directory',
+    'get_lab_directory_name':'glims.files.directories.get_lab_directory_name',
+    'get_sample_directory':'glims.files.directories.get_sample_directory',
+}
+
+
 from config import *

@@ -16,6 +16,7 @@ from django.utils._os import safe_join
 from django.utils.decorators import classproperty
 from glims.files.utils import make_directory_name
 from glims.signals.signals import directory_created
+from glims.files.directories import call_directory_function
 
 def generate_pk():
     return str(uuid4())[:15]
@@ -64,13 +65,15 @@ class Lab(models.Model):
     def name(self):
         return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name
     def get_directory_name(self):
-        parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
-        return make_directory_name('_'.join(parts))
+        return call_directory_function('get_lab_directory_name',self)
+#         parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
+#         return make_directory_name('_'.join(parts))
     def get_group_directory(self,group,full=True):
-        path = os.path.join(make_directory_name(group.name),'labs',self.get_directory_name())#self.slug
-        if full:
-            path = safe_join(FILES_ROOT,path)
-        return path
+        return call_directory_function('get_group_lab_directory',self,group,full=full)
+#         path = os.path.join(make_directory_name(group.name),'labs',self.get_directory_name())#self.slug
+#         if full:
+#             path = safe_join(FILES_ROOT,path)
+#         return path
     def __unicode__(self):
         return self.name
 
@@ -89,23 +92,25 @@ class Project(ExtensibleModel):
     archived = models.BooleanField(default=False)
     history = JSONField(null=True,blank=True,default={})
     def directory(self,full=True):
-        path =  os.path.join(self.lab.get_group_directory(self.group,full=full),'projects','ID',self.project_id)
-        return path
+        return call_directory_function('get_project_directory',self,full=full)
+#         path =  os.path.join(self.lab.get_group_directory(self.group,full=full),'projects','ID',self.project_id)
+#         return path
     def symlink_path(self,full=True):
         return os.path.join(self.lab.get_group_directory(self.group,full=full),'projects','NAME',self.get_directory_name())
     def create_directories(self):
-        dir = self.directory(full=True)
-        symlink = self.symlink_path(full=True)
-        symlink_directory = os.path.normpath(os.path.join(symlink,'../'))
-        if not os.path.exists(symlink_directory):
-            os.makedirs(symlink_directory)
-    #     os.unlink(alias_dir)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-            directory_created.send(sender=self.__class__,instance=self, directory=dir)
-        if not os.path.lexists(symlink):
-            target = '../ID/{0}'.format(self.project_id)
-            os.symlink(target,symlink)
+        return call_directory_function('create_project_directories',self) 
+#         dir = self.directory(full=True)
+#         symlink = self.symlink_path(full=True)
+#         symlink_directory = os.path.normpath(os.path.join(symlink,'../'))
+#         if not os.path.exists(symlink_directory):
+#             os.makedirs(symlink_directory)
+#     #     os.unlink(alias_dir)
+#         if not os.path.exists(dir):
+#             os.makedirs(dir)
+#             directory_created.send(sender=self.__class__,instance=self, directory=dir)
+#         if not os.path.lexists(symlink):
+#             target = '../ID/{0}'.format(self.project_id)
+#             os.symlink(target,symlink)
     def statuses(self):
         return Status.objects.filter(model_type=self.model_type).order_by('order')
     def __unicode__(self):
@@ -128,11 +133,6 @@ class Project(ExtensibleModel):
         )
 #         unique_together = (('lab','file_directory'),)
 
-# class ProjectStatus(models.Model):
-#     project = models.ForeignKey(Project,related_name="statuses")
-#     status = models.ForeignKey(Status)
-#     set_by = models.ForeignKey(User)
-#     timestamp = models.DateTimeField(auto_now=True)
 
 class Sample(ExtensibleModel):
     sample_id = models.CharField(max_length=60,unique=True,null=True,blank=True)
@@ -146,10 +146,11 @@ class Sample(ExtensibleModel):
     def get_absolute_url(self):
         return reverse('sample', args=[str(self.id)])
     def directory(self,full=True):
-        dir = self.sample_id
-        if self.name:
-            dir = make_directory_name(self.name)
-        return  os.path.join(self.project.directory(full=full),'samples',dir)
+        return call_directory_function('get_sample_directory',self,full=full)
+#         dir = self.sample_id
+#         if self.name:
+#             dir = make_directory_name(self.name)
+#         return  os.path.join(self.project.directory(full=full),'samples',dir)
     def get_group(self):
         if not self.project:
             return None
