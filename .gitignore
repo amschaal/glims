@@ -1,6 +1,5 @@
 *.pyc
 media
 /data/
-files
 */migrations/backup*
 STATIC
