@@ -15,6 +15,7 @@ from glims.models import Status
 from rest_framework.decorators import detail_route
 from glims.api.mixins import FileManagerMixin 
 from django.db.models.query_utils import Q
+from glims.api.filters import FollowingProjectFilter
 
 
 # from glims.api.permissions import CustomPermission
@@ -63,6 +64,9 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     search_fields = ('name', 'description','lab__name','type__name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
     ordering_fields = ('created', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name')
+    def __init__(self,*args,**kwargs):
+        super(ProjectViewSet, self).__init__(*args,**kwargs)
+        self.filter_backends += (FollowingProjectFilter,)
     def get_queryset(self):
         return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),

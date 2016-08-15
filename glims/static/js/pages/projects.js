@@ -7,7 +7,8 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
-	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:{archived:'False'}},Project);
+	$scope.following = true;
+	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:{archived:'False',following:$scope.following}},Project);
 //	scope.$watch('name', function(newValue, oldValue) {
 //		  scope.counter = scope.counter + 1;
 //		});
@@ -16,6 +17,12 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 			$scope.changeFilter('archived','False');
 		else
 			delete $scope.tableParams.filter()['archived'];
+	}
+	$scope.filterFollowing = function(){
+		if ($scope.following)
+			$scope.changeFilter('following',true);
+		else
+			delete $scope.tableParams.filter()['following'];
 	}
 	$scope.filterGroups = function(){
 		var keys = Object.keys($scope.groups);
