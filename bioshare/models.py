@@ -52,7 +52,7 @@ class LabShare(models.Model):
         return super(LabShare, self).save(*args, **kwargs)
 #         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
     def directory(self,full=True):
-        path = os.path.join(self.group.name.replace(' ','_'),'labs',self.lab.slug,'share')
+        path = os.path.join(self.lab.get_group_directory(self.group,full=full),'share')
         print path
         if full:
             path = safe_join(settings.FILES_ROOT,path)

@@ -11,7 +11,7 @@
             <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
           <div class="widget-body">
-          	<label>  <input type="checkbox" ng-model="following" ng-change="filterFollowing()"/>  Only show projects I'm managing, participating in, or following </label><br>
+          	<label>  <input type="checkbox" ng-model="following" ng-change="filterFollowing()"/>  Only show projects I'm managing, participating in, or subscribed to </label><br>
           	<label>  <input type="checkbox" ng-model="archived" ng-change="filterArchive()"/>  Show archived </label><br>
           	{% for g in user.groups.all %}<label><input type="checkbox" ng-model="groups['{{g.id}}']" ng-change="filterGroups()"/>{{g}} </label> {% endfor %}
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">

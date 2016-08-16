@@ -58,15 +58,13 @@ class StatusSerializerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
+    filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'lab':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'archived':['exact'],'manager__last_name':['icontains'],'status__name':['icontains']}
     search_fields = ('name', 'description','lab__name','type__name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
     ordering_fields = ('created', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name')
-    def __init__(self,*args,**kwargs):
-        super(ProjectViewSet, self).__init__(*args,**kwargs)
-        self.filter_backends += (FollowingProjectFilter,)
     def get_queryset(self):
         return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
