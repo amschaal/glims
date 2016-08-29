@@ -258,3 +258,8 @@ class EmailRecipient(models.Model):
     email = models.ForeignKey(Email,related_name='recipients')
     address = models.CharField(max_length=75)
     sent = models.DateTimeField(auto_now=False, null=True, blank=True)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    group = models.ForeignKey(Group,null=True,blank=True)
+    preferences = JSONField(default=dict)
