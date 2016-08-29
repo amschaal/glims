@@ -11,19 +11,27 @@
             <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
           <div class="widget-body">
+          <h4>Filters</h4>
           	<label>  <input type="checkbox" ng-model="following" ng-change="filterFollowing()"/>  Only show projects I'm managing, participating in, or subscribed to </label><br>
           	<label>  <input type="checkbox" ng-model="archived" ng-change="filterArchive()"/>  Show archived </label><br>
           	{% for g in user.groups.all %}<label><input type="checkbox" ng-model="groups['{{g.id}}']" ng-change="filterGroups()"/>{{g}} </label> {% endfor %}
+            <h4>Fields</h4>
+            <div style="margin-bottom: 20px">
+		        <label class="checkbox-inline" ng-repeat="(col,val) in cols">
+		          <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="cols[col]"/> {[col]}
+		        </label>
+		      </div>
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
-		        <td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
-		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
-		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
-		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
-		        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}"><a href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
-		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
-		        <td data-title="'Description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
-		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}">
+		        <td data-title="'Created'" sortable="'created'" ng-if="cols['Created']">{[row.created|date]}</td>
+		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}" ng-if="cols['ID']"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
+		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}" ng-if="cols['Name']"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
+		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}" ng-if="cols['Type']">{[row.type.name]}</td>
+		        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}" ng-if="cols['Lab']"><a href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
+		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}" ng-if="cols['Manager']"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
+		        <td data-title="'Participants'" filter="{participants: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
+		        <td data-title="'Description'" filter="{description__icontains: 'text'}" ng-if="cols['Description']"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
+		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}" ng-if="cols['Status']">
 		        	<resource-field-select resource="row" field="status" options="row.status_options" order-by-field="order"></resource-field-select>
 		        </td>
 		      </tr>

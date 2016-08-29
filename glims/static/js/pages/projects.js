@@ -8,6 +8,7 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
 	$scope.following = true;
+	$scope.cols = {'Created':true,'ID':true,'Name':true,'Type':true,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Status':true}
 	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:{archived:'False',following:$scope.following}},Project);
 //	scope.$watch('name', function(newValue, oldValue) {
 //		  scope.counter = scope.counter + 1;
