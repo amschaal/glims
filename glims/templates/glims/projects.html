@@ -29,7 +29,7 @@
 		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}" ng-if="cols['Type']">{[row.type.name]}</td>
 		        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}" ng-if="cols['Lab']"><a href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}" ng-if="cols['Manager']"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
-		        <td data-title="'Participants'" filter="{participants: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
+		        <td data-title="'Participants (search by last name)'" filter="{participants__last_name__icontains: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
 		        <td data-title="'Description'" filter="{description__icontains: 'text'}" ng-if="cols['Description']"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}" ng-if="cols['Status']">
 		        	<resource-field-select resource="row" field="status" options="row.status_options" order-by-field="order"></resource-field-select>
