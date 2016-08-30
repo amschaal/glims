@@ -260,6 +260,6 @@ class EmailRecipient(models.Model):
     sent = models.DateTimeField(auto_now=False, null=True, blank=True)
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User,null=True,blank=True,related_name='profile')
     group = models.ForeignKey(Group,null=True,blank=True)
     preferences = JSONField(default=dict)

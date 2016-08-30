@@ -17,8 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = User
-        fields = ('id','name','last_login','first_name','last_name','email','groups')
+        fields = ('id','username','name','last_login','first_name','last_name','email','groups')
 
+class UserProfileSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = ('id','name','last_login','first_name','last_name','email','groups','profile')
+        read_only_fields = ('id','username','name','last_login')
+        
 class FlatUserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     def get_name(self, user):

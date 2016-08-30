@@ -7,15 +7,16 @@ from extensible.drf.viewsets import ExtensibleViewset
 from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
-    LabSerializer, GroupSerializer, StatusSerializer
+    LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer
 from glims.models import Project, Sample, Pool, Lab
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
 from glims.models import Status
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from glims.api.mixins import FileManagerMixin 
 from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter
+from rest_framework.response import Response
 
 
 # from glims.api.permissions import CustomPermission
@@ -27,7 +28,17 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
     def get_queryset(self):
         return User.objects.all().order_by('id')
-
+    @list_route(methods=['get'],permission_classes=[IsAuthenticated])
+    def get_profile(self, request, pk=None):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data)
+    @list_route(methods=['post'],permission_classes=[IsAuthenticated])
+    def set_profile(self, request, pk=None):
+        serializer = UserProfileSerializer(request.user,data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
     model = Group
