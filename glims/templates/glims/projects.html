@@ -11,13 +11,13 @@
             <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
           <div class="widget-body">
-          {[userProfile]}
-          {[requestParams ]}
           <h4>Filters</h4>
           	<button ng-click="saveFilters()" class="btn pull-right">Save Filter</button>
           	<label>  <input type="checkbox" ng-model="requestParams.filter.following" ng-change="updateFilters()" ng-false-value="''"/>  Only show projects I'm managing, participating in, or subscribed to </label><br>
           	<label>  <input type="checkbox" ng-model="requestParams.filter.archived" ng-true-value="''" ng-false-value="'False'" ng-change="updateFilters()"/>  Show archived </label><br>
-          	{% for g in user.groups.all %}<label><input type="checkbox" ng-model="groups['{{g.id}}']" ng-change="filterGroups()"/>{{g}} </label> {% endfor %}
+          <!-- 
+          {% for g in user.groups.all %}<label><input type="checkbox" checklist-value="'{{g.id}}'" checklist-model="groups" checklist-change="filterGroups()"/>{{g}} </label> {% endfor %}
+           -->	
             <h4>Fields</h4>
             <div style="margin-bottom: 20px">
 		        <label class="checkbox-inline" ng-repeat="(col,val) in cols">
@@ -30,6 +30,7 @@
 		        <td data-title="'ID'" sortable="'project_id'" filter="{project_id__icontains: 'text'}" ng-if="cols['ID']"><a href="{[ projectLink(row) ]}">{[row.project_id]}</a></td>
 		        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}" ng-if="cols['Name']"><a href="{[ projectLink(row) ]}">{[row.name]}</a></td>
 		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}" ng-if="cols['Type']">{[row.type.name]}</td>
+		        <td data-title="'Group'" sortable="'group__name'" filter="{group__name__icontains: 'text'}" ng-if="cols['Group']">{[row.group.name]}</td>
 		        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}" ng-if="cols['Lab']"><a href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}" ng-if="cols['Manager']"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
 		        <td data-title="'Participants (search by last name)'" filter="{participants__last_name__icontains: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
