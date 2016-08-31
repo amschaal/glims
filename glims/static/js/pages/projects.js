@@ -1,26 +1,36 @@
 
 var app = angular.module('mainapp');
 app.requires.push('glims.formly');
-app.controller('ProjectController', ['$scope','$http','DRFNgTableParams','FormlyModal', 'Project','projectService', ProjectController]);
+app.controller('ProjectController', ['$scope','$http','DRFNgTableParams','FormlyModal', 'Project','projectService','growl', ProjectController]);
 
-function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,projectService) {
+function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,projectService,growl) {
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
-	$scope.requestParams = {sorting: { created: "desc" },filter:{archived:'False',following:true}}
+	$scope.tableSettings = {sorting: { created: "desc" },filter:{archived:'False',following:true}}
 	$scope.cols = {'Created':true,'ID':true,'Name':true,'Type':true,'Group':false,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Status':true}
-	$scope.tableParams = DRFNgTableParams('/api/projects/',$scope.requestParams ,Project);
-	$scope.tableParams;
 	$scope.userProfile.$promise.then(function(profile){
 		console.log('profile',profile);
-		if (_.has(profile,'preferences.pages.projects.requestParams.filter')){
-			$scope.requestParams.filter = profile.preferences.pages.projects.requestParams.filter;
-			$scope.updateFilters();
-		}
+		if (_.has(profile,'preferences.pages.projects.tableSettings.filter'))
+			$scope.tableSettings.filter = profile.preferences.pages.projects.tableSettings.filter;
+		if (_.has(profile,'preferences.pages.projects.tableSettings.sorting'))
+			$scope.tableSettings.sorting = profile.preferences.pages.projects.tableSettings.sorting;
+		if (_.has(profile,'preferences.pages.projects.tableSettings.cols'))
+			angular.extend($scope.cols,profile.preferences.pages.projects.tableSettings.cols);
+//		if (_.has(profile,'preferences.pages.projects.tableSettings.sorting')){
+//				$scope.tableSettings.sorting = profile.preferences.pages.projects.tableSettings.filter;
+		$scope.tableParams = DRFNgTableParams('/api/projects/',$scope.tableSettings ,Project);
 	});
 	$scope.saveFilters = function(){
-		_.set($scope.userProfile,'preferences.pages.projects.requestParams.filter',$scope.requestParams.filter)
-		$scope.userProfile.$save();
+		_.set($scope.userProfile,'preferences.pages.projects.tableSettings.filter',$scope.tableParams.filter());
+		_.set($scope.userProfile,'preferences.pages.projects.tableSettings.sorting',$scope.tableParams.sorting());
+		_.set($scope.userProfile,'preferences.pages.projects.tableSettings.cols',$scope.cols);
+		$scope.save_disabled = true;
+		$scope.saveProfileText = 'Saving...';
+		$scope.userProfile.$save(
+			function(){$scope.save_disabled=false;$scope.saveProfileText = null;growl.success("Savings saved",{ttl: 3000})},
+			function(){$scope.save_disabled=false;$scope.saveProfileText = null;growl.error("Error saving settings",{ttl: 3000})}
+		);
 	}
 	$scope.changeFilter = function(field, value){
 	      var filter = {};
@@ -28,8 +38,8 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	      angular.extend($scope.tableParams.filter(), filter);
 	    }
 	$scope.updateFilters = function(){
-		console.log('filter',$scope.requestParams.filter)
-		$scope.tableParams.filter($scope.requestParams.filter);
+		console.log('filter',$scope.tableSettings.filter)
+		$scope.tableParams.filter($scope.tableSettings.filter);
 	}
 	$scope.saveStatus = function(project){
 		console.log('project',project);
