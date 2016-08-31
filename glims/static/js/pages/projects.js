@@ -7,23 +7,19 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
-	$scope.following = true;
+	$scope.requestParams = {sorting: { created: "desc" },filter:{archived:'False',following:true}}
 	$scope.cols = {'Created':true,'ID':true,'Name':true,'Type':true,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Status':true}
-	$scope.tableParams = DRFNgTableParams('/api/projects/',{sorting: { created: "desc" },filter:{archived:'False',following:$scope.following}},Project);
-//	scope.$watch('name', function(newValue, oldValue) {
-//		  scope.counter = scope.counter + 1;
-//		});
-	$scope.filterArchive = function(){
-		if (!$scope.archived)
-			$scope.changeFilter('archived','False');
-		else
-			delete $scope.tableParams.filter()['archived'];
-	}
-	$scope.filterFollowing = function(){
-		if ($scope.following)
-			$scope.changeFilter('following',true);
-		else
-			delete $scope.tableParams.filter()['following'];
+	$scope.tableParams = DRFNgTableParams('/api/projects/',$scope.requestParams ,Project);
+	$scope.userProfile.$promise.then(function(profile){
+		console.log('profile',profile);
+		if (_.has(profile,'preferences.pages.projects.requestParams.filter')){
+			$scope.requestParams.filter = profile.preferences.pages.projects.requestParams.filter;
+			$scope.userProfile.$save();
+		}
+	});
+	$scope.saveFilters = function(){
+		_.set($scope.userProfile,'preferences.pages.projects.requestParams.filter',$scope.requestParams.filter)
+		$scope.userProfile.$save();
 	}
 	$scope.filterGroups = function(){
 		var keys = Object.keys($scope.groups);
@@ -31,15 +27,20 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 		    return $scope.groups[key];
 		});
 		if (filtered.length > 0)
-			$scope.changeFilter('group__id__in',filtered.join(','));
+			$scope.requestParams.filter['group__id__in']=filtered.join(',');//$scope.changeFilter('group__id__in',filtered.join(','));
 		else
-			delete $scope.tableParams.filter()['group__id__in'];
+			delete $scope.requestParams.filter['group__id__in'];//$scope.tableParams.filter()['group__id__in'];
+		$scope.updateFilters();
 	}
 	$scope.changeFilter = function(field, value){
 	      var filter = {};
 	      filter[field] = value;
 	      angular.extend($scope.tableParams.filter(), filter);
 	    }
+	$scope.updateFilters = function(){
+		console.log('filter',$scope.requestParams.filter)
+		$scope.tableParams.filter($scope.requestParams.filter);
+	}
 	$scope.saveStatus = function(project){
 		console.log('project',project);
 		project.status = project.new_status.id;

@@ -8,7 +8,7 @@ from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer
-from glims.models import Project, Sample, Pool, Lab
+from glims.models import Project, Sample, Pool, Lab, UserProfile
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
 from glims.models import Status
@@ -28,16 +28,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
     def get_queryset(self):
         return User.objects.all().order_by('id')
-    @list_route(methods=['get'],permission_classes=[IsAuthenticated])
-    def get_profile(self, request, pk=None):
-        serializer = UserProfileSerializer(request.user)
+    @list_route(methods=['get','post'],permission_classes=[IsAuthenticated])
+    def profile(self, request, pk=None):
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        if request.method == 'GET':
+            serializer = UserProfileSerializer(profile)
+        if request.method == 'POST':
+            serializer = UserProfileSerializer(profile,data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
         return Response(serializer.data)
-    @list_route(methods=['post'],permission_classes=[IsAuthenticated])
-    def set_profile(self, request, pk=None):
-        serializer = UserProfileSerializer(request.user,data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+#     @list_route(methods=['post'],permission_classes=[IsAuthenticated])
+#     def profile(self, request, pk=None):
+#         serializer = UserProfileSerializer(request.user,data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
     
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer

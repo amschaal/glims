@@ -28,7 +28,7 @@
   {% compress js%}
   <!-- SCRIPTS -->
   <script src="/static/vendor/jquery.min.js"></script>
-  <script src="{{ STATIC_URL }}/vendor/underscore.min.js"></script>
+  <script src="{{ STATIC_URL }}/vendor/lodash.min.js"></script>
   {% include 'autocomplete_light/static.html' %}
   <!--  <script src="/static/responsive/lib/angular/angular.js"></script>-->
   <script src="{{ STATIC_URL }}django_js_utils.js"></script>
@@ -92,9 +92,8 @@
   <script src="/static/plugins/js/directives/plugins.js"></script>
   {% for js in plugins.js %}
   	<script src="/static/{{js}}"></script>
-  {% endfor %}  
+  {% endfor %} 
   {% endcompress %}
-  
   <script>
   angular.module('widgets.select',['ngSanitize','ui.select'])
   	.config(function(uiSelectConfig) {
@@ -114,10 +113,11 @@
 	.config(['$resourceProvider', function($resourceProvider) {
 	  // Don't strip trailing slashes from calculated URLs
 	  $resourceProvider.defaults.stripTrailingSlashes = false;
-	}]).run(function($rootScope) {
+	}]).run(function($rootScope,UserProfile) {
 		$rootScope.getURL = function(name,params){
 			return django_js_utils.urls.resolve(name, params);
 		}
+		$rootScope.userProfile = UserProfile.get({});
     });
 	
 	

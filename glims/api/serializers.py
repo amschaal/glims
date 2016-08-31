@@ -6,7 +6,7 @@ from django_compute.models import Job
 from extensible.drf.serializers import ExtensibleSerializer, ModelTypeSerializer,\
     FlatModelTypeSerializer
 from glims.api.fields import JSONField, ModelRelatedField
-from glims.models import Project, Sample, ModelType, Pool, Lab
+from glims.models import Project, Sample, ModelType, Pool, Lab, UserProfile
 from glims.models import Status
 
 
@@ -19,11 +19,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id','username','name','last_login','first_name','last_name','email','groups')
 
-class UserProfileSerializer(UserSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
+    preferences = JSONField()
     class Meta:
-        model = User
-        fields = ('id','name','last_login','first_name','last_name','email','groups','profile')
-        read_only_fields = ('id','username','name','last_login')
+        model = UserProfile
+        fields = ('preferences',)
+
+# class UserWithProfileSerializer(UserSerializer):
+#     profile = UserProfileSerializer()
+#     class Meta:
+#         model = User
+#         fields = ('id','name','last_login','first_name','last_name','email','groups','profile')
+#         read_only_fields = ('id','username','name','last_login')
         
 class FlatUserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()

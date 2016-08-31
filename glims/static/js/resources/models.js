@@ -36,6 +36,12 @@ angular.module('glimsModels', ['ngResource'])
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
   });
 }])
+.factory('UserProfile', ['$resource', function ($resource) {
+  return $resource('/api/users/profile/', {}, {
+    get: { method: 'GET', isArray:false },
+    save: { method: 'POST', isArray:false }
+  });
+}])
 .factory('Sample', ['$resource', function ($resource) {
   return $resource('/api/samples/:id/', {id:'@id'}, standard_methods);
 }])
