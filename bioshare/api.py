@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 # from models import 
 from bioshare.serializers import ProjectShareSerializer
-from bioshare.models import ProjectShare, LabShare
+from bioshare.models import ProjectShare
 from glims.models import Project
 from rest_framework.response import Response
 from glims.api.mixins import FileBrowserMixin, FileDownloadMixin
@@ -21,9 +21,9 @@ class ProjectShareViewSet(viewsets.ModelViewSet,FileBrowserMixin,FileDownloadMix
 #         return viewsets.ModelViewSet.create(self, request, *args, **kwargs)
     def create(self, request, *args, **kwargs):
         project = Project.objects.get(id=request.data.get('project'))
-        labshare, created = LabShare.objects.get_or_create(lab=project.lab,group=project.group) 
+#         labshare, created = LabShare.objects.get_or_create(lab=project.lab,group=project.group) 
 #         data = {'project':request.data.get('project'),'folder':,'labshare':labshare.id}
-        project_share = ProjectShare.objects.create(project=project,labshare=labshare,folder=request.data.get('directory',project.slugify_name()))
+        project_share = ProjectShare.objects.create(project=project)
         serializer = self.get_serializer(project_share)
 #         print "LABSHARE"
 #         serializer.is_valid(raise_exception=True)

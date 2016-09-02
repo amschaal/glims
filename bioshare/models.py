@@ -38,37 +38,23 @@ class BioshareAccount(models.Model):
             error_message = e.read()
             print error_message
             raise Exception('Unable to create share: %s'%error_message)
-class LabShare(models.Model):
-    lab = models.ForeignKey(Lab)
-    group = models.ForeignKey(Group)
-    bioshare_id = models.CharField(max_length=15,unique=True)
-    class Meta:
-        unique_together = (('lab','group'))
+
+
+class ProjectShare(models.Model):
+    project = models.OneToOneField(Project)
+#     labshare = models.ForeignKey(LabShare)
+    bioshare_id = models.CharField(max_length=15,null=True,blank=True)
+#     folder = models.SlugField(max_length=50,unique=True)
+#     class Meta:
+#         unique_together = (('labshare','folder'),('project','labshare'))
     def save(self, *args, **kwargs):
         if not self.bioshare_id:
             if not os.path.exists(self.directory(full=True)):
                 os.makedirs(self.directory(full=True))
-            self.bioshare_id = self.group.bioshare_account.create_share('%s - %s'%(self.lab.name,self.group.name),self.directory())
-        return super(LabShare, self).save(*args, **kwargs)
-#         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+            self.bioshare_id = self.project.group.bioshare_account.create_share('%s - %s'%(self.project.lab.name,self.project.name),self.directory())
+        return super(ProjectShare, self).save(*args, **kwargs)
     def directory(self,full=True):
-        path = os.path.join(self.lab.get_group_directory(self.group,full=full),'share')
-        print path
-        if full:
-            path = safe_join(settings.FILES_ROOT,path)
-        return path
-    @property
-    def url(self):
-        return VIEW_URL.format(id=self.bioshare_id)
-
-class ProjectShare(models.Model):
-    project = models.OneToOneField(Project)
-    labshare = models.ForeignKey(LabShare)
-    folder = models.SlugField(max_length=50)
-    class Meta:
-        unique_together = (('labshare','folder'),('project','labshare'))
-    def directory(self,full=True):
-        return safe_join(self.labshare.directory(full=full),self.folder)
+        return safe_join(self.project.directory(full=full),'share')
     #This should always return an empty array.  We don't want actual data, just a view on the data!
     def real_files(self,relpath=True,recalculate=False):
         if not hasattr(self, '_real_files') or recalculate: #only run once
@@ -80,7 +66,7 @@ class ProjectShare(models.Model):
         return self._symlinks
     @property
     def url(self):
-        return self.labshare.url + self.folder
+        return VIEW_URL.format(id=self.bioshare_id)
     def link_paths(self,paths):
         current_links = self.symlinks(relpath=True,recalculate=True)
         new_paths = list(set(remove_sub_paths(paths+current_links)) - set(current_links))

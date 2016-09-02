@@ -1,10 +1,5 @@
 from rest_framework import serializers
-from bioshare.models import LabShare, ProjectShare
-
-class LabShareSerializer(serializers.ModelSerializer):
-    directory = serializers.CharField(read_only=True)
-    class Meta:
-        model = LabShare
+from bioshare.models import ProjectShare
 
 class ProjectShareSerializer(serializers.ModelSerializer):
     directory = serializers.CharField(read_only=True)
