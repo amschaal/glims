@@ -14,7 +14,7 @@ table.details th {
 }
 
 </style>
-
+<script src="/static/js/directives/project-directives.js"></script>
 <script src="/static/js/pages/project.js"></script>
 
 <div class="row" ng-cloak>
@@ -24,6 +24,7 @@ table.details th {
             <i class="fa fa-suitcase"></i> {[project.name]}
             <div class="pull-right action-buttons">
 	            <a ng-click="editProject()" class="btn btn-sm btn-default">Edit</a>
+   	            <archive-project project="project"></archive-project>
 	            <a class="btn btn-sm btn-danger" ng-click="deleteProject()">Delete</a> 
 	            <div  notification-subscription object-id="{{project.id}}" content-type="{{project | content_type_id}}"></div>
              </div>

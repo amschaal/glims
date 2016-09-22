@@ -1,6 +1,6 @@
 
 var app = angular.module('mainapp');
-app.requires.push('ui.grid','ui.grid.pinning','ui.grid.resizeColumns','glims.formly');
+app.requires.push('ui.grid','ui.grid.pinning','ui.grid.resizeColumns','glims.formly','project');
 app.directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
