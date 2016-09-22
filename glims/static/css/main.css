@@ -13,3 +13,7 @@ a
 .show-more{
 	white-space: pre-line;
 }
+
+.action-buttons > * {
+	display: inline-block;
+}

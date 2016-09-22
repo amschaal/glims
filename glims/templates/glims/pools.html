@@ -8,7 +8,9 @@
         <div class="widget" ng-controller="PoolController">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Pools
-            <button ng-click="createPool()" class="pull-right btn btn-sm btn-success">Create</button>
+            <div class="pull-right action-buttons">
+            	<button ng-click="createPool()" class="btn btn-sm btn-success">Create</button>
+            </div>
           </div>
           <div class="widget-body">
 	            <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">

@@ -12,6 +12,7 @@ background-color: pink;
 table.details th {
     width: 200px;
 }
+
 </style>
 
 <script src="/static/js/pages/project.js"></script>
@@ -21,9 +22,11 @@ table.details th {
         <div class="widget" ng-controller="ProjectController" ng-init="tabs['{{tab}}']=true;object_id='{{project.id}}';content_type={{project | content_type_id}};init({project:'{{project.id}}'});">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> {[project.name]}
-            <div class="pull-right" notification-subscription object-id="{{project.id}}" content-type="{{project | content_type_id}}"></div>
-           	<a class="btn btn-sm btn-danger pull-right" ng-click="deleteProject()">Delete</a> 
-            <a ng-click="editProject()" class="btn btn-sm btn-default pull-right">Edit</a> 
+            <div class="pull-right action-buttons">
+	            <a ng-click="editProject()" class="btn btn-sm btn-default">Edit</a>
+	            <a class="btn btn-sm btn-danger" ng-click="deleteProject()">Delete</a> 
+	            <div  notification-subscription object-id="{{project.id}}" content-type="{{project | content_type_id}}"></div>
+             </div>
           </div>
           <div class="widget-body">
           	<tabset>

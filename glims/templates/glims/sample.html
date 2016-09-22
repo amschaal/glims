@@ -9,8 +9,10 @@
         <div class="widget" ng-controller="SampleController" ng-init="init({sample:'{{sample.id}}'});tabs['{{tab}}']=true;">
           <div class="widget-header">
             <i class="fa fa-flask"></i> {[sample.sample_id]}
-            <div class="pull-right" notification-subscription object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></div>
-            <a ng-click="editSample()" class="btn btn-sm btn-default pull-right">Edit</a>
+            <div class="pull-right action-buttons">
+	            <a ng-click="editSample()" class="btn btn-sm btn-default">Edit</a>
+	            <div notification-subscription object-id="{{sample.id}}" content-type="{{sample | content_type_id}}"></div>
+            </div>
           </div>
           <div class="widget-body">
           	<tabset>
