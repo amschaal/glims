@@ -184,8 +184,8 @@ class JobViewset(viewsets.ReadOnlyModelViewSet):
 class LabViewSet(viewsets.ModelViewSet):
     serializer_class = LabSerializer
 #     permission_classes = [CustomPermission]
-    filter_fields = {'affiliation':['exact', 'icontains'],'description':['icontains']} #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
-    multi_field_filters = {'name':['first_name__icontains','last_name__icontains']}
+    filter_fields = {'description':['icontains']} #@todo: upgrade django-rest-framework to fix this: https://github.com/tomchristie/django-rest-framework/pull/1836
+    multi_field_filters = {'name':['first_name__icontains','last_name__icontains'],'affiliation':['affiliation__exact', 'affiliation__icontains']}
     search_fields=('first_name','last_name','description')
     model = Lab
     def get_queryset(self):
