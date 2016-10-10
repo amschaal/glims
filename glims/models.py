@@ -84,6 +84,7 @@ class Project(ExtensibleModel):
     lab = models.ForeignKey(Lab, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
+    contact = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+",on_delete=models.PROTECT)
     status = models.ForeignKey('Status',null=True,blank=True, on_delete=models.PROTECT)
     manager = models.ForeignKey(User,null=True,blank=True,related_name='+',on_delete=models.PROTECT)
