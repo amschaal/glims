@@ -52,6 +52,7 @@ angular.module('glimsServices')
 	   			   options: []
 	   			 }
 	   			},
+	   			{"templateOptions": {"required": false, "description": "", "label": "Contact"}, "type": "textarea", "key": "contact"},
 	   			{
    				"templateOptions": {
    					"required": false, 

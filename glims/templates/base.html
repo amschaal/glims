@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Genome Center LIMS</title>
+	<title>{% block title%}BioBin{% endblock %}</title>
 
   <script src="{% url 'jsurls' %}"></script>
    {% compress css %}
@@ -132,16 +132,16 @@
 
 </head>
 <body>
-  <div id="page-wrapper" class="active">
+  <div id="page-wrapper" ng-class="{'active':!toggle}">
 
     <!-- Sidebar -->
 
     <div id="sidebar-wrapper">
       <ul class="sidebar">
         <li class="sidebar-main">
-          <a href="{% url 'home' %}">
-            Dashboard
-            <span class="menu-icon glyphicon glyphicon-transfer" ng-click="toggleSidebar()"></span>
+          <a href="#" ng-click="toggle = !toggle;">
+            Menu
+            <span class="menu-icon glyphicon glyphicon-transfer" ></span>
           </a>
         </li>
         {% include 'glims/partials/sidebar.html' %}
@@ -245,7 +245,7 @@
             
             <div class="meta">
               <div class="page">
-                {% block page%}Dashboard{% endblock %}
+                {% block page%}BioBin{% endblock %}
               </div>
               <div class="breadcrumb-links">
                 {% block breadcrumbs%}Home / Dashboard{% endblock %}
