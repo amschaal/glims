@@ -19,12 +19,14 @@ class PluginManager(object):
         self.model_plugins = {}
         for plugin_string in PLUGINS:
             plugin = import_string(plugin_string)
-            self.plugins[plugin.id] = plugin
+            self.plugins[plugin.get_id()] = plugin
             for model in plugin.models:
                 if not self.model_plugins.has_key(model.__name__):
                     self.model_plugins[model.__name__] = [plugin] 
                 else:
                     self.model_plugins[model.__name__] += [plugin]
+    def get_plugins(self):
+        return self.plugins.items()
     def get_plugin(self,id):
         return self.plugins[id]
     def get_model_plugins(self,model):
@@ -35,6 +37,11 @@ class PluginManager(object):
 #     def get_plugins_by_class(self,klass):
 #         
     def get_urls(self):
+        """
+        Return all the URLs for configured plugins.  For use in main URL config file.
+        plugin_manager = PluginManager()
+        urlpatterns += plugin_manager.get_urls()
+        """
         urls = []
         for plugin in self.plugins.values():
             if plugin.urls:
