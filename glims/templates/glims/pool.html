@@ -32,7 +32,6 @@
 	
 		
 	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
-	             {[samples]}
 					<h3>Samples <button ng-click="selectSamples()" class="btn btn-sm btn-success pull-right">Select</button></h3>
 					<h4 ng-hide="samples.length">There are no samples associated with this pool</h4>
 					<table class="table" ng-show="samples.length">

@@ -42,6 +42,7 @@ class PluginManager(object):
         plugin_manager = PluginManager()
         urlpatterns += plugin_manager.get_urls()
         """
+        # @todo: fix the case when multiple plugins reference the same urls.  There is no reason the urls should be repeated.
         urls = []
         for plugin in self.plugins.values():
             if plugin.urls:

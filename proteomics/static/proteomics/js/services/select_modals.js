@@ -1,5 +1,5 @@
 angular.module('proteomicsSelectModals',['selectModals'])
-.service('proteomicsSelectModalService', function(selectModalService,DRFNgTableParams) {
+.service('proteomicsSelectModalService', function(SelectModalService,DRFNgTableParams) {
 	 return {
 		 selectFastaFile: selectFastaFile,
 		 selectDefaultFile: selectDefaultFile
@@ -11,7 +11,7 @@ angular.module('proteomicsSelectModals',['selectModals'])
 				  template: 'proteomics/select_modals/fasta_modal.html'
 		  }
 		  angular.extend(defaultOptions,options?options:{});
-		  return selectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
 	  }
 	  function selectDefaultFile(options){ 
 		  var defaultOptions = {
@@ -20,7 +20,7 @@ angular.module('proteomicsSelectModals',['selectModals'])
 				  template: 'proteomics/select_modals/parameter_modal.html'
 		  }
 		  angular.extend(defaultOptions,options?options:{});
-		  return selectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
 	  }
 	  
 })

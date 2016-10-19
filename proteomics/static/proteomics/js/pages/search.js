@@ -1,9 +1,9 @@
 
 angular.module('mainapp').requires.push('proteomicsSelectModals');
 angular.module('mainapp')
-.controller('SearchController', ['$scope','$http','ParameterFile','$modal','$filter','proteomicsSelectModalService','selectModalService',SearchController]);
+.controller('SearchController', ['$scope','$http','ParameterFile','$modal','$filter','proteomicsSelectModalService','SelectModalService',SearchController]);
 
-function SearchController($scope,$http,ParameterFile,$modal,$filter,proteomicsSelectModalService,selectModalService) {
+function SearchController($scope,$http,ParameterFile,$modal,$filter,proteomicsSelectModalService,SelectModalService) {
 	$scope.errors={};
 	$scope.data={"engine":{"msgf":1,"omssa":1,"xtandem":1,"ms_amanda":1,"myrimatch":1,"comet":1,"tide":1},"samples":[],"fastas":[]};
 	$scope.jobLink = function(job_id){return django_js_utils.urls.resolve('job', { id: job_id })};
@@ -43,7 +43,7 @@ function SearchController($scope,$http,ParameterFile,$modal,$filter,proteomicsSe
 		});
 	}
 	  $scope.selectSamples = function(){
-		  selectModalService.selectSamples({multi:true,initial:$scope.data.samples}).result.then(function(samples){$scope.data.samples=samples});
+		  SelectModalService.selectSamples({multi:true,initial:$scope.data.samples}).result.then(function(samples){$scope.data.samples=samples});
 	  }
 	  $scope.selectDefaultFile = function(){
 		  proteomicsSelectModalService.selectDefaultFile({initial:$scope.parameter_file}).result.then(function(parameter_file){$scope.parameter_file=parameter_file});

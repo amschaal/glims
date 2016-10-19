@@ -26,9 +26,11 @@ function PoolController($scope,$http,$Pool,growl,poolService) {
 	}
 }
 angular.module('mainapp')
-.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams','selectModalService', SamplesController]);
+.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams','SelectModalService', SamplesController]);
 
-function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,selectModalService) {
+function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,SelectModalService) {
+	
+	console.log('SelectModalService', SelectModalService)
 //	var sampleURL = django_js_utils.urls.resolve('sample-list');
 	$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
 	var pool_id = null;
@@ -106,7 +108,18 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,selectMod
 	    });
 	  };
 	  $scope.selectSamples = function(){
-		  selectModalService.selectSamples({multi:true,initial:$scope.samples}).result.then(function(samples){$scope.samples=samples});
+		  SelectModalService.selectSamples({multi:true,initial:$scope.samples}).result.then(
+				  function(samples){
+					  var url = django_js_utils.urls.resolve('add_pool_samples',{ pk: pool_id });
+					  var sample_ids = samples.map(function(sample){return sample.id});
+					  $http.post(url,{'sample_ids':sample_ids})
+						.success(function(){
+							$scope.samples=samples;							
+						})
+						.error(function(){
+							alert('Failed to add samples');
+						});
+				  });
 	  }
 	
 }
