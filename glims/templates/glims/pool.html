@@ -31,20 +31,20 @@
 	          	</table>
 	
 		
-	             <div ng-controller="SamplesController" ng-init="init({pool_id:{{pool.id}}})">
-					<h3>Samples <button ng-click="selectSamples()" class="btn btn-sm btn-success pull-right">Select</button></h3>
-					<h4 ng-hide="samples.length">There are no samples associated with this pool</h4>
-					<table class="table" ng-show="samples.length">
+	             <div ng-controller="LibrariesController" ng-init="init({pool_id:{{pool.id}}})">
+					<h3>Libraries <button ng-click="selectLibraries()" class="btn btn-sm btn-success pull-right">Select</button></h3>
+					<h4 ng-hide="libraries.length">There are no libraries associated with this pool</h4>
+					<table class="table" ng-show="libraries.length">
 	              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>
 	              	<tbody>
-	                	<tr ng-repeat="s in samples">
-	                		<td ng-if="s.editing"><input ng-model="s.sample_id" value="{[s.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!s.editing"><a href="{[ sampleLink(s) ]}">{[s.sample_id]}</a></td>
-	                		<td ng-if="s.editing"><input ng-model="s.name" value="{[s.name]}" placeholder="(required) Enter sample name"/></td><td ng-if="!s.editing">{[s.name]}</td>
-	                		<td ng-if="s.editing"><textarea ng-model="s.description" placeholder="(Optional) Enter a description">{[s.description]}</textarea></td><td ng-if="!s.editing">{[s.description]}</td>
+	                	<tr ng-repeat="l in libraries">
+	                		<td ng-if="l.editing"><input ng-model="l.sample.sample_id" value="{[l.sample.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!l.editing"><a href="{[ sampleLink(l) ]}">{[l.sample.sample_id]}</a></td>
+	                		<td ng-if="l.editing"><input ng-model="l.name" value="{[l.name]}" placeholder="(required) Enter library name"/></td><td ng-if="!l.editing">{[l.name]}</td>
+	                		<td ng-if="l.editing"><textarea ng-model="l.description" placeholder="(Optional) Enter a description">{[l.description]}</textarea></td><td ng-if="!l.editing">{[l.description]}</td>
 	                		<td>{[overriddenFields(s)]}</span></td>
 	                		<td>
-	                			<button class="btn btn-danger" ng-click="removeSample(s,$index)">Remove</button>
-	                			<button class="btn btn-default" ng-click="open(s,'lg')">Edit</button>	
+	                			<button class="btn btn-danger" ng-click="removeLibrary(l,$index)">Remove</button>
+	                			<button class="btn btn-default" ng-click="open(l,'lg')">Edit</button>	
 	                		</td>
 	                	</tr>
 	                </tbody>

@@ -26,47 +26,47 @@ function PoolController($scope,$http,$Pool,growl,poolService) {
 	}
 }
 angular.module('mainapp')
-.controller('SamplesController', ['$scope','Sample','Pool','$http','DRFNgTableParams','SelectModalService', SamplesController]);
+.controller('LibrariesController', ['$scope','Library','Pool','$http','DRFNgTableParams','SelectModalService', LibrariesController]);
 
-function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,SelectModalService) {
+function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,SelectModalService) {
 	
 	console.log('SelectModalService', SelectModalService)
 //	var sampleURL = django_js_utils.urls.resolve('sample-list');
-	$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
+	$scope.sampleLink = function(library){return django_js_utils.urls.resolve('sample', { pk: library.sample.id })};
 	var pool_id = null;
-	$scope.sample_data={};
-	function refreshSamples(){
-		$scope.samples = $Sample.query({pool:pool_id});
+	$scope.library_data={};
+	function refreshLibraries(){
+		$scope.libraries = $Library.query({pool:pool_id});
 	}
-	$scope.removeSample = function (sample,index){
-		var url = django_js_utils.urls.resolve('remove_pool_samples',{ pk: pool_id });
-		$http.post(url,{'sample_ids':[sample.id]})
+	$scope.removeLibrary = function (library,index){
+		var url = django_js_utils.urls.resolve('remove_pool_libraries',{ pk: pool_id });
+		$http.post(url,{'library_ids':[library.id]})
 		.success(function(){
-			for (var i in $scope.samples){
-				if ($scope.samples[i].id == sample.id)
-					$scope.samples.splice(i,1);
-				delete $scope.sample_data[String(sample.id)];
+			for (var i in $scope.libraries){
+				if ($scope.libraries[i].id == library.id)
+					$scope.libraries.splice(i,1);
+				delete $scope.library_data[String(library.id)];
 			}
 			
 		})
 		.error(function(){
-			alert('Failed to delete sample');
+			alert('Failed to delete library');
 		});
 		
 	}
 	$scope.init = function(data){
 		pool_id = data.pool_id;
 		$Pool.get({id:pool_id},function(data){
-			$scope.sample_data = data.sample_data;
+			$scope.library_data = data.library_data;
 		});
-		refreshSamples();
+		refreshLibraries();
 //		$http.get(sampleURL,{})
 //		.success(function(data){
 //			
 //		})
 	};
-	$scope.overriddenFields = function(sample){
-		var data = $scope.sample_data[String(sample.id)] ? $scope.sample_data[String(sample.id)] : {};
+	$scope.overriddenFields = function(library){
+		var data = $scope.library_data[String(library.id)] ? $scope.library_data[String(library.id)] : {};
 		var fields = [];
 		angular.forEach(Object.keys(data),function(key,val){
 			if (key != 'data')
@@ -79,21 +79,21 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,SelectMod
 		}
 		return fields.join(', ');
 	}
-	$scope.open = function (sample,size) {
+	$scope.open = function (library,size) {
 
 	    var modalInstance = $modal.open({
 	      templateUrl: 'myModalContent.html',
 	      controller: 'ModalInstanceCtrl',
 	      size: size,
 	      resolve: {
-	    	  sample: function () {
-		          return sample;
+	    	  library: function () {
+		          return library;
 		      },
 		      pool_id: function () {
 		          return pool_id;
 		      },
-		      sample_data: function(){
-		        	return $scope.sample_data[String(sample.id)] ? $scope.sample_data[String(sample.id)] : {};
+		      library_data: function(){
+		        	return $scope.library_data[String(library.id)] ? $scope.library_data[String(library.id)] : {};
 		      }
 //	        items: function () {
 //	          return $scope.items;
@@ -102,22 +102,22 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,SelectMod
 	    });
 
 	    modalInstance.result.then(function (data) {
-	      $scope.sample_data[String(data.sample.id)] = data.data;
+	      $scope.library_data[String(data.sample.id)] = data.data;
 	    }, function () {
 //	      $log.info('Modal dismissed at: ' + new Date());
 	    });
 	  };
-	  $scope.selectSamples = function(){
-		  SelectModalService.selectSamples({multi:true,initial:$scope.samples}).result.then(
-				  function(samples){
-					  var url = django_js_utils.urls.resolve('add_pool_samples',{ pk: pool_id });
-					  var sample_ids = samples.map(function(sample){return sample.id});
-					  $http.post(url,{'sample_ids':sample_ids})
+	  $scope.selectLibraries = function(){
+		  SelectModalService.selectLibraries({multi:true,initial:$scope.libraries}).result.then(
+				  function(libraries){
+					  var url = django_js_utils.urls.resolve('add_pool_libraries',{ pk: pool_id });
+					  var library_ids = libraries.map(function(library){return library.id});
+					  $http.post(url,{'library_ids':library_ids})
 						.success(function(){
-							$scope.samples=samples;							
+							$scope.libraries = libraries;							
 						})
 						.error(function(){
-							alert('Failed to add samples');
+							alert('Failed to add libraries');
 						});
 				  });
 	  }
@@ -128,18 +128,18 @@ function SamplesController($scope,$Sample,$Pool,$http,DRFNgTableParams,SelectMod
 // Please note that $modalInstance represents a modal window (instance) dependency.
 // It is not the same as the $modal service used above.
 
-angular.module('mainapp').controller('ModalInstanceCtrl', function ($scope, $http, $modalInstance, sample, pool_id, sample_data) {
-	$scope.sample = sample;
+angular.module('mainapp').controller('ModalInstanceCtrl', function ($scope, $http, $modalInstance, library, pool_id, library_data) {
+	$scope.library = library;
 	var pool_id = pool_id;
 	$scope.override = {}
 	$scope.errors={};
-	$scope.sample_data = sample_data;
-	angular.forEach(Object.keys(sample_data),function(key,val){
+	$scope.library_data = library_data;
+	angular.forEach(Object.keys(library_data),function(key,val){
 		$scope.override[key]=true;
 	});
 	$scope.override['data']={};
-	if (sample_data.data){
-		angular.forEach(Object.keys(sample_data.data),function(key,val){
+	if (library_data.data){
+		angular.forEach(Object.keys(library_data.data),function(key,val){
 			$scope.override['data'][key]=true;
 		});
 	}
@@ -148,12 +148,12 @@ angular.module('mainapp').controller('ModalInstanceCtrl', function ($scope, $htt
 		angular.forEach(Object.keys($scope.override),function(key,value){
 			console.log(key,value);
 			if($scope.override[key])
-				data[key]=$scope.sample_data[key];
+				data[key]=$scope.library_data[key];
 		});
 		data['data']={};
 		angular.forEach(Object.keys($scope.override['data']),function(key,value){
 			if($scope.override['data'][key])
-				data['data'][key]=$scope.sample_data['data'][key];
+				data['data'][key]=$scope.library_data['data'][key];
 		});
 		return data;
 	};
@@ -162,7 +162,7 @@ angular.module('mainapp').controller('ModalInstanceCtrl', function ($scope, $htt
 		return $scope.errors[name] ? $scope.errors[name] : []; 
 	};
 	$scope.ok = function () {
-		var url = django_js_utils.urls.resolve('update_pool_sample', { pool_id: pool_id, sample_id: $scope.sample.id});
+		var url = django_js_utils.urls.resolve('update_pool_library', { pool_id: pool_id, library_id: $scope.library.id});
 		var data = get_overridden_data();
 		console.log('data',data);
 		$http.post(
@@ -173,7 +173,7 @@ angular.module('mainapp').controller('ModalInstanceCtrl', function ($scope, $htt
 				$scope.errors=data.errors;
 			}
 			else{
-				$modalInstance.close({'sample':$scope.sample,'data':data.data});
+				$modalInstance.close({'library':$scope.library,'data':data.data});
 			}
 			
 		});

@@ -4,6 +4,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	 return {
 		 openSelectModal: openSelectModal,
 		 selectSamples: selectSamples,
+		 selectLibraries: selectLibraries,
 		 selectFiles: selectFiles
 	 };
 	 function openSelectModal (template,tableParams,options) { 
@@ -31,6 +32,15 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 				  title: 'Search Samples',
 				  tableParams: DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }}),
 				  template: 'glims/select_modals/sample_modal.html'
+		  }
+		  angular.extend(defaultOptions,options?options:{});
+		  return openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+	  }
+	  function selectLibraries(options){ 
+		  var defaultOptions = {
+				  title: 'Search Libraries',
+				  tableParams: DRFNgTableParams('/api/libraries/',{sorting: { created: "desc" }}),
+				  template: 'glims/select_modals/library_modal.html'
 		  }
 		  angular.extend(defaultOptions,options?options:{});
 		  return openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
@@ -134,6 +144,11 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 .run(['$templateCache', function($templateCache) {
 	$templateCache.put('glims/select_modals/sample_modal.html',
 			'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Created\'" sortable="\'created\'"">{[row.created|date]}</td><td data-title="\'ID\'" sortable="\'sample_id\'" filter="{sample_id__icontains: \'text\'}"><a target="_blank" href="{[ sampleLink(row) ]}">{[row.sample_id]}</a></td><td data-title="\'Name\'" sortable="\'name\'" filter="{name__icontains: \'text\'}">{[row.name]}</td><td data-title="\'Type\'" sortable="\'type__name\'" filter="{type__name__icontains: \'text\'}">{[row.type.name]}</td><td data-title="\'Project\'" sortable="\'project__name\'" filter="{project__name__icontains: \'text\'}"><a target="_blank" href="{[ projectLink(row) ]}">{[row.project.name]}</a></td><td data-title="\'Description\'" sortable="\'description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td modal-select-actions></td></tr></table>'
+	);
+}])
+.run(['$templateCache', function($templateCache) {
+	$templateCache.put('glims/select_modals/library_modal.html',
+			'<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed"><tr ng-repeat="row in $data track by row.id"><td data-title="\'Created\'" sortable="\'created\'"">{[row.created|date]}</td><td data-title="\'ID\'" sortable="\'sample__sample_id\'" filter="{sample__sample_id__icontains: \'text\'}"><a target="_blank" href="{[ sampleLink(row) ]}">{[row.sample.sample_id]}</a></td><td data-title="\'Name\'" sortable="\'name\'" filter="{name__icontains: \'text\'}">{[row.name]}</td><td data-title="\'Type\'" sortable="\'type__name\'" filter="{type__name__icontains: \'text\'}">{[row.type.name]}</td><td data-title="\'Project\'" sortable="\'sample__project__name\'" filter="{sample__project__name__icontains: \'text\'}"><a target="_blank" href="{[ projectLink(row) ]}">{[row.sample.project.name]}</a></td><td data-title="\'Description\'" sortable="\'description\'" filter="{description__icontains: \'text\'}">{[row.description]}</td><td modal-select-actions></td></tr></table>'
 	);
 }])
 .run(['$templateCache', function($templateCache) {
