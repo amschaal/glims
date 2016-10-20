@@ -187,13 +187,31 @@ class Sample(ExtensibleModel):
                 queries.append(Q(project__pk__in = pks))
         return Sample.objects.filter(reduce(operator.or_, queries))
 
+class Barcode(ExtensibleModel):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+
+class Library(ExtensibleModel):
+    created = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    sample = models.ForeignKey(Sample,related_name='libraries')
+    barcode = models.ForeignKey(Barcode,null=True,blank=True,related_name='libraries')
+    description = models.TextField(null=True,blank=True)
+    def get_group(self):
+        try:
+            return self.sample.project.group
+        except:
+            return None
+    def __unicode__(self):
+        return self.name
+
 class Pool(ExtensibleModel):
     name = models.CharField(max_length=100)
     group = models.ForeignKey(Group,on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True)
     created = models.DateField(auto_now=True)
-    samples = models.ManyToManyField(Sample,related_name='pools',null=True,blank=True)
-    sample_data = JSONField(null=True,blank=True,default={})
+    libraries = models.ManyToManyField(Library,related_name='pools',null=True,blank=True)
+    library_data = JSONField(null=True,blank=True,default={})
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):

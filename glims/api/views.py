@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from django_compute.utils import sizeof_fmt
 from glims.api.serializers import SampleSerializer, PoolSerializer
-from glims.models import Sample, Pool, Project
+from glims.models import Sample, Pool, Project, Library
 from django.views.generic.list import ListView
 from rest_framework.views import APIView
 
@@ -51,21 +51,21 @@ def remove_samples_from_cart(request):
     return Response(get_cart(cart))
 
 @api_view(['POST'])
-def remove_pool_samples(request,pk):
-    sample_ids = request.data.get('sample_ids',[])
+def remove_pool_libraries(request,pk):
+    library_ids = request.data.get('library_ids',[])
     pool = Pool.objects.get(pk=pk)
-    for s in Sample.objects.filter(id__in=sample_ids):
-        pool.samples.remove(s)
-        pool.sample_data.pop(str(s.id),None)
+    for l in Library.objects.filter(id__in=library_ids):
+        pool.libraries.remove(l)
+        pool.library_data.pop(str(l.id),None)
     pool.save()
     return Response({'status':'ok'})
 
 @api_view(['POST'])
-def add_pool_samples(request,pk):
-    sample_ids = request.data.get('sample_ids',[])
+def add_pool_libraries(request,pk):
+    library_ids = request.data.get('library_ids',[])
     pool = Pool.objects.get(pk=pk)
-    for s in Sample.objects.filter(id__in=sample_ids):
-        pool.samples.add(s)
+    for l in Library.objects.filter(id__in=library_ids):
+        pool.libraries.add(l)
     return Response({'status':'ok'})
 
 @api_view(['POST'])
@@ -92,7 +92,7 @@ def update_pool_sample(request,pool_id,sample_id):
 #     plugins = workflow.plugins.filter(page='workflow')
     form = PoolForm(pool_data,instance=pool)
     if form.is_valid():
-        pool.sample_data[str(sample_id)] = original_data
+        pool.library_data[str(sample_id)] = original_data
         pool.save()
         return Response({'status':'ok','data':original_data})
     else:

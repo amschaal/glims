@@ -7,8 +7,10 @@ from extensible.drf.viewsets import ExtensibleViewset
 from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
-    LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer
-from glims.models import Project, Sample, Pool, Lab, UserProfile
+    LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer,\
+    BarcodeSerializer, LibrarySerializer
+from glims.models import Project, Sample, Pool, Lab, UserProfile, Barcode,\
+    Library
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
 from glims.models import Status
@@ -170,6 +172,29 @@ class PoolViewSet(ExtensibleViewset):
         return Pool.objects.all()
 #         return get_all_user_objects(self.request.user, ['view'], Pool)
 
+class BarcodeViewSet(ExtensibleViewset):
+    serializer_class = BarcodeSerializer
+    permission_classes = [IsAuthenticated]#,GroupPermission
+#     filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+#     ordering_fields = ('name', 'created','type__name')
+#     search_fields = ('name', 'description','type__name')
+    model = Barcode
+    def get_queryset(self):
+        return Barcode.objects.all()
+
+class LibraryViewSet(ExtensibleViewset):
+    serializer_class = LibrarySerializer
+    permission_classes = [IsAuthenticated,GroupPermission]
+    filter_fields = {'sample__sample_id':['exact', 'icontains'],'sample__name':['exact', 'icontains'], 'sample__project__name':['exact', 'icontains'],'sample__project':['exact'], 'description':['exact', 'icontains'],'sample__type__name':['exact', 'icontains'],'data':['contains'],'sample__project__lab':['exact']}
+#     multi_field_filters = {'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
+    ordering_fields = ('id','sample_id','name', 'description','project__name','received','created','type__name')
+    model = Library
+    def get_queryset(self):
+        queryset = Library.objects.select_related('sample','barcode').all()
+        pool = self.request.query_params.get('pool', None)
+        if pool is not None:
+            queryset = queryset.filter(pools__id=pool)
+        return queryset
 
 class JobViewset(viewsets.ReadOnlyModelViewSet):
     model = Job

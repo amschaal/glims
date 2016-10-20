@@ -26,7 +26,7 @@ urlpatterns = patterns('',)
 
 from rest_framework import routers
 from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet,\
-    StatusSerializerViewSet
+    StatusSerializerViewSet, BarcodeViewSet, LibraryViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
@@ -34,6 +34,8 @@ router.register(r'groups', GroupViewSet,'Group')
 router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
 router.register(r'projects', ProjectViewSet,'Project')
 router.register(r'samples', SampleViewSet,'Sample')
+router.register(r'barcodes', BarcodeViewSet,'Barcode')
+router.register(r'libraries', LibraryViewSet,'Library')
 router.register(r'pools', PoolViewSet,'Pool')
 router.register(r'jobs', JobViewset,'Job')
 # router.register(r'submissions', JobSubmissionViewset)
@@ -87,8 +89,8 @@ urlpatterns += patterns('',
 #    url(r'^api/job/(?P<job_id>\d+\.?\d*)/update/$', 'glims.api.views.update_job', name='update_job'),
     url(r'^api/pool/(?P<pk>\d+)/update/$', 'glims.api.views.update_pool', name='update_pool'),
     url(r'^api/pool/(?P<pool_id>\d+)/sample/(?P<sample_id>\d+)/update/$', 'glims.api.views.update_pool_sample', name='update_pool_sample'),
-    url(r'^api/pool/(?P<pk>\d+)/remove_samples/$', 'glims.api.views.remove_pool_samples', name='remove_pool_samples'),
-    url(r'^api/pool/(?P<pk>\d+)/add_samples/$', 'glims.api.views.add_pool_samples', name='add_pool_samples'),
+    url(r'^api/pool/(?P<pk>\d+)/remove_libraries/$', 'glims.api.views.remove_pool_libraries', name='remove_pool_libraries'),
+    url(r'^api/pool/(?P<pk>\d+)/add_libraries/$', 'glims.api.views.add_pool_libraries', name='add_pool_libraries'),
     url(r'^api/projects/(?P<project_id>[\-\w]+)/data/(?:(?P<path>.*/))?$', 'glims.api.views.project_files', name='get_project_files'),
     url(r'^samples/', include('glims.samples.urls')),
     url(r'^plugins/', include('plugins.urls')),

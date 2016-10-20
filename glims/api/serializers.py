@@ -6,7 +6,8 @@ from django_compute.models import Job
 from extensible.drf.serializers import ExtensibleSerializer, ModelTypeSerializer,\
     FlatModelTypeSerializer
 from glims.api.fields import JSONField, ModelRelatedField
-from glims.models import Project, Sample, ModelType, Pool, Lab, UserProfile
+from glims.models import Project, Sample, ModelType, Pool, Lab, UserProfile,\
+    Library, Barcode
 from glims.models import Status
 
 
@@ -97,8 +98,22 @@ class SampleSerializer(ExtensibleSerializer):
         model = Sample
         read_only_fields = ('sample_id',)
 
+class FlatSampleSerializer(ExtensibleSerializer):
+    class Meta:
+        model = Sample
+        fields = ('id','sample_id','name','description')
+
+class BarcodeSerializer(ExtensibleSerializer):
+    class Meta:
+        model = Barcode
+
+class LibrarySerializer(ExtensibleSerializer):
+    sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
+    class Meta:
+        model = Library
+
 class PoolSerializer(ExtensibleSerializer):
-    sample_data = DictField(default={},required=False)
+    library_data = DictField(default={},required=False)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     class Meta:
         model = Pool

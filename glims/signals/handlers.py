@@ -9,7 +9,7 @@ from django.db.models.signals import post_save, pre_save, \
 from django.dispatch import receiver
 
 from attachments.models import Note, File, delete_attachments
-from glims.models import Project, Sample, Pool, Lab
+from glims.models import Project, Sample, Pool, Lab, Library
 from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification
@@ -94,8 +94,18 @@ def set_lab_slug(sender,instance,**kwargs):
     if not instance.slug:
         instance.slug = instance.get_directory_name()
         
+@receiver(pre_save,sender=Library)
+def set_library_name(sender,instance,**kwargs):
+    if not instance.name:
+        instance.name = instance.sample.sample_id
+    if Library.objects.filter(name=instance.name).first():
+        for i in range(1,100):
+            new_name = '%s-%d'%(instance.name,i)
+            if not Library.objects.filter(name=new_name).first():
+                instance.name = new_name
+                break
+            
         
-    
     
     
 """

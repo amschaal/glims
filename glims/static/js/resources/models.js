@@ -48,6 +48,12 @@ angular.module('glimsModels', ['ngResource'])
 .factory('Project', ['$resource', function ($resource) {
   return $resource('/api/projects/:id/', {id:'@id'}, standard_methods);
 }])
+.factory('Library', ['$resource', function ($resource) {
+  return $resource('/api/libraries/:id/', {id:'@id'}, standard_methods);
+}])
+.factory('Barcode', ['$resource', function ($resource) {
+  return $resource('/api/barcodes/:id/', {id:'@id'}, standard_methods);
+}])
 .factory('Pool', ['$resource', function ($resource) {
   return $resource('/api/pools/:id/', {id:'@id'}, standard_methods);
 }]);
