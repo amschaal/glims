@@ -20,6 +20,20 @@ class SamplePlugin(BasePlugin):
         return 'Samples ({[sample_count]})'
 #     extra_context = {'BASE_URL':settings.BASE_URL,'foo':'bar'} #to be passed to template
 
+class SampleLibrariesPlugin(BasePlugin):
+    id = 'sample-libraries-plugin' #Name of directive
+    name = 'Sample Libraries Plugin'
+    description = 'Manage sample libraries'
+#     template = 'glims/plugins/manage_samples.html'
+    js_files = ['js/directives/libraries.plugin.js']
+    models = [Sample]
+    @staticmethod
+    def get_template(obj):
+        return '<sample-libraries sample="sample"></sample-libraries>'
+    @staticmethod
+    def get_header_template(obj):
+        return 'Libraries ({[library_count]})'
+
 class NotePlugin(BasePlugin):
     id = 'attachment-notes'
     name = 'Note Plugin'
