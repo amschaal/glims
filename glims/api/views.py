@@ -62,6 +62,7 @@ def remove_pool_libraries(request,pk):
 
 @api_view(['POST'])
 def add_pool_libraries(request,pk):
+    # @todo: Check to make sure that adapter is unique!!
     library_ids = request.data.get('library_ids',[])
     pool = Pool.objects.get(pk=pk)
     for l in Library.objects.filter(id__in=library_ids):

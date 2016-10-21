@@ -28,7 +28,7 @@ function PoolController($scope,$http,$Pool,growl,poolService) {
 angular.module('mainapp')
 .controller('LibrariesController', ['$scope','Library','Pool','$http','DRFNgTableParams','SelectModalService', LibrariesController]);
 
-function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,SelectModalService) {
+function LibrariesController($scope,Library,$Pool,$http,DRFNgTableParams,SelectModalService) {
 	
 	console.log('SelectModalService', SelectModalService)
 //	var sampleURL = django_js_utils.urls.resolve('sample-list');
@@ -36,7 +36,7 @@ function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,Select
 	var pool_id = null;
 	$scope.library_data={};
 	function refreshLibraries(){
-		$scope.libraries = $Library.query({pool:pool_id});
+		$scope.libraries = Library.query({pool:pool_id});
 	}
 	$scope.removeLibrary = function (library,index){
 		var url = django_js_utils.urls.resolve('remove_pool_libraries',{ pk: pool_id });
@@ -47,6 +47,7 @@ function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,Select
 					$scope.libraries.splice(i,1);
 				delete $scope.library_data[String(library.id)];
 			}
+			$scope.tableParams.reload();
 			
 		})
 		.error(function(){
@@ -56,6 +57,7 @@ function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,Select
 	}
 	$scope.init = function(data){
 		pool_id = data.pool_id;
+		$scope.tableParams = DRFNgTableParams('/api/libraries/',{sorting: { created: "desc" },filter:{pool:pool_id}} ,Library);
 		$Pool.get({id:pool_id},function(data){
 			$scope.library_data = data.library_data;
 		});
@@ -114,7 +116,8 @@ function LibrariesController($scope,$Library,$Pool,$http,DRFNgTableParams,Select
 					  var library_ids = libraries.map(function(library){return library.id});
 					  $http.post(url,{'library_ids':library_ids})
 						.success(function(){
-							$scope.libraries = libraries;							
+							$scope.libraries = libraries;	
+							$scope.tableParams.reload();
 						})
 						.error(function(){
 							alert('Failed to add libraries');

@@ -96,6 +96,8 @@ def set_lab_slug(sender,instance,**kwargs):
         
 @receiver(pre_save,sender=Library)
 def set_library_name(sender,instance,**kwargs):
+    if instance.name and instance.id:
+        return
     if not instance.name:
         instance.name = instance.sample.sample_id
     if Library.objects.filter(name=instance.name).first():

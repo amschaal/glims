@@ -34,21 +34,19 @@
 	             <div ng-controller="LibrariesController" ng-init="init({pool_id:{{pool.id}}})">
 					<h3>Libraries <button ng-click="selectLibraries()" class="btn btn-sm btn-success pull-right">Select</button></h3>
 					<h4 ng-hide="libraries.length">There are no libraries associated with this pool</h4>
-					<table class="table" ng-show="libraries.length">
-	              	<thead><tr><td>ID</td><td>Name</td><td>Description</td><td>Overridden Fields</td><td></td></tr></thead>
-	              	<tbody>
-	                	<tr ng-repeat="l in libraries">
-	                		<td ng-if="l.editing"><input ng-model="l.sample.sample_id" value="{[l.sample.sample_id]}" placeholder="(required) Enter sample id"/></td><td ng-if="!l.editing"><a href="{[ sampleLink(l) ]}">{[l.sample.sample_id]}</a></td>
-	                		<td ng-if="l.editing"><input ng-model="l.name" value="{[l.name]}" placeholder="(required) Enter library name"/></td><td ng-if="!l.editing">{[l.name]}</td>
-	                		<td ng-if="l.editing"><textarea ng-model="l.description" placeholder="(Optional) Enter a description">{[l.description]}</textarea></td><td ng-if="!l.editing">{[l.description]}</td>
-	                		<td>{[overriddenFields(s)]}</span></td>
-	                		<td>
-	                			<button class="btn btn-danger" ng-click="removeLibrary(l,$index)">Remove</button>
-	                			<button class="btn btn-default" ng-click="open(l,'lg')">Edit</button>	
-	                		</td>
-	                	</tr>
-	                </tbody>
-	              </table>
+	              <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+		      		<tr ng-repeat="row in $data track by row.id">
+		              <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
+				        <td data-title="'Name'" sortable="'name'" filter="{name__icontains: 'text'}">{[row.name]}</td>
+				        <td data-title="'Sample ID'" sortable="'sample__sample_id'" filter="{sample__sample_id__icontains: 'text'}"><a href="{[ sampleLink(row) ]}">{[row.sample.sample_id]}</a></td>
+				        <td data-title="'Adapter'" sortable="'adapter__name'" filter="{adapter__name__icontains: 'text'}">{[row.adapter.name]}</td>
+				        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
+			     	 	<td data-title="'Actions'">
+	                			<button class="btn btn-danger" ng-click="removeLibrary(row,$index)">Remove</button>
+	                			<button class="btn btn-default" ng-click="open(row,'lg')">Edit</button>	
+               			</td>
+			     	 </tr>
+			    </table>
 				</div>
 			</tab>
           	<object-plugins object-id="{{pool.id}}" content-type="{{pool | content_type_id}}"></object-plugins>    

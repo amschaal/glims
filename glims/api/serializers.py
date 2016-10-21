@@ -7,7 +7,7 @@ from extensible.drf.serializers import ExtensibleSerializer, ModelTypeSerializer
     FlatModelTypeSerializer
 from glims.api.fields import JSONField, ModelRelatedField
 from glims.models import Project, Sample, ModelType, Pool, Lab, UserProfile,\
-    Library, Barcode
+    Library, Adapter
 from glims.models import Status
 
 
@@ -103,12 +103,13 @@ class FlatSampleSerializer(ExtensibleSerializer):
         model = Sample
         fields = ('id','sample_id','name','description')
 
-class BarcodeSerializer(ExtensibleSerializer):
+class AdapterSerializer(ExtensibleSerializer):
     class Meta:
-        model = Barcode
+        model = Adapter
 
 class LibrarySerializer(ExtensibleSerializer):
     sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
+    adapter = ModelRelatedField(model=Adapter,serializer=AdapterSerializer)
     class Meta:
         model = Library
 

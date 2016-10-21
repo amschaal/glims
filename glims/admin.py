@@ -1,6 +1,6 @@
 from django.contrib import admin
 from models import EmailTemplate
-from glims.models import Project, Sample, ModelType, Barcode
+from glims.models import Project, Sample, ModelType, Adapter
 from guardian.admin import GuardedModelAdmin
 from glims.models import Lab
 from glims.models import Status
@@ -67,6 +67,6 @@ admin.site.register(Lab, LabAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(ModelType, ModelTypeAdmin)
-admin.site.register(Barcode)
+admin.site.register(Adapter)
 # admin.site.register(Status, StatusAdmin)
 
