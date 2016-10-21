@@ -10,7 +10,7 @@ angular.module("libraries-plugin")
 		templateUrl: 'template/plugins/sample_libraries.html',
 		scope: {
 			sample:'=',
-			getURL:'&'
+//			getURL:'&'
 		},
 		controller: function ($scope,$rootScope,$http,$log,$uibModal,NgTableParams) {
 			$scope.getURL = $rootScope.getURL;
@@ -70,10 +70,12 @@ angular.module("libraries-plugin").run(['$templateCache', function($templateCach
 			<button ng-click="createLibrary()" class="btn btn-success btn-sm">Create Library</button>\
 			<table ng-table="tableParams" class="table table-condensed table-bordered table-striped">\
 		      <tr ng-repeat="row in $data">\
-		        <td data-title="\'Name\'" filter="{name: \'text\'}" sortable="\'name\'">{[row.name]}</td>\
-		        <td data-title="\'Description\'" filter="{description: \'text\'}" sortable="\'description\'">{[row.description]}</td>\
+				<td data-title="\'Created\'" sortable="\'created\'">{[row.created|date]}</td>\
+				<td data-title="\'Name\'" filter="{name: \'text\'}" sortable="\'name\'">{[row.name]}</td>\
 		        <td data-title="\'Adapter\'" filter="{\'adapter.name\': \'text\'}" sortable="\'adapter.name\'">{[row.adapter.name]}</td>\
-				<td data-title="\'Actions\'"><button class="btn btn-sm btn-primary" ng-click="editLibrary(row)">Edit</button> <button class="btn btn-sm btn-danger" ng-click="deleteLibrary(row,$index)">Delete</button></td>\
+		        <td data-title="\'Description\'" filter="{description: \'text\'}" sortable="\'description\'">{[row.description]}</td>\
+				<td data-title="\'Pools\'"><a href="{[getURL(\'pool\',{pk:p.id})]}" ng-repeat="p in row.pools">{[p.name]}{[$last ? \'\' : \', \']}</a></td>\
+		        <td data-title="\'Actions\'"><button class="btn btn-sm btn-primary" ng-click="editLibrary(row)">Edit</button> <button class="btn btn-sm btn-danger" ng-click="deleteLibrary(row,$index)">Delete</button></td>\
 		      </tr>\
 		    </table>\
 			</load-on-select>'

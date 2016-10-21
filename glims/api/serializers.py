@@ -107,9 +107,15 @@ class AdapterSerializer(ExtensibleSerializer):
     class Meta:
         model = Adapter
 
+class FlatPoolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pool
+        fields = ('id','name','description','created')
+
 class LibrarySerializer(ExtensibleSerializer):
     sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
     adapter = ModelRelatedField(model=Adapter,serializer=AdapterSerializer)
+    pools = FlatPoolSerializer(many=True,read_only=True)
     class Meta:
         model = Library
 

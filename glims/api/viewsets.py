@@ -190,7 +190,7 @@ class LibraryViewSet(ExtensibleViewset):
     ordering_fields = ('id','sample__sample_id','name', 'description','sample__project__name','sample__received','created','type__name','adapter__name')
     model = Library
     def get_queryset(self):
-        queryset = Library.objects.select_related('sample','adapter').all()
+        queryset = Library.objects.select_related('sample','adapter').prefetch_related('pools').all()
         pool = self.request.query_params.get('pool', None)
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
