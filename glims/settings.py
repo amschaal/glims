@@ -61,7 +61,8 @@ INSTALLED_APPS = (
     'accounts',
     'logger',
     'bioshare',
-    'afs.apps.AFSConfig'
+    'afs.apps.AFSConfig',
+    'sequencing',
 )
 
 STATICFILES_FINDERS = (
