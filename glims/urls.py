@@ -101,6 +101,7 @@ urlpatterns += patterns('',
     url(r'^notifications/', include(notification_urls.urlpatterns)),
     url(r'^bioshare/', include(bioshare_urls.urlpatterns)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^sequencing/', include('sequencing.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 plugin_manager = PluginManager()

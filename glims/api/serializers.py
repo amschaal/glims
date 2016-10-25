@@ -119,9 +119,16 @@ class LibrarySerializer(ExtensibleSerializer):
     class Meta:
         model = Library
 
+class FlatLibrarySerializer(ExtensibleSerializer):
+#     sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
+    adapter = AdapterSerializer(read_only=True)
+    class Meta:
+        model = Library
+
 class PoolSerializer(ExtensibleSerializer):
     library_data = DictField(default={},required=False)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
+    libraries = FlatLibrarySerializer(many=True,read_only=True)
     class Meta:
         model = Pool
 
