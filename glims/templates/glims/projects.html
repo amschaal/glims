@@ -15,7 +15,7 @@
           <button ng-click="saveFilters()" class="btn pull-right" title="Save filters, fields, and sorting orders as your default view of projects" ng-disabled="save_disabled">{[saveProfileText||'Save settings']}</button>
           <h4>Filters</h4>
           	<label>  <input type="checkbox" ng-model="tableSettings.filter.following" ng-change="updateFilters()" ng-false-value="''"/>  Only show projects I'm managing, participating in, or subscribed to </label><br>
-          	<label>  <input type="checkbox" ng-model="tableSettings.filter.archived" ng-true-value="''" ng-false-value="'False'" ng-change="updateFilters()"/>  Show archived </label><br>
+          	<label>  <input type="checkbox" ng-model="tableSettings.filter.archived" ng-true-value="" ng-false-value="'False'" ng-change="updateFilters()"/>  Show archived </label><br>
           <!-- 
           {% for g in user.groups.all %}<label><input type="checkbox" checklist-value="'{{g.id}}'" checklist-model="groups" checklist-change="filterGroups()"/>{{g}} </label> {% endfor %}
            -->	

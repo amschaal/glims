@@ -1,8 +1,8 @@
 
 angular.module('mainapp')
-.controller('RunController', ['$scope','$http','DRFNgTableParams', RunController]);
+.controller('RunsController', ['$scope','$http','DRFNgTableParams', RunsController]);
 
-function RunController($scope,$http,DRFNgTableParams) {
+function RunsController($scope,$http,DRFNgTableParams) {
 	var defaults={};
 	$scope.tableParams = DRFNgTableParams('/sequencing/api/runs/',{sorting: { created: "desc" }});
 }

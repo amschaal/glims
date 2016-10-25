@@ -9,10 +9,11 @@
           <div class="widget-header">
             <i class="fa fa-flask"></i> Runs
           </div>
-           <div class="widget-body" ng-controller="RunController">
+           <div class="widget-body" ng-controller="RunsController">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
-		        <td data-title="'Created'" sortable="'created'"">{[row.created|date]}</td>
+		        <td data-title="'Created'" sortable="'created'"><a href="{[getURL('run',{pk:row.id})]}">{[row.created|date]}</a></td>
+		        <td data-title="'Name'" filter="{name__icontains: 'text'}" sortable="'name'"><a href="{[getURL('run',{pk:row.id})]}">{[row.name]}</a></td>
 		        <td data-title="'Machine'" sortable="'machine'" filter="{machine__name__icontains: 'text'}">{[row.machine.name]}</td>
 		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
 		        <td data-title="'Lanes'" >{[row.lanes]}</td>
