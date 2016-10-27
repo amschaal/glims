@@ -22,8 +22,10 @@ class ModelRelatedField(serializers.RelatedField):
         if isinstance(data, int):
             kwargs = {self.pk:data}
             return self.model.objects.get(**kwargs)
-        if data.get(self.pk,None):
+        if isinstance(data,dict) and data.get(self.pk,None):
             return self.model.objects.get(id=data['id'])
+        if isinstance(data,self.model) and hasattr(data,self.pk):
+            return self.model.objects.get(id=getattr(data,self.pk))
         return None
     def to_representation(self, value):
         return self.serializer(value).data
