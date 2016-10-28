@@ -75,4 +75,52 @@ angular.module('utility.directives', [])
         	}
         }
     };
+}])
+.directive('remoteSelect', [function() {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            model: '=',
+            url:'@',
+//            template: '=?',
+            config: '@'
+        },
+        template: '<div>{[settings]}{[options]}{[model]}<ui-select ng-model="model" required="settings.required" disabled="settings.disabled" on-remove="settings.onRemove($item,$model)" on-select="settings.onSelect($item,$model)" theme="bootstrap">\
+			        <ui-select-match placeholder="{[settings.placeholder]}" >{[settings.labelFunc($select.selected)]}</ui-select-match>\
+			        <ui-select-choices data-repeat="{[settings.ngOptions]}" refresh="settings.refresh($select.search)" refresh-delay="{[settings.refreshDelay]}">\
+			          <div ng-bind-html="settings.labelFunc(option) | highlight: $select.search"></div>\
+			        </ui-select-choices>\
+			      </ui-select><a ng-click="model=null;">Clear</a></div>',
+//        link: function(scope, iElement, iAttrs) {
+    	controller: function($scope, $http, $element){
+    		console.log('settings',$scope.settings,$scope.model);
+        	$scope.settings = {
+        		required: false,
+        		disabled: false,
+        		onRemove: function($item,$model){},
+        		onSelect: function($item,$model){},
+        		placeholder: 'Search...',
+    			valueProp: 'id',
+    			labelProp: 'name',
+    			ngOptions: 'option in options | filter: $select.search track by option[settings.valueProp]',
+        		template: '<div>{[option[settings.labelProp]]}</div>',
+	        	refresh: function(term) {
+	        		console.log('refresh',term);
+	        		return $http.get($scope.url, {params:{search: term}})
+	        		.then(function(response) {
+	        			$scope.options = response.data.results;
+	        		});
+	        	},
+	        	labelFunc: function(option){
+//	        		if ($scope.template)
+//	        		return '<span ng-include="template"></span>';
+	        		return option ? option[$scope.settings.labelProp] : '';
+	        	},
+        	};
+        	angular.extend($scope.settings,$scope.config);
+        	console.log('remoteSelect',$scope.settings);
+        	$scope.options = [];
+        }
+    };
 }]);

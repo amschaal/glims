@@ -58,7 +58,7 @@
 	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Description</th></tr></thead>
 	              	<tbody>
 	              		<tr ng-repeat="l in run.lanes">
-	              			<td>{[l.index]}</td>
+	              			<td>{[l.index]} <remote-select url="'/api/pools/'" config="{disabled:false}" model="l.pool"></remote-select></td>
 	              			<td title="{[l.pool.description]}">
 								<ui-select data-ng-model="l.pool" data-required="true" theme="bootstrap">
 							        <ui-select-match placeholder="Search pools" >{[$select.selected.name]}</ui-select-match>

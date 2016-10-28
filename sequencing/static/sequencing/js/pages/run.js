@@ -15,10 +15,11 @@ function RunController($scope , $log, $http, runService, Run){
 					$scope.run = run;
 				}
 		);
-	}
+	};
 	$scope.pools = [];
 	$scope.refreshPools = function(pool) {
-		return $http.get('/api/pools/', {search: pool})
+		console.log('refresh',pool);
+		return $http.get('/api/pools/', {params:{search: pool}})
 		.then(function(response) {
 			$scope.pools = response.data.results;
 		});
@@ -27,13 +28,13 @@ function RunController($scope , $log, $http, runService, Run){
 		$scope.run.$save(function(){
 			$scope.editing = false;
 		});
-	}
+	};
 	$scope.cancel = function(){
 		$scope.editing = false;
 		angular.copy($scope.saved,$scope.run);
-	}
+	};
 	$scope.edit = function(){
 		angular.copy($scope.run,$scope.saved);
 		$scope.editing = true;
-	}
+	};
 }
