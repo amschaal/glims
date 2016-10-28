@@ -19,7 +19,12 @@
           <div class="widget-body">
           	<tabset>
           	  <tab heading="Details">
-	              <table class="table">
+				<span class="pull-right">
+	          	  	<button class="btn btn-sm btn-default" ng-show="!editing" ng-click="edit();">Edit</button>
+	          	  	<button class="btn btn-sm btn-success" ng-show="editing" ng-click="save();">Save</button>
+	          	  	<button class="btn btn-sm btn-warning" ng-show="editing" ng-click="cancel();">Cancel</button>
+				</span>
+	              <table class="table" ng-if="!editing">
 	              	<tbody>
 	              		<tr><th>Type</th><td>{[run.type.name]}</td></tr>
 	              		<tr><th>Name</th><td>{[run.name]}</td></tr>
@@ -29,6 +34,43 @@
 	                	<tr ng-repeat="field in run.type.fields"><th>{[field.label]}</th><td>{[run.data[field.name]]}</td></tr>
 	                </tbody>
 	              </table>
+	              <table class="table" ng-if="editing">
+	              	<tbody>
+	              		<tr><th>Type</th><td>{[run.type.name]}</td></tr>
+	              		<tr><th>Name</th><td><input ng-model="run.name"/></td></tr>
+	              		<tr><th>Machine</th><td>{[run.machine.name]}</td></tr>
+	                	<tr><th>Description</th><td><textarea ng-model="run.description"></textarea></td></tr>
+	                	<tr ng-repeat="field in run.type.fields"><th>{[field.label]}</th><td>{[run.data[field.name]]}</td></tr>
+	                </tbody>
+	              </table>
+	              <table class="table" ng-if="!editing">
+	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Description</th></tr></thead>
+	              	<tbody>
+	              		<tr ng-repeat="l in run.lanes">
+	              			<td>{[l.index]}</td>
+	              			<td title="{[l.pool.description]}"><a href="{[getURL('pool',{pk:l.pool.id})]}">{[l.pool.name]}</a></td>
+	              			<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
+	              			<td>{[l.description]}</td>
+	              		</tr>
+	              	</tbody>
+              	</table>
+              	<table class="table" ng-if="editing">
+	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Description</th></tr></thead>
+	              	<tbody>
+	              		<tr ng-repeat="l in run.lanes">
+	              			<td>{[l.index]}</td>
+	              			<td title="{[l.pool.description]}">
+								<ui-select data-ng-model="l.pool" data-required="true" theme="bootstrap">
+							        <ui-select-match placeholder="Search pools" >{[$select.selected.name]}</ui-select-match>
+							        <ui-select-choices repeat="pool in pools track by $index" refresh="refreshPools($select.search)" refresh-delay="0">
+							          <div ng-bind-html="pool.name | highlight: $select.search"></div>
+							        </ui-select-choices>
+							      </ui-select><a ng-click="l.pool=null;">Clear</a>
+							</td>
+	              			<td><textarea ng-model="l.description"></textarea></td>
+	              		</tr>
+	              	</tbody>
+              	</table>
               </tab>
               <!-- <tab heading="Data" ng-init="selection=[]">
               	<list-files base-url="{% url 'Run-detail' pk=run.id  %}" selection="selection"></list-files>

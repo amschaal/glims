@@ -2,21 +2,24 @@
 {% block page %}Sequencing{% endblock %}
 {% block breadcrumbs %} Runs {% endblock %}
 {% block content %}
+<script src="/static/sequencing/js/resources/models.js"></script>
+<script src="/static/sequencing/js/services/run_service.js"></script>
 <script src="/static/sequencing/js/pages/runs.js"></script>
-<div class="row">
+<div class="row" ng-controller="RunsController">
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-flask"></i> Runs
+            <button ng-click="createRun()" class="btn btn-sm btn-success pull-right">Create</button>
           </div>
-           <div class="widget-body" ng-controller="RunsController">
+           <div class="widget-body">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Created'" sortable="'created'"><a href="{[getURL('run',{pk:row.id})]}">{[row.created|date]}</a></td>
 		        <td data-title="'Name'" filter="{name__icontains: 'text'}" sortable="'name'"><a href="{[getURL('run',{pk:row.id})]}">{[row.name]}</a></td>
 		        <td data-title="'Machine'" sortable="'machine'" filter="{machine__name__icontains: 'text'}">{[row.machine.name]}</td>
 		        <td data-title="'Type'" sortable="'type__name'" filter="{type__name__icontains: 'text'}">{[row.type.name]}</td>
-		        <td data-title="'Lanes'" >{[row.lanes]}</td>
+		        <td data-title="'Pools'" filter="{lanes__pool__name__icontains: 'text'}"><span ng-repeat="l in row.lanes"><a href="{[getURL('pool',{pk:l.pool.id})]}">{[l.pool.name]}</a>{[$last ? '' : ', ']}</span></td>
 		        <td data-title="'Description'" sortable="'description'" filter="{description__icontains: 'text'}"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		      </tr>
 		    </table>
