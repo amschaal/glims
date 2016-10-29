@@ -55,18 +55,21 @@
 	              	</tbody>
               	</table>
               	<table class="table" ng-if="editing">
-	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Description</th></tr></thead>
+	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Description</th></tr></thead>
 	              	<tbody>
 	              		<tr ng-repeat="l in run.lanes">
-	              			<td>{[l.index]} <remote-select url="'/api/pools/'" config="{disabled:false}" model="l.pool"></remote-select></td>
+	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}">
-								<ui-select data-ng-model="l.pool" data-required="true" theme="bootstrap">
+								<remote-select url="/api/pools/" config="{disabled:false}" model="l" field="pool"></remote-select>
+								<!-- <ui-select data-ng-model="l.pool" data-required="true" theme="bootstrap">
 							        <ui-select-match placeholder="Search pools" >{[$select.selected.name]}</ui-select-match>
 							        <ui-select-choices repeat="pool in pools track by $index" refresh="refreshPools($select.search)" refresh-delay="0">
 							          <div ng-bind-html="pool.name | highlight: $select.search"></div>
 							        </ui-select-choices>
 							      </ui-select><a ng-click="l.pool=null;">Clear</a>
+							     -->
 							</td>
+							<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
 	              			<td><textarea ng-model="l.description"></textarea></td>
 	              		</tr>
 	              	</tbody>

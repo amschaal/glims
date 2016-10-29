@@ -77,24 +77,33 @@ angular.module('utility.directives', [])
     };
 }])
 .directive('remoteSelect', [function() {
+	/*
+		This makes it easy to create selects based on REST api.
+		Usage: <remote-select url="/api/users/" model="project" field="manager"></remote-select>
+		
+		Notice that the 'field' parameter is required.  This is the field in the model that is being bound.
+		For some reason it is difficult to get 2 way binding if using the field directly in ng-model.
+	*/
+	
     return {
         restrict: 'AE',
         replace: true,
         scope: {
-            model: '=',
-            url:'@',
-//            template: '=?',
-            config: '@'
-        },
-        template: '<div>{[settings]}{[options]}{[model]}<ui-select ng-model="model" required="settings.required" disabled="settings.disabled" on-remove="settings.onRemove($item,$model)" on-select="settings.onSelect($item,$model)" theme="bootstrap">\
+            model: '=',  
+            field: '@',  //field in model to be changed
+            url:'@',  //api url
+            config: '=' //optional settings
+        },//required="settings.required" disabled="settings.disabled"//{[settings]}{[options]}
+        template: '<div><ui-select data-ng-model="model[field]" on-remove="settings.onRemove($item,$model)" on-select="settings.onSelect($item,$model)" theme="bootstrap">\
 			        <ui-select-match placeholder="{[settings.placeholder]}" >{[settings.labelFunc($select.selected)]}</ui-select-match>\
 			        <ui-select-choices data-repeat="{[settings.ngOptions]}" refresh="settings.refresh($select.search)" refresh-delay="{[settings.refreshDelay]}">\
 			          <div ng-bind-html="settings.labelFunc(option) | highlight: $select.search"></div>\
 			        </ui-select-choices>\
 			      </ui-select><a ng-click="model=null;">Clear</a></div>',
 //        link: function(scope, iElement, iAttrs) {
+//	    controllerAs: 'cx',
     	controller: function($scope, $http, $element){
-    		console.log('settings',$scope.settings,$scope.model);
+    		console.log('config',$scope.config);
         	$scope.settings = {
         		required: false,
         		disabled: false,
@@ -106,7 +115,8 @@ angular.module('utility.directives', [])
     			ngOptions: 'option in options | filter: $select.search track by option[settings.valueProp]',
         		template: '<div>{[option[settings.labelProp]]}</div>',
 	        	refresh: function(term) {
-	        		console.log('refresh',term);
+	        		console.log('refresh',term,$scope.url);
+	        		
 	        		return $http.get($scope.url, {params:{search: term}})
 	        		.then(function(response) {
 	        			$scope.options = response.data.results;
