@@ -55,12 +55,15 @@
 	              	</tbody>
               	</table>
               	<table class="table" ng-if="editing">
+              		<script type="text/ng-template" id="pool-options.html">
+ 						<div title="{[option['description']]}" ng-bind-html="option['name'] | highlight: $select.search"></div>
+					</script>
 	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Description</th></tr></thead>
 	              	<tbody>
 	              		<tr ng-repeat="l in run.lanes">
 	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}">
-								<remote-select url="/api/pools/" config="{disabled:false}" model="l" field="pool"></remote-select>
+								<remote-select url="/api/pools/" config="{disabled:false,templateUrl:'pool-options.html'}" model="l" field="pool"></remote-select>
 								<!-- <ui-select data-ng-model="l.pool" data-required="true" theme="bootstrap">
 							        <ui-select-match placeholder="Search pools" >{[$select.selected.name]}</ui-select-match>
 							        <ui-select-choices repeat="pool in pools track by $index" refresh="refreshPools($select.search)" refresh-delay="0">

@@ -76,7 +76,7 @@ angular.module('utility.directives', [])
         }
     };
 }])
-.directive('remoteSelect', [function() {
+.directive('remoteSelect', ['$templateCache',function($templateCache) {
 	/*
 		This makes it easy to create selects based on REST api.
 		Usage: <remote-select url="/api/users/" model="project" field="manager"></remote-select>
@@ -97,13 +97,15 @@ angular.module('utility.directives', [])
         template: '<div><ui-select data-ng-model="model[field]" on-remove="settings.onRemove($item,$model)" on-select="settings.onSelect($item,$model)" theme="bootstrap">\
 			        <ui-select-match placeholder="{[settings.placeholder]}" >{[settings.labelFunc($select.selected)]}</ui-select-match>\
 			        <ui-select-choices data-repeat="{[settings.ngOptions]}" refresh="settings.refresh($select.search)" refresh-delay="{[settings.refreshDelay]}">\
-			          <div ng-bind-html="settings.labelFunc(option) | highlight: $select.search"></div>\
+        				<div ng-include="settings.templateUrl"></div>\
 			        </ui-select-choices>\
 			      </ui-select><a ng-click="model=null;">Clear</a></div>',
+			      //<div ng-if="!settings.template" ng-bind-html="settings.labelFunc(option) | highlight: $select.search"></div>\
 //        link: function(scope, iElement, iAttrs) {
 //	    controllerAs: 'cx',
     	controller: function($scope, $http, $element){
     		console.log('config',$scope.config);
+    		console.log('$templateCache',$templateCache);
         	$scope.settings = {
         		required: false,
         		disabled: false,
@@ -113,7 +115,7 @@ angular.module('utility.directives', [])
     			valueProp: 'id',
     			labelProp: 'name',
     			ngOptions: 'option in options | filter: $select.search track by option[settings.valueProp]',
-        		template: '<div>{[option[settings.labelProp]]}</div>',
+        		template: '<div ng-bind-html="option[settings.labelProp] | highlight: $select.search"></div>', //Either 1: provide "labelProp", 2: override this setting, or 3: provide a different templateUrl
 	        	refresh: function(term) {
 	        		console.log('refresh',term,$scope.url);
 	        		
@@ -129,6 +131,10 @@ angular.module('utility.directives', [])
 	        	},
         	};
         	angular.extend($scope.settings,$scope.config);
+        	if (!$scope.settings.templateUrl){
+        		$templateCache.put('remote-select-choices.html', $scope.settings.template);
+        		$scope.settings.templateUrl = 'remote-select-choices.html';
+        	}
         	console.log('remoteSelect',$scope.settings);
         	$scope.options = [];
         }
