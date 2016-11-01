@@ -55,10 +55,10 @@ class MyModelExtended(MyModel):
         ...
 """
 class Lab(models.Model):
-    first_name = models.CharField(max_length=30,null=True,blank=True)
-    last_name = models.CharField(max_length=30)
-    affiliation = models.CharField(max_length=50,choices=((affiliation,affiliation) for affiliation in settings.LAB_AFFILIATIONS),null=True,blank=True)
-    description = models.TextField()
+    first_name = models.CharField(max_length=30,null=True,blank=True,db_index=True)
+    last_name = models.CharField(max_length=30,db_index=True)
+    affiliation = models.CharField(max_length=50,choices=((affiliation,affiliation) for affiliation in settings.LAB_AFFILIATIONS),null=True,blank=True,db_index=True)
+    description = models.TextField(db_index=True)
     url = models.URLField(blank=True,null=True)
     slug = models.SlugField(max_length=50,unique=True,null=True)
     @property
@@ -78,12 +78,12 @@ class Lab(models.Model):
         return self.name
 
 class Project(ExtensibleModel):
-    project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True)
+    project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True,db_index=True)
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True,db_index=True)
     lab = models.ForeignKey(Lab, on_delete=models.PROTECT)
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True,blank=True)
+    name = models.CharField(max_length=100,db_index=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
     contact = models.TextField(null=True,blank=True)
     sample_type = models.ForeignKey(ModelType, null=True, blank=True, limit_choices_to = {'content_type__model':'sample'}, related_name="+",on_delete=models.PROTECT)
     status = models.ForeignKey('Status',null=True,blank=True, on_delete=models.PROTECT)
@@ -138,10 +138,10 @@ class Project(ExtensibleModel):
 class Sample(ExtensibleModel):
     sample_id = models.CharField(max_length=60,unique=True,null=True,blank=True)
     project = models.ForeignKey(Project, related_name="samples",null=True,blank=True)
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True,blank=True)
-    created = models.DateTimeField(auto_now=True)
-    received = models.DateField(null=True,blank=True)
+    name = models.CharField(max_length=100,db_index=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
+    created = models.DateTimeField(auto_now=True,db_index=True)
+    received = models.DateField(null=True,blank=True,db_index=True)
     def __unicode__(self):
         return self.name
     def get_absolute_url(self):
@@ -193,11 +193,11 @@ class Adapter(ExtensibleModel):
     description = models.TextField(null=True,blank=True)
 
 class Library(ExtensibleModel):
-    created = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=100,null=True,blank=True)
+    created = models.DateTimeField(auto_now_add=True,db_index=True)
+    name = models.CharField(max_length=100,null=True,blank=True,db_index=True)
     sample = models.ForeignKey(Sample,related_name='libraries')
     adapter = models.ForeignKey(Adapter,null=True,blank=True,related_name='libraries')
-    description = models.TextField(null=True,blank=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
     def get_group(self):
         try:
             return self.sample.project.group
@@ -207,10 +207,10 @@ class Library(ExtensibleModel):
         return self.name
 
 class Pool(ExtensibleModel):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,db_index=True)
     group = models.ForeignKey(Group,on_delete=models.PROTECT)
-    description = models.TextField(null=True,blank=True)
-    created = models.DateField(auto_now=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
+    created = models.DateField(auto_now=True,db_index=True)
     libraries = models.ManyToManyField(Library,related_name='pools',null=True,blank=True)
     library_data = JSONField(null=True,blank=True,default={})
     def __unicode__(self):
@@ -225,8 +225,8 @@ class Pool(ExtensibleModel):
 
 class Status(models.Model):
     model_type = models.ForeignKey(ModelType,related_name="status_options")
-    name = models.CharField(max_length=30)
-    description = models.TextField(null=True,blank=True)
+    name = models.CharField(max_length=30,db_index=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
     order = models.PositiveSmallIntegerField()
     def __unicode__(self):
         return self.name

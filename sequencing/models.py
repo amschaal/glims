@@ -8,14 +8,14 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch.dispatcher import receiver
 
 class Machine(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50,db_index=True)
     description = models.TextField(null=True,blank=True)
     num_lanes = models.SmallIntegerField()
     def __unicode__(self):
         return self.name
 
 class Run(ExtensibleModel):
-    name = models.CharField(max_length=100,blank=True,null=True)
+    name = models.CharField(max_length=100,blank=True,null=True,db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine)
     description = models.TextField(null=True,blank=True)
@@ -24,7 +24,7 @@ class Lane(ExtensibleModel):
     run = models.ForeignKey(Run,related_name='lanes')
     index = models.PositiveSmallIntegerField()
     pool = models.ForeignKey(Pool,null=True,blank=True)
-    description = models.TextField(null=True,blank=True)
+    description = models.TextField(null=True,blank=True,db_index=True)
     class Meta:
         unique_together = (('run','index'))
 
