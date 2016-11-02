@@ -97,6 +97,7 @@ class SampleSerializer(ExtensibleSerializer):
     class Meta:
         model = Sample
         read_only_fields = ('sample_id',)
+#         extra_kwargs = {'created': {'required': 'False'},'received':{'required':'False'}}
 
 class FlatSampleSerializer(ExtensibleSerializer):
     class Meta:
@@ -113,8 +114,8 @@ class FlatPoolSerializer(serializers.ModelSerializer):
         fields = ('id','name','description','created')
 
 class LibrarySerializer(ExtensibleSerializer):
-    sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
-    adapter = ModelRelatedField(model=Adapter,serializer=AdapterSerializer)
+    sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer,required=False)
+    adapter = ModelRelatedField(model=Adapter,serializer=AdapterSerializer,required=False)
     pools = FlatPoolSerializer(many=True,read_only=True)
     class Meta:
         model = Library
@@ -129,6 +130,9 @@ class PoolSerializer(ExtensibleSerializer):
     library_data = DictField(default={},required=False)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     libraries = FlatLibrarySerializer(many=True,read_only=True)
+#     barcode_duplicates = serializers.SerializerMethodField()
+#     def get_barcode_duplicates(self,obj):
+#         return obj.get_barcode_duplicates() 
     class Meta:
         model = Pool
 

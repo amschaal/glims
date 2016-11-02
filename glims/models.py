@@ -222,6 +222,17 @@ class Pool(ExtensibleModel):
     @staticmethod
     def user_queryset(user):
         Pool.objects.filter(group__in=user.groups)
+    def get_barcode_duplicates(self):
+        barcodes = self.get_barcode_count()
+        duplicates = {barcode:cnt for barcode,cnt in barcodes.iteritems() if cnt > 1}
+        return duplicates if len(duplicates) > 0 else None
+    def get_barcode_count(self):
+        barcodes = {}
+        for l in self.libraries.select_related('adapter').filter(adapter__isnull=False):
+            if not barcodes.has_key(l.adapter.barcode):
+                barcodes[l.adapter.barcode] = 0
+            barcodes[l.adapter.barcode] += 1
+        return barcodes
 
 class Status(models.Model):
     model_type = models.ForeignKey(ModelType,related_name="status_options")

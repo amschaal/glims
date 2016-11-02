@@ -100,12 +100,11 @@ def set_library_name(sender,instance,**kwargs):
         return
     if not instance.name:
         instance.name = instance.sample.sample_id
-    if Library.objects.filter(name=instance.name).first():
-        for i in range(1,100):
-            new_name = '%s-%d'%(instance.name,i)
-            if not Library.objects.filter(name=new_name).first():
-                instance.name = new_name
-                break
+    for i in range(1,100):
+        new_name = '%s-%d'%(instance.sample.sample_id,i)
+        if not Library.objects.filter(name=new_name).first():
+            instance.name = new_name
+            break
             
         
     

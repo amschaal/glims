@@ -24,10 +24,12 @@ angular.module("samples-plugin")
 //			objectId:'@',
 //			contentType:'@',
 			project:'=',
-			getURL:'&'
+			getURL:'&',
+			data: '='
 		},
 		controller: function ($scope,$rootScope,$http,$log,$uibModal) {
 			$scope.getURL = $rootScope.getURL;
+			$scope.data = {};
 			$scope.errors = false;
 			function updateSampleCount(){
 				$rootScope.sample_count = $scope.samples ? $scope.samples.length : 0;
@@ -63,7 +65,7 @@ angular.module("samples-plugin")
 			};
 			$scope.sampleLink = function(sample){return django_js_utils.urls.resolve('sample', { pk: sample.id })};
 			$scope.uploadFile = function(url){
-				var file = $scope.myFile;
+				var file = $scope.data.file;
 				$log.info('file is ' );
 				console.dir(file);
 
@@ -185,7 +187,8 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 			<h3>Samples</h3>\
 			<div ng-if="project.id">\
 			<p>\
-			<input type="file" file-model="myFile" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import TSV samplesheet</button>\
+			<input type="file" file-model="data.file" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import TSV samplesheet</button>\
+			{[data.file]}\
 			<br><a href="{[sampleDownloadURL()]}">Download</a> template\
 			<a href="{[getURL(\'download_samplesheet_tsv\',{project_id:project.id})]}">Download</a> samplesheet\
 			</p>\
