@@ -3,8 +3,8 @@ from glims.samples import views
 
 
 urlpatterns = patterns('',
-    url(r'^tsv_template/download/$', 'glims.samples.views.sample_template_tsv', name='sample_template_tsv'),
-    url(r'^samplesheet_tsv/(?P<project_id>\d+)/$', 'glims.samples.views.sample_sheet_tsv', name='download_samplesheet_tsv'),
+    url(r'^template/download/$', 'glims.samples.views.sample_template', name='sample_template'),
+    url(r'^samplesheet/(?P<project_id>\d+)/$', 'glims.samples.views.sample_sheet', name='download_samplesheet'),
     url(r'^import_samplesheet/(?P<project_id>\d+)/$', 'glims.samples.views.import_samplesheet', name='import_samplesheet'),
 #     url(r'^create$', 'glims.samples.views.create_sample', name='create_sample_view'),
 #     url(r'^api_create/$', 'glims.samples.views.create_update_sample', name='create_sample'),

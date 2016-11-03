@@ -13,140 +13,242 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.template.context import RequestContext
 from glims.forms import FullSampleForm
+from tablib.core import Dataset
+import tablib
 
 
-def generate_template_rows(model_type):
-    rows = []
-    rows.append(['#'+model_type.name+': '+model_type.description])
-    for field in model_type.fields:
-        field_description = "#%s: %s" % (field['name'],field['label'])
-        if field.has_key('help_text'):
-            field_description += ", Description: %s" % field['help_text']
-        if field.has_key('choices'):
-            field_description += ", options: %s" % ', '.join([option['name'] for option in field['choices']])
-        rows.append([field_description])
-    headers = ['sample_id','name','description','received','pool']
+def tablib_response(request, dataset, filename, file_type="xls"):
+    content_types = {'xls':'application/vnd.ms-excel','csv':'text/csv','json':'text/json'}
+    response_kwargs = {
+        'content_type': content_types[file_type]
+    }
+    filename = "%s.%s" %(filename,file_type)
+    response = HttpResponse(getattr(dataset, file_type), **response_kwargs)
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
+
+
+
+def generate_headers(model_type):
+    headers = ['sample_id','name','description','received','adapter','barcode','pool']
     if model_type:
         if model_type.fields:
             headers = headers + ['data.'+field['name'] for field in model_type.fields]#     field_names = [field.name for field in opts.fields]
-    rows.append(headers)
+    return headers
+
+def generate_template_rows(model_type):
+    rows = []
+#     rows.append(['#'+model_type.name+': '+model_type.description])
+#     for field in model_type.fields:
+#         field_description = "#%s: %s" % (field['name'],field['label'])
+#         if field.has_key('help_text'):
+#             field_description += ", Description: %s" % field['help_text']
+#         if field.has_key('choices'):
+#             field_description += ", options: %s" % ', '.join([option['name'] for option in field['choices']])
+#         rows.append([field_description])
+    
+    rows.append(generate_headers(model_type))
     return rows
-            
-            
-def sample_template_tsv(request):
+
+def sample_template(request):
     type_id = request.GET.get('type_id',False)
     print "TYPE" + type_id
     model_type = None if not type_id else ModelType.objects.get(pk=type_id)
-    response = HttpResponse(content_type='text/tsv')
-    response['Content-Disposition'] = 'attachment;filename=sample_template.tsv'
-    # the csv writer
-    writer = csv.writer(response,delimiter='\t')
-    writer.writerows(generate_template_rows(model_type))
-    return response
+    data = tablib.Dataset(headers=generate_headers(model_type))
+    return tablib_response(request,data,'samplesheet_template')
 
-def sample_sheet_tsv(request,project_id):
+def sample_sheet(request,project_id):
     project = Project.objects.get(id=project_id)
-    response = HttpResponse(content_type='text/tsv')
-    response['Content-Disposition'] = 'attachment;filename=samplesheet.tsv'
-    # the csv writer
-    writer = csv.writer(response,delimiter='\t')
-    writer.writerows(generate_template_rows(project.sample_type))
+    data = tablib.Dataset(headers=generate_headers(project.sample_type))
     for s in Sample.objects.filter(project=project):
-        row = [s.sample_id,s.name,s.description,s.received,'']
+        row = [s.sample_id,s.name,s.description,s.received,'','','']
         for field in project.sample_type.fields:
             row.append(s.data.get(field['name'],''))
-        writer.writerow(row)
-    return response
+        data.append(row)
+    return tablib_response(request,data,'samplesheet')
 
+# @api_view(['POST'])
+# @transaction.atomic
+# def import_samplesheet_tsv(request, project_id):
+#     sid = transaction.savepoint()
+#     try:
+#         project = Project.objects.get(pk=project_id)
+#         # the csv writer
+# #         dialect = csv.Sniffer().sniff(request.FILES['tsv'].read(1024),"\t")
+# #         request.FILES['tsv'].seek(0)
+# #         reader = csv.reader(request.FILES['tsv'], delimiter=dialect.delimiter)
+#         #Read TSV
+#         reader = csv.reader(request.FILES['tsv'],delimiter='\t')
+#         tsv = list(reader)
+#         
+#         #Chew comment lines
+#         for i, row in enumerate(tsv):
+#             if ''.join(row).strip().startswith('#'):
+#                 continue
+#             else:
+#                 start = i
+#                 headers = row
+#                 break
+#         
+#         # Make a list of dictionaries based on the headers
+#         values = [dict(zip(headers,sample)) for sample in tsv[start+1:]]
+#         
+#         #initialize variables
+#         errors = {}
+#         samples = []
+#         pools = {}
+#         
+#         for index, row in enumerate(values): 
+#             #get rid of empty values
+#             for key in row.keys():
+#                 if row[key] == '':
+#                     row.pop(key)
+#             
+#             #If an autogenerated sample_id is listed, get the sample to update it            
+#             sample_id =  row.get('sample_id',None)
+#             instance = None
+#             if sample_id:
+#                 instance = Sample.objects.filter(sample_id = row.get('sample_id'), project=project).first()
+#             
+#             row['project']=project.id
+#             row['type'] = project.sample_type_id
+#             print row
+#             if instance:
+#                 sample = SampleSerializer(data=row,instance=instance)
+#             else:
+#                 sample = SampleSerializer(data=row)
+#             if sample.is_valid():
+#                 sample_instance = sample.save()
+#                 samples.append(sample)
+#                 #Keep track of pool name, if provided 
+#                 pool = row.get('pool','')
+#                 if not instance:
+#                     #Make a library
+#                     library = Library.objects.create(sample=sample_instance) #should include adapter and pool != '':
+#                     #Mark the library for addition to the given pool 
+#                     if not pools.has_key(pool):
+#                         pools[pool] = []
+#                     pools[pool].append(library)
+#             else:
+#                 errors['row %d' % index] = sample.errors
+#             print 'end loop'
+#         
+#         #Create pools when necessary and add libraries
+#         for pool_name, libraries in pools.iteritems():
+#             #Check if the project has a pool of this name
+#             pool = Pool.objects.filter(libraries__sample__project=project,name=pool_name).first()
+#             #Create a new pool
+#             #@todo: specify a specific group, not just the first one a user has
+#             if not pool:
+#                 pool = Pool.objects.create(name=pool_name,group=request.user.groups.first())
+#             #Add libraries
+#             pool.libraries.add(*libraries)
+#             pool.save()
+#             duplicates = pool.get_barcode_duplicates()
+#             if duplicates:
+#                 errors['%s barcode duplicates' % pool.name] = {barcode:[', '.join(libraries)] for barcode,libraries in duplicates.iteritems()}
+#         if len(errors.keys()) > 0:
+#             transaction.savepoint_rollback(sid)
+#             return Response({'errors':errors},status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             transaction.savepoint_commit(sid)
+#             return Response([s.data for s in samples])
+#     except Exception, e:
+#         print e
+#         return Response({'errors':[]},status=status.HTTP_400_BAD_REQUEST)
+
+def prepare_row(row):
+    data = {}
+    #get rid of empty values
+    for key in row.keys():
+        if row[key] == '':
+            row.pop(key)
+    for key,val in row.iteritems():
+        if key.startswith('data.'):
+            data[key[5:]]=val
+            del row[key]
+    row['data'] = data
+    return row
 @api_view(['POST'])
 @transaction.atomic
 def import_samplesheet(request, project_id):
     sid = transaction.savepoint()
-    try:
-        project = Project.objects.get(pk=project_id)
-        # the csv writer
+    project = Project.objects.get(pk=project_id)
+    # the csv writer
 #         dialect = csv.Sniffer().sniff(request.FILES['tsv'].read(1024),"\t")
 #         request.FILES['tsv'].seek(0)
 #         reader = csv.reader(request.FILES['tsv'], delimiter=dialect.delimiter)
-        #Read TSV
-        reader = csv.reader(request.FILES['tsv'],delimiter='\t')
-        tsv = list(reader)
+    #Read TSV
+#         reader = csv.reader(request.FILES['tsv'],delimiter='\t')
+    data = Dataset().load(request.FILES['sheet'].read())
+    
+    #initialize variables
+    errors = {}
+    samples = []
+    pools = {}
+    
+    for index, row in enumerate(data.dict): 
+        print index
+        print row
+        row = prepare_row(row)
         
-        #Chew comment lines
-        for i, row in enumerate(tsv):
-            if ''.join(row).strip().startswith('#'):
-                continue
-            else:
-                start = i
-                headers = row
-                break
+        #If an autogenerated sample_id is listed, get the sample to update it            
+        sample_id =  row.get('sample_id',None)
+        instance = None
+        if sample_id:
+            instance = Sample.objects.filter(sample_id = row.get('sample_id'), project=project).first()
         
-        # Make a list of dictionaries based on the headers
-        values = [dict(zip(headers,sample)) for sample in tsv[start+1:]]
-        
-        #initialize variables
-        errors = {}
-        samples = []
-        pools = {}
-        
-        for index, row in enumerate(values): 
-            #get rid of empty values
-            for key in row.keys():
-                if row[key] == '':
-                    row.pop(key)
-            
-            #If an autogenerated sample_id is listed, get the sample to update it            
-            sample_id =  row.get('sample_id',None)
-            instance = None
-            if sample_id:
-                instance = Sample.objects.filter(sample_id = row.get('sample_id'), project=project).first()
-            
-            row['project']=project.id
-            row['type'] = project.sample_type_id
-            
-            if instance:
-                sample = SampleSerializer(data=row,instance=instance)
-            else:
-                sample = SampleSerializer(data=row)
-            if sample.is_valid():
-                sample_instance = sample.save()
-                samples.append(sample)
-                #Keep track of pool name, if provided 
-                pool = row.get('pool','')
-                if not instance:
-                    #Make a library
-                    library = Library.objects.create(sample=sample_instance) #should include adapter and pool != '':
-                    #Mark the library for addition to the given pool 
-                    if not pools.has_key(pool):
-                        pools[pool] = []
-                    pools[pool].append(library)
-            else:
-                errors['row %d' % index] = sample.errors
-            print 'end loop'
-        
-        #Create pools when necessary and add libraries
-        for pool_name, libraries in pools.iteritems():
-            #Check if the project has a pool of this name
-            pool = Pool.objects.filter(libraries__sample__project=project,name=pool_name).first()
-            #Create a new pool
-            #@todo: specify a specific group, not just the first one a user has
-            if not pool:
-                pool = Pool.objects.create(name=pool_name,group=request.user.groups.first())
-            #Add libraries
-            pool.libraries.add(*libraries)
-            pool.save()
-            duplicates = pool.get_barcode_duplicates()
-            if duplicates:
-                errors['pool %s' % pool.name] = {barcode:['%d duplicates'%cnt] for barcode,cnt in duplicates.iteritems()}
-        if len(errors.keys()) > 0:
-            transaction.savepoint_rollback(sid)
-            return Response({'errors':errors},status=status.HTTP_400_BAD_REQUEST)
+        row['project']=project.id
+        row['type'] = project.sample_type_id
+        row['data']
+        if instance:
+            sample = SampleSerializer(data=row,instance=instance,model_type=project.sample_type_id)
         else:
-            transaction.savepoint_commit(sid)
-            return Response([s.data for s in samples])
-    except Exception, e:
-        print e
-        return Response({'errors':[]},status=status.HTTP_400_BAD_REQUEST)
+            sample = SampleSerializer(data=row,model_type=project.sample_type_id)
+        if sample.is_valid():
+            sample_instance = sample.save()
+            samples.append(sample)
+            #Keep track of pool name, if provided 
+            pool = row.get('pool','')
+            if not instance:
+                #Make a library
+                library = Library.objects.create(sample=sample_instance) #should include adapter and pool != '':
+                #Mark the library for addition to the given pool 
+                if not pools.has_key(pool):
+                    pools[pool] = []
+                pools[pool].append(library)
+        else:
+            sample_errors = dict(sample.errors)
+            data_errors = sample_errors.pop('data',{})
+            for field,field_errors in data_errors.iteritems():
+                sample_errors['data.%s'%field]=field_errors
+            errors['row %d' % index] = sample_errors
+        print 'end loop'
+    
+    #Create pools when necessary and add libraries
+    for pool_name, libraries in pools.iteritems():
+        #Check if the project has a pool of this name
+        pool = Pool.objects.filter(libraries__sample__project=project,name=pool_name).first()
+        #Create a new pool
+        #@todo: specify a specific group, not just the first one a user has
+        if not pool:
+            pool = Pool.objects.create(name=pool_name,group=request.user.groups.first())
+        #Add libraries
+        pool.libraries.add(*libraries)
+        pool.save()
+        duplicates = pool.get_barcode_duplicates()
+        if duplicates:
+            errors['%s barcode duplicates' % pool.name] = {barcode:[', '.join(libraries)] for barcode,libraries in duplicates.iteritems()}
+    if len(errors.keys()) > 0:
+        transaction.savepoint_rollback(sid)
+        return Response({'errors':errors},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        transaction.savepoint_commit(sid)
+        return Response([s.data for s in samples])
+# except Exception, e:
+#     print e
+#     return Response({'errors':[]},status=status.HTTP_400_BAD_REQUEST)
+
 
 # @api_view(['POST'])
 # def create_update_sample(request):

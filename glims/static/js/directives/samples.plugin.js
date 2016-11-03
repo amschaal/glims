@@ -72,7 +72,7 @@ angular.module("samples-plugin")
 				var fd = new FormData();
 //				if ($scope.merge)
 //				fd.append('merge', true);
-				fd.append('tsv', file);
+				fd.append('sheet', file);
 
 				$http.post(url, fd, {
 					transformRequest: angular.identity,
@@ -83,11 +83,14 @@ angular.module("samples-plugin")
 					$scope.refreshSamples();
 				})
 				.error(function(data){
-					$log.info('errors',data)
+					$log.info('errors',data);
 					$scope.errors = data.errors;
 				});
 
 			};
+			$scope.clearErrors = function(){
+				$scope.errors = false;
+			}
 			$scope.refreshSamples = function(){
 				$scope.samples = Sample.query({project:$scope.project.id},function() {
 					$scope.gridOptions.data = $scope.samples;
@@ -153,7 +156,7 @@ angular.module("samples-plugin")
 					enableFiltering: true
 			};
 			$scope.sampleDownloadURL = function(){
-				return $scope.getURL("sample_template_tsv") + ($scope.project.sample_type ? '?type_id='+$scope.project.sample_type.id : '');
+				return $scope.getURL("sample_template") + ($scope.project.sample_type ? '?type_id='+$scope.project.sample_type.id : '');
 			}
 			$scope.edit_sample = function(row){
 				var sample = row ? row.entity : new Sample({project:$scope.project.id,type:$scope.project.sample_type,data:{}});
@@ -187,13 +190,12 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 			<h3>Samples</h3>\
 			<div ng-if="project.id">\
 			<p>\
-			<input type="file" file-model="data.file" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import TSV samplesheet</button>\
-			{[data.file]}\
+			<input type="file" file-model="data.file" style="display:inline-block" /><button ng-click="uploadFile(getURL(\'import_samplesheet\',{project_id:project.id}))" class="btn btn-success">Import samplesheet</button>\
 			<br><a href="{[sampleDownloadURL()]}">Download</a> template\
-			<a href="{[getURL(\'download_samplesheet_tsv\',{project_id:project.id})]}">Download</a> samplesheet\
+			<a href="{[getURL(\'download_samplesheet\',{project_id:project.id})]}">Download</a> samplesheet\
 			</p>\
 			<div class="alert alert-danger" role="alert" ng-show="errors">\
-				<button ng-click="errors = false;" class="btn btn-sm btn-danger pull-right">Clear errors</button>\
+				<button ng-click="clearErrors();" class="btn btn-sm btn-danger pull-right">Clear errors</button>\
 				<div ng-repeat="(id, sample_errors) in errors">\
 					<b>{[id]}:</b>\
 					<ul>\
@@ -202,7 +204,7 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 						</li>\
 					</ul>\
 				</div>\
-				<div ng-show="errors.length==0">There was an error processing the sample file.</div>\
+				<div ng-show="errors">There was an error processing the sample file.</div>\
 			</div>\
 			<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>\
 			<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>\
