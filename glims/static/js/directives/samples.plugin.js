@@ -140,7 +140,7 @@ angular.module("samples-plugin")
 				var cols = angular.copy(columnDefs);
 				angular.forEach($scope.project.sample_type.fields,function(field){
 					cols.push({
-						displayName:field.label+field.type,
+						displayName:field.label,
 						name:'data.'+field.name,
 						minWidth: 100,
 						cellTemplate: '<div class="ui-grid-cell-contents"><div ng-if="grid.appScope.project.sample_type.id != row.entity.type.id" class="error">Incompatible type!</div>{{COL_FIELD}}</div>',

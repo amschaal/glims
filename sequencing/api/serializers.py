@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from sequencing.models import Machine, Lane, Run
 from glims.api.fields import ModelRelatedField
-from glims.models import Pool
-from glims.api.serializers import FlatLibrarySerializer
+from glims.models import Pool, Library, Lab
+from glims.api.serializers import FlatLibrarySerializer, LibrarySerializer,\
+    SampleSerializer, AdapterSerializer
 from django.db import transaction
 
 class MachineSerializer(serializers.ModelSerializer):
@@ -22,7 +23,6 @@ class RunLaneSerializer(serializers.ModelSerializer):
         read_only_fields = ('run',)
         extra_kwargs = {'run': {'required': 'False'},'id':{'required':'False'}}
         validators = []  # Remove default global validators
-
 
 class RunSerializer(serializers.ModelSerializer):
     machine = ModelRelatedField(model=Machine,serializer=MachineSerializer)
@@ -61,5 +61,27 @@ class RunSerializer(serializers.ModelSerializer):
                     else:
                         print lane_serializer.errors
             return run
-        
-        
+
+# class LibraryDetailSerializer(serializers.ModelSerializer):
+#     sample = SampleSerializer()
+#     adapter = AdapterSerializer()
+#     class Meta:
+#         model = Library
+# class RunPoolDetailSerializer(serializers.ModelSerializer):
+#     libraries = LibraryDetailSerializer(many=True,read_only=True)
+#     class Meta:
+#         model = Pool
+class RunLaneDetailSerializer(RunLaneSerializer):
+    labs = serializers.SerializerMethodField()
+#     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
+    def get_labs(self,obj):
+        print obj.pool.id
+        if not obj.pool:
+            return []
+        return Lab.objects.filter(projects__samples__libraries__pools=obj.pool.id).distinct().values('first_name','last_name','id')
+            
+class RunDetailSerializer(RunSerializer):
+    def __init__(self,*args,**kwargs):
+        print "RUN DETAIL SERIALIZER"
+        super(RunDetailSerializer, self).__init__(*args,**kwargs)
+    lanes = RunLaneDetailSerializer(many=True,read_only=False,required=False)

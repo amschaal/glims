@@ -44,12 +44,13 @@
 	                </tbody>
 	              </table>
 	              <table class="table" ng-if="!editing">
-	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Description</th></tr></thead>
+	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Labs</th><th>Description</th></tr></thead>
 	              	<tbody>
 	              		<tr ng-repeat="l in run.lanes">
 	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}"><a href="{[getURL('pool',{pk:l.pool.id})]}">{[l.pool.name]}</a></td>
 	              			<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
+	              			<td><span ng-repeat="lab in l.labs">{[lab.first_name]} {[lab.last_name]}{[$last ? '' : ', ']}</span></td>
 	              			<td>{[l.description]}</td>
 	              		</tr>
 	              	</tbody>
@@ -58,7 +59,7 @@
               		<script type="text/ng-template" id="pool-options.html">
  						<div title="{[option['description']]}" ng-bind-html="option['name'] | highlight: $select.search"></div>
 					</script>
-	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Description</th></tr></thead>
+	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Labs</th><th>Description</th></tr></thead>
 	              	<tbody>
 	              		<tr ng-repeat="l in run.lanes">
 	              			<td>{[l.index]}</td>
@@ -73,6 +74,7 @@
 							     -->
 							</td>
 							<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
+							<td><span ng-repeat="lab in l.pool.labs">{[lab.last_name]} {[lab.first_name]}{[$last ? '' : ', ']}</span></td>
 	              			<td><textarea ng-model="l.description"></textarea></td>
 	              		</tr>
 	              	</tbody>
