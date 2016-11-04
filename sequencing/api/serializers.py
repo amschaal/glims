@@ -3,7 +3,7 @@ from sequencing.models import Machine, Lane, Run
 from glims.api.fields import ModelRelatedField
 from glims.models import Pool, Library, Lab
 from glims.api.serializers import FlatLibrarySerializer, LibrarySerializer,\
-    SampleSerializer, AdapterSerializer
+    SampleSerializer, AdapterSerializer, PoolSerializer
 from django.db import transaction
 
 class MachineSerializer(serializers.ModelSerializer):
@@ -74,6 +74,7 @@ class RunSerializer(serializers.ModelSerializer):
 class RunLaneDetailSerializer(RunLaneSerializer):
     labs = serializers.SerializerMethodField()
 #     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
+    pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
     def get_labs(self,obj):
         print obj.pool.id
         if not obj.pool:

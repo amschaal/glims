@@ -50,7 +50,7 @@
 	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}"><a href="{[getURL('pool',{pk:l.pool.id})]}">{[l.pool.name]}</a></td>
 	              			<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
-	              			<td><span ng-repeat="lab in l.labs">{[lab.first_name]} {[lab.last_name]}{[$last ? '' : ', ']}</span></td>
+	              			<td><span ng-repeat="lab in l.pool.labs">{[lab.first_name]} {[lab.last_name]}{[$last ? '' : ', ']}</span></td>
 	              			<td>{[l.description]}</td>
 	              		</tr>
 	              	</tbody>
@@ -74,7 +74,7 @@
 							     -->
 							</td>
 							<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
-							<td><span ng-repeat="lab in l.pool.labs">{[lab.last_name]} {[lab.first_name]}{[$last ? '' : ', ']}</span></td>
+							<td><span ng-repeat="lab in l.pool.labs">{[lab.first_name]} {[lab.last_name]}{[$last ? '' : ', ']}</span></td>
 	              			<td><textarea ng-model="l.description"></textarea></td>
 	              		</tr>
 	              	</tbody>
