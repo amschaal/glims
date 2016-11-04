@@ -207,7 +207,7 @@ class Library(ExtensibleModel):
         return self.name
 
 class Pool(ExtensibleModel):
-    name = models.CharField(max_length=100,db_index=True)
+    name = models.CharField(max_length=100,unique=True,db_index=True)
     group = models.ForeignKey(Group,on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True,db_index=True)
     created = models.DateField(auto_now=True,db_index=True)

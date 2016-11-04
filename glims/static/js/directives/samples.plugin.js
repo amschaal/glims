@@ -10,7 +10,7 @@
 
 
 
-angular.module("samples-plugin", ['ui.grid','ui.grid.pinning','ui.grid.resizeColumns','glims.formly']);
+angular.module("samples-plugin", ['ui.grid','ui.grid.edit','ui.grid.pinning','ui.grid.resizeColumns','glims.formly']);
 //angular.module("samples.tpls", ["template/plugins/samples.html"]);
 
 angular.module('plugins').requires.push("samples-plugin")
@@ -92,13 +92,14 @@ angular.module("samples-plugin")
 				$scope.errors = false;
 			}
 			$scope.refreshSamples = function(){
-				$scope.samples = Sample.query({project:$scope.project.id},function() {
+				$scope.samples = Sample.query({project:$scope.project.id,page_size:1000},function() {
 					$scope.gridOptions.data = $scope.samples;
 					console.log($scope.gridOptions);
 					updateSampleCount()
 //					$scope.gridApi.core.refresh(); //gridApi
 				});
 			}
+			var columnTypes = {'checkbox':'boolean','float':'number','integer':'number'}
 			var columnDefs = [
 			                  {
 			                	  displayName: "Actions",
@@ -119,17 +120,18 @@ angular.module("samples-plugin")
 			                		  width:80,
 			                		  enableSorting: false,
 			                		  enableColumnMenu: false,
-			                		  enableFiltering: false
+			                		  enableFiltering: false,
+			                		  enableCellEdit: false
 			                  },
-			                  {displayName: "ID", name: "sample_id", pinnedLeft:true, minWidth: 150,
+			                  {displayName: "ID", name: "sample_id", pinnedLeft:true, minWidth: 150,enableCellEdit: false,
 			                	cellTemplate:   '<div class="ui-grid-cell-contents"><a href="{[grid.appScope.getURL(\'sample\',{pk:row.entity.id})]}">{{COL_FIELD}}</a></div>'
 			                  },
-			                  {displayName: "Type", name: "type.name", minWidth: 150,
+			                  {displayName: "Type", name: "type.name", minWidth: 150,enableCellEdit: false,
 			                	  cellTemplate: '<div class="ui-grid-cell-contents" ng-class="{\'error\':grid.appScope.project.sample_type.id != row.entity.type.id}">{{COL_FIELD}}</div>'
 			                  },
-			                  {displayName: "Name", name: "name", minWidth: 150},
-			                  {displayName: "Description", name: "description", minWidth: 150},
-			                  {displayName: "Received", name: "received", minWidth: 150, type:'date'},
+			                  {displayName: "Name", name: "name", minWidth: 150,enableCellEdit: true},
+			                  {displayName: "Description", name: "description", minWidth: 150,enableCellEdit: true},
+			                  {displayName: "Received", name: "received", minWidth: 150, type:'date',enableCellEdit: true},
 
 			                  ];
 			$scope.$watch('project.sample_type',function(newValue,oldValue){
@@ -138,10 +140,12 @@ angular.module("samples-plugin")
 				var cols = angular.copy(columnDefs);
 				angular.forEach($scope.project.sample_type.fields,function(field){
 					cols.push({
-						displayName:field.label,
+						displayName:field.label+field.type,
 						name:'data.'+field.name,
 						minWidth: 100,
-						cellTemplate: '<div class="ui-grid-cell-contents"><div ng-if="grid.appScope.project.sample_type.id != row.entity.type.id" class="error">Incompatible type!</div>{{COL_FIELD}}</div>'
+						cellTemplate: '<div class="ui-grid-cell-contents"><div ng-if="grid.appScope.project.sample_type.id != row.entity.type.id" class="error">Incompatible type!</div>{{COL_FIELD}}</div>',
+						enableCellEdit: true,
+						type: columnTypes[field.type] ? columnTypes[field.type] : 'string'
 					});
 				});
 				$scope.gridOptions.columnDefs = cols;
@@ -206,7 +210,7 @@ angular.module("samples-plugin").run(['$templateCache', function($templateCache)
 				</div>\
 				<div ng-show="errors">There was an error processing the sample file.</div>\
 			</div>\
-			<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ng-show="samples.length"></div>\
+			<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ui-grid-edit ng-show="samples.length"></div>\
 			<button ng-click="edit_sample()" class="btn btn-success">Add sample</button>\
 			</div>\
 			</load-on-select>'
