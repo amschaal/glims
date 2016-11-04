@@ -46,7 +46,7 @@
 	              <table class="table" ng-if="!editing">
 	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Labs</th><th>Description</th></tr></thead>
 	              	<tbody>
-	              		<tr ng-repeat="l in run.lanes">
+	              		<tr ng-repeat="l in run.lanes | orderBy:'index'">
 	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}"><a href="{[getURL('pool',{pk:l.pool.id})]}">{[l.pool.name]}</a></td>
 	              			<td><span ng-repeat="l in l.pool.libraries">{[l.name]}{[$last ? '' : ', ']}</span></td>
@@ -61,7 +61,7 @@
 					</script>
 	              	<thead><tr><th>Lane/Index</th><th>Pool</th><th>Libraries</th><th>Labs</th><th>Description</th></tr></thead>
 	              	<tbody>
-	              		<tr ng-repeat="l in run.lanes">
+	              		<tr ng-repeat="l in run.lanes | orderBy:'index'">
 	              			<td>{[l.index]}</td>
 	              			<td title="{[l.pool.description]}">
 								<remote-select url="/api/pools/" config="{disabled:false,templateUrl:'pool-options.html'}" model="l" field="pool"></remote-select>
