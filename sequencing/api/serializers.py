@@ -72,14 +72,8 @@ class RunSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Pool
 class RunLaneDetailSerializer(RunLaneSerializer):
-    labs = serializers.SerializerMethodField()
 #     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
     pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
-    def get_labs(self,obj):
-        print obj.pool.id
-        if not obj.pool:
-            return []
-        return Lab.objects.filter(projects__samples__libraries__pools=obj.pool.id).distinct().values('first_name','last_name','id')
             
 class RunDetailSerializer(RunSerializer):
     def __init__(self,*args,**kwargs):

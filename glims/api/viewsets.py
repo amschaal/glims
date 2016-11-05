@@ -169,7 +169,7 @@ class PoolViewSet(ExtensibleViewset):
     search_fields = ('name', 'description','type__name')
     model = Pool
     def get_queryset(self):
-        return Pool.objects.all()
+        return Pool.objects.select_related('group').prefetch_related('libraries','libraries__adapter','libraries__sample','libraries__sample__project__lab').all()
 #         return get_all_user_objects(self.request.user, ['view'], Pool)
 
 class AdapterViewSet(ExtensibleViewset):

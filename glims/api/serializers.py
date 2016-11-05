@@ -131,9 +131,12 @@ class PoolSerializer(ExtensibleSerializer):
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
     libraries = FlatLibrarySerializer(many=True,read_only=True)
     labs = serializers.SerializerMethodField()
+    #labs = LabSerializer(many=True,read_only=True)
 #     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
     def get_labs(self,obj):
-        return Lab.objects.filter(projects__samples__libraries__pools=obj.id).distinct().values('first_name','last_name','id')
+        return {l.sample.project.lab.id:LabSerializer(instance=l.sample.project.lab).data for l in obj.libraries.all()}.values()
+#         return LabSerializer(data=obj.labs)
+#         return Lab.objects.filter(projects__samples__libraries__pools=obj.id).distinct().values('first_name','last_name','id')
 #     barcode_duplicates = serializers.SerializerMethodField()
 #     def get_barcode_duplicates(self,obj):
 #         return obj.get_barcode_duplicates() 
