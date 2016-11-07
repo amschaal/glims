@@ -74,7 +74,7 @@ class RunSerializer(serializers.ModelSerializer):
 class RunLaneDetailSerializer(RunLaneSerializer):
 #     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
     pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
-            
+
 class RunDetailSerializer(RunSerializer):
     def __init__(self,*args,**kwargs):
         print "RUN DETAIL SERIALIZER"

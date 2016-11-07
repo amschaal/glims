@@ -169,7 +169,7 @@ class PoolViewSet(ExtensibleViewset):
     search_fields = ('name', 'description','type__name')
     model = Pool
     def get_queryset(self):
-        return Pool.objects.select_related('group').prefetch_related('libraries','libraries__adapter','libraries__sample','libraries__sample__project__lab').all()
+        return Pool.objects.select_related('group','type').prefetch_related('libraries','libraries__adapter','libraries__sample','libraries__sample__project__lab').all()
 #         return get_all_user_objects(self.request.user, ['view'], Pool)
 
 class AdapterViewSet(ExtensibleViewset):
@@ -190,7 +190,7 @@ class LibraryViewSet(ExtensibleViewset):
     ordering_fields = ('id','sample__sample_id','name', 'description','sample__project__name','sample__received','created','type__name','adapter__name')
     model = Library
     def get_queryset(self):
-        queryset = Library.objects.select_related('sample','adapter').prefetch_related('pools').all()
+        queryset = Library.objects.select_related('sample','adapter','type').prefetch_related('pools').all()
         pool = self.request.query_params.get('pool', None)
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)

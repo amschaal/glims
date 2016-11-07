@@ -107,6 +107,11 @@ class FlatSampleSerializer(ExtensibleSerializer):
 class AdapterSerializer(ExtensibleSerializer):
     class Meta:
         model = Adapter
+        
+class FlatAdapterSerializer(ExtensibleSerializer):
+    class Meta:
+        model = Adapter
+        fields = ('id','name','barcode','description')
 
 class FlatPoolSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,7 +127,7 @@ class LibrarySerializer(ExtensibleSerializer):
 
 class FlatLibrarySerializer(ExtensibleSerializer):
 #     sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
-    adapter = AdapterSerializer(read_only=True)
+    adapter = FlatAdapterSerializer(read_only=True)
     class Meta:
         model = Library
 
