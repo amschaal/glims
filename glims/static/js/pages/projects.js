@@ -8,7 +8,7 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,p
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
 	$scope.tableSettings = {sorting: { created: "desc" },filter:{archived:'False',following:true}}
-	$scope.cols = {'Created':true,'ID':true,'Name':true,'Type':true,'Group':false,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Contact':false,'Status':true,'Archived':false}
+	$scope.cols = {'Created':true,'ID':true,'Name':true,'Type':true,'Group':false,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Contact':false,'Status':true,'Archived':false,'Subscription':false}
 	$scope.userProfile.$promise.then(function(profile){
 		console.log('profile',profile);
 		if (_.has(profile,'preferences.pages.projects.tableSettings.filter'))

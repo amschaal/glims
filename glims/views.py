@@ -41,7 +41,8 @@ def lab(request, pk):
 def projects(request):
 #     projects = get_all_user_objects(request.user, ['view'], Project)#Project.objects.all()
     query = json.dumps(request.GET)
-    return render(request, 'glims/projects.html', {'query':query} ,context_instance=RequestContext(request))
+    content_type_id = ContentType.objects.get_for_model(Project).id
+    return render(request, 'glims/projects.html', {'query':query,'content_type_id':content_type_id} ,context_instance=RequestContext(request))
 @login_required
 def samples(request):
     query = json.dumps(request.GET)

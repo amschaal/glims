@@ -82,10 +82,10 @@ def update_participant_subscriptions(sender,instance,pk_set,**kwargs):
         project_type = ContentType.objects.get_for_model(Project)
         for user in User.objects.filter(pk__in=pk_set):
             subscription, created = UserSubscription.objects.get_or_create(user=user,content_type=project_type,object_id=instance.id)
-    
-@receiver(object_updated,sender=Project)
-def update_manager_subscription(sender,instance,old_instance,**kwargs):
-    if instance.manager != old_instance.manager:
+
+@receiver(post_save,sender=Project)
+def set_manager_subscription(sender,instance,created,**kwargs):
+    if instance.manager:
         project_type = ContentType.objects.get_for_model(Project)
         subscription, created = UserSubscription.objects.get_or_create(user=instance.manager,content_type=project_type,object_id=instance.id)
 
@@ -157,4 +157,3 @@ def create_update_notification(sender, instance,**kwargs):
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW)
     except sender.DoesNotExist, e:
         pass
-

@@ -41,6 +41,7 @@
 		        	<resource-field-select resource="row" field="status" options="row.status_options" order-by-field="order"></resource-field-select>
 		        </td>
 		        <td data-title="'Archived'"  sortable="'archived'" ng-if="cols['Archived']"><archive-project project="row"></archive-project></td>
+		        <td data-title="'Subscription'" ng-if="cols['Subscription']"><div  notification-subscription object-id="{[row.id]}" content-type="{{content_type_id}}"></div></td>
 		      </tr>
 		    </table>
        	  </div>
