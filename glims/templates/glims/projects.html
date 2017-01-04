@@ -9,7 +9,9 @@
         <div class="widget" ng-controller="ProjectController">
           <div class="widget-header">
             <i class="fa fa-suitcase"></i> Projects
-            <button ng-click="createProject()" class="btn btn-sm btn-success pull-right">Create</button>
+            <span class="pull-right">
+				<button ng-click="createProject()" class="btn btn-sm btn-success">Create</button>
+			</span>
           </div>
           <div class="widget-body">
           <button ng-click="saveFilters()" class="btn pull-right" title="Save filters, fields, and sorting orders as your default view of projects" ng-disabled="save_disabled">{[saveProfileText||'Save settings']}</button>
@@ -44,7 +46,9 @@
 		        <td data-title="'Subscription'" ng-if="cols['Subscription']"><div  notification-subscription object-id="{[row.id]}" content-type="{{content_type_id}}"></div></td>
 		      </tr>
 		    </table>
-       	  </div>
+		    <select ng-model="export.type"><option selected="selected" value="">Select project type...</option><option ng-repeat="type in types" value="{[type.id]}">{[type.name]}</option></select>
+		    <select ng-model="export.format"><option selected="selected" value="">Select format...</option><option value="csv">CSV</option><option value="xls">XLS</option></select>
+		    <a class="btn btn-primary btn-xs" href="/api/projects/export/?type={[export.type]}&file_format={[export.format]}" ng-disabled="!export.type||!export.format">Export</a>
             
           </div>
         </div>

@@ -6,12 +6,12 @@ from rest_framework.response import Response
 from glims.api.serializers import SampleSerializer, PoolSerializer
 from rest_framework import status
 from django.db import transaction 
-from tablib.core import Dataset
 import tablib
+import copy
 
-
-class SampleImportExport(object):
+class Export(object):
     content_types = {'xls':'application/vnd.ms-excel','csv':'text/csv','json':'text/json'}
+    headers = []
     def __init__(self,type=None):
         self.type = type if isinstance(type,ModelType) else ModelType.objects.filter(id=type).first()
         print self.type
@@ -27,20 +27,47 @@ class SampleImportExport(object):
                 del row[key]
         row['data'] = data
         return row
+    def generate_headers(self):
+        headers = copy.copy(self.headers)
+        if self.type:
+            if self.type.fields:
+                headers += ['data.'+field['name'] for field in self.type.fields]#     field_names = [field.name for field in opts.fields]
+        return headers
     def response(self,request, dataset, filename, file_type="xls"):
         response_kwargs = {
-            'content_type': SampleImportExport.content_types[file_type]
+            'content_type': Export.content_types[file_type]
         }
         filename = "%s.%s" %(filename,file_type)
         response = HttpResponse(getattr(dataset, file_type), **response_kwargs)
         response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
-        return response    
-    def generate_headers(self):
-        self.headers = ['sample_id','name','description','received','adapter','barcode','pool']
-        if self.type:
-            if self.type.fields:
-                self.headers += ['data.'+field['name'] for field in self.type.fields]#     field_names = [field.name for field in opts.fields]
-        return self.headers
+        return response
+class ProjectExport(Export):
+    """
+    <tr><th>Status</th><td><resource-field-select resource="project" field="status" options="project.status_options" order-by-field="order"></resource-field-select></td></tr>
+    <tr><th>ID</th><td>{[project.project_id]}</td></tr>
+    <tr><th>Type</th><td>{[project.type.name]}</td></tr>
+    <tr><th>Group</th><td>{[project.group.name]}</td></tr>
+    <tr><th>Lab</th><td>{[project.lab.name]}</td></tr>
+    <tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
+    <tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
+    <tr><th>Participants</th><td><span ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}{[$last ? '' : ', ']}</span></td></tr>
+    <tr><th>Description</th><td style="white-space: pre-wrap;">{[project.description]}</td></tr>
+    <tr><th>Contact</th><td style="white-space: pre-wrap;">{[project.contact]}</td></tr>
+    <tr><th>Related Projects</th><td><span ng-repeat="p in project.related_projects"><a title="Group: {[p.group__name]}, Lab: {[p.lab__name]}" href="{[getURL('project',{pk:p.id})]}">{[p.name]}</a>{[$last ? '' : ', ']}</span></td
+    """
+    headers = ['ID','Name','Type','Status','Group','Lab','Sample Type','Manager','Participants','Description','Contact','Related Projects']
+    def export(self,request,projects,filename_base='projects',file_type='xls'):
+#         print self.generate_headers()
+        data = tablib.Dataset(headers=self.generate_headers()) 
+        for p in projects:
+            row = [p.project_id,p.name,str(p.type),str(p.status),str(p.group),str(p.lab),str(p.sample_type),p.manager.name if p.manager else '',', '.join(u.name for u in p.participants.all()),p.description,p.contact,', '.join(proj.name for proj in p.related_projects.all())]
+            for field in p.type.fields:
+                row.append(p.data.get(field['name'],''))
+            print row
+            data.append(row)
+        return self.response(request,data,filename_base,file_type)
+class SampleImportExport(Export):
+    headers = ['sample_id','name','description','received','adapter','barcode','pool']
     def sample_template(self,request,filename_base='samplesheet_template',file_type='xls'):
         data = tablib.Dataset(headers=self.generate_headers())
         return self.response(request,data,filename_base,file_type)
@@ -54,7 +81,7 @@ class SampleImportExport(object):
         return self.response(request,data,filename_base,file_type)
     def import_samplesheet(self,request,file_handle,project):
         sid = transaction.savepoint()
-        data = Dataset().load(file_handle.read())
+        data = tablib.Dataset().load(file_handle.read())
         
         #initialize variables
         errors = {}

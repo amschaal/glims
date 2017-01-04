@@ -294,3 +294,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User,null=True,blank=True,related_name='profile')
     group = models.ForeignKey(Group,null=True,blank=True)
     preferences = JSONField(default=dict)
+
+def user_name(self):
+    return "%s %s" % (self.first_name, self.last_name)
+User.name = property(user_name)

@@ -19,6 +19,7 @@ from glims.api.mixins import FileManagerMixin
 from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter
 from rest_framework.response import Response
+from glims.samples.importer import ProjectExport
 
 
 # from glims.api.permissions import CustomPermission
@@ -88,7 +89,22 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
         return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
             Prefetch('type__status_options'),Prefetch('participants'),Prefetch('related_projects'))#, queryset=Status.objects.order_by('order')
-
+    @list_route(methods=['get'],permission_classes=[IsAuthenticated])
+    def export(self, request):
+        queryset = self.get_queryset()#self.filter_queryset(self.get_queryset())
+        type = request.query_params.get('type')
+        format = request.query_params.get('file_format','xls')
+        queryset = queryset.filter(type=type)
+        exporter = ProjectExport(type=type)
+        return exporter.export(request,queryset,file_type=format)
+#         data = tablib.Dataset(headers=self.generate_headers())
+#         for p in queryset:
+#             data = serializer(p).data
+#             row = [s.sample_id,s.name,s.description,s.received,'','','']
+#             for field in project.sample_type.fields:
+#                 row.append(s.data.get(field['name'],''))
+#             data.append(row)
+#         return self.response(request,data,filename_base,file_type)
 class SampleViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
