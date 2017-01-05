@@ -80,6 +80,7 @@ MIDDLEWARE_CLASSES = (
     'notifications.middleware.NotificationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'glims.middlewares.ThreadLocal.ThreadLocalMiddleware',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'

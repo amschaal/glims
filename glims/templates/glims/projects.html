@@ -48,7 +48,7 @@
 		    </table>
 		    <select ng-model="export.type" class="form-control inline-input"><option selected="selected" value="">Select project type...</option><option ng-repeat="type in types" value="{[type.id]}">{[type.name]}</option></select>
 		    <select ng-model="export.format" class="form-control inline-input"><option selected="selected" value="">Select format...</option><option value="csv">CSV</option><option value="xls">XLS</option></select>
-		    <a class="btn btn-primary btn-xs" href="/api/projects/export/?type={[export.type]}&file_format={[export.format]}" ng-disabled="!export.type||!export.format">Export</a>
+		    <a class="btn btn-primary btn" href="/api/projects/export/?type={[export.type]}&file_format={[export.format]}" ng-disabled="!export.type||!export.format">Export</a>
             
           </div>
         </div>

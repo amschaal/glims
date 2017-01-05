@@ -13,6 +13,7 @@ from glims.models import Project, Sample, Pool, Lab, Library
 from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification
+from glims.middlewares.ThreadLocal import get_current_user
 
 
 @receiver(pre_save,sender=Project)
@@ -154,6 +155,6 @@ def create_update_notification(sender, instance,**kwargs):
             url = settings.SITE_URL + instance.get_absolute_url()
             text = '"%s" has been updated'%(str(instance))
             description = "The following fields have been modified: %s" % ', '.join(changed)
-            create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW)
+            create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW,exclude_user=get_current_user())
     except sender.DoesNotExist, e:
         pass
