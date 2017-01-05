@@ -113,18 +113,18 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 				<tab heading="Details">
 					<table class="table">
 					<tr><th>Content Type</th><td>{[content_type]}</td></tr>
-					<tr><th>Name</th><td><input ng-model="name"/></td></tr>
-					<tr><th>Description</th><td><textarea ng-model="description">{[description]}</textarea></td></tr>
+					<tr><th>Name</th><td><input ng-model="name" class="form-control"/></td></tr>
+					<tr><th>Description</th><td><textarea ng-model="description" class="form-control">{[description]}</textarea></td></tr>
 					</table>
 					<h2>Extra fields</h2>
 						<table class="table">
 						<tr><th>Required</th><th>Type</th><th>Name</th><th>Label</th><th>Help Text</th><th>Options</th><th></th></tr>
 						<tr ng-repeat="field in fields">
 							<td><input type="checkbox" ng-model="field.required" ></td> <!-- ng-true-value="1" -->
-							<td><select ng-model="field.type" ng-options="type for type in field_types"></select></td>
-							<td><input ng-model="field.name"/></td>
-							<td><input ng-model="field.label"/></td>
-							<td><textarea ng-model="field.help_text"></textarea></td>
+							<td><select ng-model="field.type" ng-options="type for type in field_types" class="form-control"></select></td>
+							<td><input ng-model="field.name" class="form-control"/></td>
+							<td><input ng-model="field.label" class="form-control"/></td>
+							<td><textarea ng-model="field.help_text" class="form-control"></textarea></td>
 							<td>
 								<div ng-if="['select','radio'].indexOf(field.type) != -1">
 									<p><b>Choices:</b></p>
@@ -150,7 +150,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 						<table class="table" ng-if="plugins.length > 0">
 						<tr><th>Order</th><th>Name</th><th>Description</th></tr>
 						<tr ng-repeat="plugin in plugins|orderBy:'order' track by $index">
-							<td><input ng-model="plugin.order" type="int"/></td>
+							<td><input ng-model="plugin.order" type="number" class="form-control inline-input"/></td>
 							<td>{[plugin.plugin.name]}</td>
 							<td>{[plugin.plugin.description]} <button class="btn btn-danger pull-right" ng-click="deletePlugin(plugin,$index)">Remove</button></td>
 						</tr>
@@ -173,7 +173,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 						<table class="table" ng-if="statuses.length > 0">
 						<tr><th>Order</th><th>Name</th><th>Description</th><th></th></tr>
 						<tr ng-repeat="status in statuses|orderBy:'order' track by $index" ng-class="{error:status.errors}">
-							<td style="width:100px">{[status.errors]}<input ng-model="status.order" type="int" class="form-control" ng-class="{error:status.errors.order}"/></td>
+							<td style="width:100px">{[status.errors]}<input ng-model="status.order" type="number" class="form-control" ng-class="{error:status.errors.order}"/></td>
 							<td><input ng-model="status.name" class="form-control" ng-class="{error:status.errors.name}"/></td>
 							<td><textarea ng-model="status.description" class="form-control" ng-class="{error:status.errors.description}"></textarea> </td>
 							<td><button class="btn btn-danger pull-right" ng-click="deleteStatus(status,$index)">Remove</button></td>
