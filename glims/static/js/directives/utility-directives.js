@@ -58,7 +58,7 @@ angular.module('utility.directives', [])
 //    	<i class="fa fa-folder" ng-if="row.archived" title="Archived"></i>
 //    	<button ng-show="row.new_status.id != row.status" ng-click="saveStatus(row)">Save</button>
         template: '<div ng-show="options.length > 0">\
-        				<select ng-options="status[optionId] as status[optionLabel] for status in options | orderBy:orderByField" ng-model="resource[field]" ng-change="save()"></select>\
+        				<select ng-options="status[optionId] as status[optionLabel] for status in options | orderBy:orderByField" ng-model="resource[field]" ng-change="save()" class="form-control inline-input"></select>\
 		        	</div>',
         link: function($scope, iElement, iAttrs) {
         	var defaults = {

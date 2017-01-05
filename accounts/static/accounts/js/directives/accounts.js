@@ -62,14 +62,14 @@ angular.module("accounts-plugin").run(['$templateCache', function($templateCache
 	<td ng-if="!account.editing">{[types[account.type]]}</span></td>\
 	<td ng-if="account.editing">\
 			<p class="error" ng-repeat="error in account.errors.type">{[error]}</p>\
-			<select ng-options="id as label for (id,label) in types" ng-model="account.type"></select>\
+			<select ng-options="id as label for (id,label) in types" ng-model="account.type" class="form-control"></select>\
 	</td>\
 	<td ng-if="!account.editing">\
 			<p class="error" ng-repeat="error in account.errors.account">{[error]}</p>\
 			{[account.account]}\
 	</td>\
-	<td ng-if="account.editing"><input ng-model="account.account"/></td>\
-	<td ng-if="!account.editing">{[account.description]}</td><td ng-if="account.editing"><textarea ng-model="account.description"></textarea></td>\
+	<td ng-if="account.editing"><input ng-model="account.account" class="form-control"/></td>\
+	<td ng-if="!account.editing">{[account.description]}</td><td ng-if="account.editing"><textarea ng-model="account.description" class="form-control"></textarea></td>\
 	<td>\
 		<button class="btn btn-xs btn-danger pull-right" ng-click="deleteAccount($index)">Delete</button>\
 		<button class="btn btn-xs pull-right" ng-if="!account.editing" ng-click="editAccount(account)">Edit</button>\

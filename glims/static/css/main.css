@@ -17,3 +17,7 @@ a
 .action-buttons > * {
 	display: inline-block;
 }
+.inline-input{
+	width: auto !important;
+	display: inline-block;
+}
