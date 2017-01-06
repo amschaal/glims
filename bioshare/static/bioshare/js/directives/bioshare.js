@@ -16,7 +16,7 @@ angular.module("bioshare-plugin")
 			}
 			$scope.createShare = function(){
 				var share = new ProjectShare({project:$scope.project.id});
-				share.$create(function(share){$scope.share = share;})
+				share.$create(function(share){$scope.share = share;},function(){alert('There was an error creating the share.');})
 			}
 			$scope.addFiles = function(){
 				SelectModalService.selectFiles('/api/projects/'+$scope.project.id+'/',{selection:$scope.share.symlinks,actions:{select:true,deselect:true}}).result.then(function(result){

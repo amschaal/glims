@@ -20,16 +20,19 @@ class ProjectShareViewSet(viewsets.ModelViewSet,FileBrowserMixin,FileDownloadMix
 #     def create(self, request, *args, **kwargs):
 #         return viewsets.ModelViewSet.create(self, request, *args, **kwargs)
     def create(self, request, *args, **kwargs):
-        project = Project.objects.get(id=request.data.get('project'))
-#         labshare, created = LabShare.objects.get_or_create(lab=project.lab,group=project.group) 
-#         data = {'project':request.data.get('project'),'folder':,'labshare':labshare.id}
-        project_share = ProjectShare.objects.create(project=project)
-        serializer = self.get_serializer(project_share)
-#         print "LABSHARE"
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        try:    
+            project = Project.objects.get(id=request.data.get('project'))
+    #         labshare, created = LabShare.objects.get_or_create(lab=project.lab,group=project.group) 
+    #         data = {'project':request.data.get('project'),'folder':,'labshare':labshare.id}
+            project_share = ProjectShare.objects.create(project=project)
+            serializer = self.get_serializer(project_share)
+    #         print "LABSHARE"
+    #         serializer.is_valid(raise_exception=True)
+    #         self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception, e:
+            return Response({'status':'error','message':e.message},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     @detail_route(methods=['post'])
     def link_paths(self, request, pk=None):
         obj = self.get_object()

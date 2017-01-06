@@ -33,11 +33,11 @@ class BioshareAccount(models.Model):
                 data = json.load(response)
                 return data['id']
             else:
-                raise Exception('Unable to create Bioshare share')
+                raise Exception('Unable to create share')
         except urllib2.HTTPError as e:
             error_message = e.read()
-            print error_message
-            raise Exception('Unable to create share: %s'%error_message)
+#             print error_message
+            raise Exception('Unable to create share')
 
 
 class ProjectShare(models.Model):
