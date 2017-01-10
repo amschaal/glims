@@ -1,6 +1,6 @@
 (function() {
 
-	angular.module('formly.widgets',['formly','ngMessages','formlyBootstrap', 'ui.bootstrap', 'ui.select', 'ngSanitize'])
+	angular.module('formly.widgets',['formly','ngMessages','formlyBootstrap', 'ui.bootstrap', 'ui.select', 'ngSanitize','checklist-model'])
 	.run(runBlock)
 
 	runBlock.$inject = [ 'formlyConfig','$http','$window' ];
@@ -133,10 +133,10 @@
 					        	  <div ng-repeat="(key, option) in to.options" class="checkbox">\
 					        <label>\
 					          <input type="checkbox"\
-					                 id="{[id + \'_\'+ $index]}"\
-					                 ng-model="multiCheckbox.checked[$index]"\
-					                 ng-change="multiCheckbox.change()">\
-					          {[option[to.labelProp || \'name\']]}\
+	        							data-checklist-model="model[options.key]"\
+	        							data-checklist-value="option"\
+	        							checklist-comparator=".id">\
+	        							{[option[to.labelProp || \'name\']]}\
 					        </label>\
 					      </div>\
 					    </div>',
@@ -144,32 +144,7 @@
 	        controller: /* @ngInject */["$scope", function controller($scope) {
 	        	var to = $scope.to;
 		        var opts = $scope.options;
-		        $scope.multiCheckbox = {
-		  	          checked: []
-//		  	          change: setModel
-		  	        };
-		        function checkBoxes(selected,options){
-		        	selected = selected||[];
-		        	var ids = selected.map(function(obj){
-		        		return obj[to.valueProp];
-		        	});
-		        	angular.forEach(options,function(option,index){
-		        		$scope.multiCheckbox.checked[index] = ids.indexOf(option[to.valueProp]) !== -1;
-		        	});
-		        }
-		        checkBoxes($scope.model[opts.key],to.options);
-		        $scope.multiCheckbox.change = function() {
-		        	console.log($scope.multiCheckbox.checked);
-		        	var selected = [];
-			          angular.forEach($scope.multiCheckbox.checked, function (checkbox, index) {
-			            if (checkbox) {
-			              selected.push(to.options[index]);
-			            }
-			          });
-			          $scope.model[opts.key] = selected;
-			          // Must make sure we mark as touched because only the last checkbox due to a bug in angular.
-			          $scope.fc.$setTouched();
-		        }
+		        console.log('selected',$scope.selected);
 	        }]
 	      });
 	}

@@ -2,6 +2,12 @@ angular.module('glimsServices')
  .service('projectService', function($rootScope,$http,FormlyModal,Project,User,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
 	 var userOptions = User.query({id__gte:1});//groups__name:'Bioinformatics Core'
+	 var getUserOptions = function($viewValue,$modelValue,scope){
+		 console.log('getUserOptions',$viewValue,$modelValue,scope);
+		 console.log('group',scope.model.group);
+		 if (scope.model.group)
+			 return User.query({groups__id:scope.model.group.id});
+	 }
 	 var fields =  [
 	            {
 					 key: 'group',
@@ -75,6 +81,9 @@ angular.module('glimsServices')
 	            	    valueProp: 'id',
 	            	    labelProp: 'name',
 	            	    required: false
+	            	  },
+	            	  expressionProperties:{
+	            		  'templateOptions.options':getUserOptions
 	            	  }
 	        	},
 //				{
