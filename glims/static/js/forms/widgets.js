@@ -141,10 +141,22 @@
 					      </div>\
 					    </div>',
 	        wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+	        defaultOptions:{
+	        	templateOptions: {
+	        		'valueProp': 'id'
+	        	}
+	        },
 	        controller: /* @ngInject */["$scope", function controller($scope) {
-	        	var to = $scope.to;
-		        var opts = $scope.options;
-		        console.log('selected',$scope.selected);
+	        	//If the options change, remove invalid options from selection
+		        $scope.$watch('to.options', function(options,oldOptions) {
+		        	if(!options.$promise || options.$resolved)
+		        		$scope.model[$scope.options.key] = _.intersectionWith(
+	        				$scope.model[$scope.options.key], $scope.to.options, 
+		        			function(opt1,opt2){
+		        				return opt1[$scope.to.valueProp]==opt2[$scope.to.valueProp];
+		        			}
+		        		);
+		        },true);
 	        }]
 	      });
 	}
