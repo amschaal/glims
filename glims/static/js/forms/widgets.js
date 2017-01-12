@@ -130,7 +130,7 @@
 	        name: 'objectMultiCheckbox',
 //	        extends: 'multiCheckbox',
 	        template: '<div class="radio-group">\
-					        	  <div ng-repeat="(key, option) in to.options" class="checkbox">\
+					        	  <div ng-repeat="(key, option) in checkbox_options" class="checkbox">\
 					        <label>\
 					          <input type="checkbox"\
 	        							data-checklist-model="model[options.key]"\
@@ -147,18 +147,36 @@
 	        	}
 	        },
 	        controller: /* @ngInject */["$scope", function controller($scope) {
+	        	$scope.checkbox_options = angular.copy($scope.to.options);
 	        	//If the options change, remove invalid options from selection
 		        $scope.$watch('to.options', function(options,oldOptions) {
-		        	if(!options.$promise || options.$resolved)
+		        	if(!options.$promise || options.$resolved){
+		        		$scope.checkbox_options = angular.copy(options);
 		        		$scope.model[$scope.options.key] = _.intersectionWith(
-	        				$scope.model[$scope.options.key], $scope.to.options, 
-		        			function(opt1,opt2){
-		        				return opt1[$scope.to.valueProp]==opt2[$scope.to.valueProp];
-		        			}
-		        		);
+		        				$scope.model[$scope.options.key], $scope.to.options, 
+			        			function(opt1,opt2){
+			        				return opt1[$scope.to.valueProp]==opt2[$scope.to.valueProp];
+			        			}
+			        		);
+		        	}
 		        },true);
 	        }]
 	      });
+		formlyConfig.setType({
+	        name: 'subForm',
+	        template: '{[model]}<formly-form model="sub_model" fields="to.form_fields" ></formly-form>',//'<h1>foo</h1>',
+	        defaultOptions:{
+	        	templateOptions: {
+	        		'modelOptions': { allowInvalid: true },
+	        		'form_fields': []
+	        	}
+	        },
+	        controller: /* @ngInject */["$scope", function controller($scope) {
+	        	//If the options change, remove invalid options from selection
+	        	$scope.sub_model = $scope.model[$scope.options.key];
+	        }]
+	      });
+		
 	}
 
 })();
