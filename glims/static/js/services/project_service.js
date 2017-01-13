@@ -1,12 +1,15 @@
 angular.module('glimsServices')
  .service('projectService', function($rootScope,$http,FormlyModal,Project,User,ModelType) {
 	 var sample_types = ModelType.query({content_type__model:'sample'});
-	 var userOptions = User.query({id__gte:1});//groups__name:'Bioinformatics Core'
-	 var getUserOptions = function($viewValue,$modelValue,scope){
-		 console.log('getUserOptions',$viewValue,$modelValue,scope);
-		 console.log('group',scope.model.group);
-		 if (scope.model.group)
-			 return User.query({groups__id:scope.model.group.id});
+	 var userOptions = {}//Used for caching
+	 function getUserOptions($viewValue,$modelValue,scope){
+		 if (scope.model.group){
+			 //cache options
+			 if (!userOptions[scope.model.group.id])
+				 userOptions[scope.model.group.id] = User.query({groups__id:scope.model.group.id});
+			 return userOptions[scope.model.group.id];
+		 }
+			 
 	 }
 	 var fields =  [
 	            {
@@ -60,14 +63,16 @@ angular.module('glimsServices')
 	   			},
 	   			{"templateOptions": {"required": false, "description": "", "label": "Contact"}, "type": "textarea", "key": "contact"},
 	   			{
-   				"templateOptions": {
-   					"required": false, 
-   					"options": userOptions, 
-   					"description": "", 
-   					"label": "Manager",
-   					"valueProp":"id",
-   					"labelProp":"name" 
-   					}, 
+	   				"templateOptions": {
+	   					"required": false, 
+	   					"description": "", 
+	   					"label": "Manager",
+	   					"valueProp":"id",
+	   					"labelProp":"name",
+	   					},
+   					expressionProperties:{
+	            		  'templateOptions.options':getUserOptions
+   					},
    					"type": "select", 
    					"key": "manager.id", 
    					"data":{"error_key":"manager"}
@@ -77,7 +82,7 @@ angular.module('glimsServices')
 	            	  type: 'objectMultiCheckbox',
 	            	  templateOptions: {
 	            	    label: 'Participants',
-	            	    options: userOptions,
+//	            	    options: userOptions,
 	            	    valueProp: 'id',
 	            	    labelProp: 'name',
 	            	    required: false
@@ -86,19 +91,13 @@ angular.module('glimsServices')
 	            		  'templateOptions.options':getUserOptions
 	            	  }
 	        	},
-//				{
-//	            	  key: 'participants',
-//	            	  type: 'multiSelect',
-//	            	  templateOptions: {
-//	            	    label: 'Participants',
-//	            	    options: userOptions,
-//	            	    ngOptions: "option as option.name for option in to.options track by option.id",
-//	            	    valueProp: 'id',
-//	            	    labelProp: 'name',
-//	            	    required: false
-//	            	  }
-//	        	},
-	        	{"templateOptions": {"required": false, "description": "", "label": "Archived"}, "type": "checkbox", "key": "archived"}
+	        	{"templateOptions": {"required": false, "description": "", "label": "Archived"}, "type": "checkbox", "key": "archived"},
+//	        	{
+//	        		"expressionProperties":{
+//	            		  'templateOptions.form_fields':getTypeFields
+//	            	  },
+//                     "type": "subForm", "key": "data"
+//                }
 	   			];
 	 return {
 		 create: create,

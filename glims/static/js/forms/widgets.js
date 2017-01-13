@@ -150,10 +150,11 @@
 	        	$scope.checkbox_options = angular.copy($scope.to.options);
 	        	//If the options change, remove invalid options from selection
 		        $scope.$watch('to.options', function(options,oldOptions) {
+		        	console.log('checkbox_options',options);
 		        	if(!options.$promise || options.$resolved){
 		        		$scope.checkbox_options = angular.copy(options);
 		        		$scope.model[$scope.options.key] = _.intersectionWith(
-		        				$scope.model[$scope.options.key], $scope.to.options, 
+		        				$scope.model[$scope.options.key], $scope.checkbox_options, 
 			        			function(opt1,opt2){
 			        				return opt1[$scope.to.valueProp]==opt2[$scope.to.valueProp];
 			        			}
