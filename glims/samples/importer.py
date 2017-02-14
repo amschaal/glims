@@ -1,6 +1,6 @@
 from django.http.response import HttpResponse
 from extensible.models import ModelType
-from glims.models import Sample, Library, Pool
+from glims.models import Sample, Library, Pool, Project
 from rest_framework.response import Response
 # from glims.forms import SampleForm, FullSampleForm
 from glims.api.serializers import SampleSerializer, PoolSerializer
@@ -9,6 +9,8 @@ from django.db import transaction
 import tablib
 import copy
 from django.utils import timezone
+from logger.models import Log
+from django.contrib.contenttypes.models import ContentType
 
 class Export(object):
     content_types = {'xls':'application/vnd.ms-excel','csv':'text/csv','json':'text/json'}
@@ -45,25 +47,14 @@ class Export(object):
         response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
         return response
 class ProjectExport(Export):
-    """
-    <tr><th>Status</th><td><resource-field-select resource="project" field="status" options="project.status_options" order-by-field="order"></resource-field-select></td></tr>
-    <tr><th>ID</th><td>{[project.project_id]}</td></tr>
-    <tr><th>Type</th><td>{[project.type.name]}</td></tr>
-    <tr><th>Group</th><td>{[project.group.name]}</td></tr>
-    <tr><th>Lab</th><td>{[project.lab.name]}</td></tr>
-    <tr><th>Sample Type</th><td>{[project.sample_type.name]}</td></tr>
-    <tr><th>Manager</th><td>{[ project.manager.first_name ]} {[ project.manager.last_name ]}</td></tr>
-    <tr><th>Participants</th><td><span ng-repeat="user in project.participants">{[ user.first_name ]} {[ user.last_name ]}{[$last ? '' : ', ']}</span></td></tr>
-    <tr><th>Description</th><td style="white-space: pre-wrap;">{[project.description]}</td></tr>
-    <tr><th>Contact</th><td style="white-space: pre-wrap;">{[project.contact]}</td></tr>
-    <tr><th>Related Projects</th><td><span ng-repeat="p in project.related_projects"><a title="Group: {[p.group__name]}, Lab: {[p.lab__name]}" href="{[getURL('project',{pk:p.id})]}">{[p.name]}</a>{[$last ? '' : ', ']}</span></td
-    """
-    headers = ['Id','Name','Type','Status','Group','Lab','Sample Type','Manager','Participants','Description','Contact','Related Projects','Created']
+    headers = ['Id','Name','Type','Status','Group','Lab','Sample Type','Manager','Participants','Description','Contact','Related Projects','Created','Modified']
     def export(self,request,projects,filename_base='projects',file_type='xls',add_time_extension=True):
 #         print self.generate_headers()
+        project_ct = ContentType.objects.get_for_model(Project)
         data = tablib.Dataset(headers=self.generate_headers()) 
         for p in projects:
-            row = [p.project_id,p.name,str(p.type),str(p.status),str(p.group),str(p.lab),str(p.sample_type),p.manager.name if p.manager else '',', '.join(u.name for u in p.participants.all()),p.description,p.contact,', '.join(proj.name for proj in p.related_projects.all()),p.created]
+            latest_log = Log.objects.filter(content_type = project_ct,object_id = p.id).order_by('-created').first()
+            row = [p.project_id,p.name,str(p.type),str(p.status),str(p.group),str(p.lab),str(p.sample_type),p.manager.name if p.manager else '',', '.join(u.name for u in p.participants.all()),p.description,p.contact,', '.join(proj.name for proj in p.related_projects.all()),p.created,getattr(latest_log, 'created', '')]
             for field in p.type.fields:
                 row.append(p.data.get(field['name'],''))
             print row
