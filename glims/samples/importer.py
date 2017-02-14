@@ -8,6 +8,7 @@ from rest_framework import status
 from django.db import transaction 
 import tablib
 import copy
+from django.utils import timezone
 
 class Export(object):
     content_types = {'xls':'application/vnd.ms-excel','csv':'text/csv','json':'text/json'}
@@ -33,6 +34,8 @@ class Export(object):
             if self.type.fields:
                 headers += ['data.'+field['name'] for field in self.type.fields]#     field_names = [field.name for field in opts.fields]
         return headers
+    def add_datetime_extension(self,filename):
+        return "%s_%s"%(filename,timezone.now().strftime("%Y_%m_%d__%H_%M"))
     def response(self,request, dataset, filename, file_type="xls"):
         response_kwargs = {
             'content_type': Export.content_types[file_type]
@@ -55,16 +58,18 @@ class ProjectExport(Export):
     <tr><th>Contact</th><td style="white-space: pre-wrap;">{[project.contact]}</td></tr>
     <tr><th>Related Projects</th><td><span ng-repeat="p in project.related_projects"><a title="Group: {[p.group__name]}, Lab: {[p.lab__name]}" href="{[getURL('project',{pk:p.id})]}">{[p.name]}</a>{[$last ? '' : ', ']}</span></td
     """
-    headers = ['ID','Name','Type','Status','Group','Lab','Sample Type','Manager','Participants','Description','Contact','Related Projects']
-    def export(self,request,projects,filename_base='projects',file_type='xls'):
+    headers = ['Id','Name','Type','Status','Group','Lab','Sample Type','Manager','Participants','Description','Contact','Related Projects','Created']
+    def export(self,request,projects,filename_base='projects',file_type='xls',add_time_extension=True):
 #         print self.generate_headers()
         data = tablib.Dataset(headers=self.generate_headers()) 
         for p in projects:
-            row = [p.project_id,p.name,str(p.type),str(p.status),str(p.group),str(p.lab),str(p.sample_type),p.manager.name if p.manager else '',', '.join(u.name for u in p.participants.all()),p.description,p.contact,', '.join(proj.name for proj in p.related_projects.all())]
+            row = [p.project_id,p.name,str(p.type),str(p.status),str(p.group),str(p.lab),str(p.sample_type),p.manager.name if p.manager else '',', '.join(u.name for u in p.participants.all()),p.description,p.contact,', '.join(proj.name for proj in p.related_projects.all()),p.created]
             for field in p.type.fields:
                 row.append(p.data.get(field['name'],''))
             print row
             data.append(row)
+        if add_time_extension:
+            filename_base = self.add_datetime_extension(filename_base)
         return self.response(request,data,filename_base,file_type)
 class SampleImportExport(Export):
     headers = ['sample_id','name','description','received','adapter','barcode','pool']
