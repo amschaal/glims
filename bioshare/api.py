@@ -5,12 +5,7 @@ from bioshare.models import ProjectShare
 from glims.models import Project
 from rest_framework.response import Response
 from glims.api.mixins import FileBrowserMixin, FileDownloadMixin
-from bioshare.utils import remove_sub_paths
 from rest_framework.decorators import detail_route
-from django.utils._os import safe_join
-import os
-from os.path import exists
-from os import makedirs
 
 class ProjectShareViewSet(viewsets.ModelViewSet,FileBrowserMixin,FileDownloadMixin):
     serializer_class = ProjectShareSerializer

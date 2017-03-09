@@ -29,6 +29,7 @@ angular.module('glimsServices')
 		   			 type: 'ui-select-search-multiple',
 		   			 templateOptions: {
 		   			   optionsAttr: 'bs-options',
+		   			   labelFunc: function(item,to){return item ? (item.lab ? '('+item.lab.name+') '+item.name: item.name ): '';},
 		   			   label: 'Related Projects',
 		   			   valueProp: 'id',
 		   			   labelProp: 'name',
