@@ -21,9 +21,10 @@ class Log(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
 class Export(models.Model):
+    STATUS_NEW = 'New'
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
     modified = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50,default=STATUS_NEW)
     description = models.TextField(null=True,blank=True)
     

@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 # from models import 
-from models import Log, Category
+from models import Log, Category, Export
 from serializers import LogSerializer
-from tracker.serializers import CategorySerializer
+from tracker.serializers import CategorySerializer, ExportSerializer
 
 class LogViewSet(viewsets.ModelViewSet):
     serializer_class = LogSerializer
@@ -18,3 +18,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     model = Category
     queryset = Category.objects.all()
+
+class ExportViewSet(viewsets.ModelViewSet):
+    serializer_class = ExportSerializer
+    model = Export
+    queryset = Export.objects.all()

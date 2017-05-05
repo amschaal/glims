@@ -45,6 +45,9 @@ angular.module("tracker-plugin")
 					$scope.categories = Category.query({project:projectId},function(){});
 				});
 			};
+			$scope.total = function(){
+				return _.sumBy($scope.logs, function(o) { return o.quantity ? parseFloat(o.quantity) : 0; });
+			}
 			
 			
 		}
@@ -79,7 +82,8 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 	</td>\
 	</tr>\
 	</table>\
-	<button ng-click="newLog()" class="btn btn-success">New Log</button>\
+	<label>Totals:</label> {[total()]}\
+	<br><button ng-click="newLog()" class="btn btn-success">New Log</button>\
 	</div></load-on-select>'
 	);
 }]);
