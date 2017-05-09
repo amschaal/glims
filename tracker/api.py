@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from models import Log, Category, Export
 from serializers import LogSerializer
 from tracker.serializers import CategorySerializer, ExportSerializer
+from rest_framework.response import Response
 
 class LogViewSet(viewsets.ModelViewSet):
     serializer_class = LogSerializer
@@ -22,4 +23,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ExportViewSet(viewsets.ModelViewSet):
     serializer_class = ExportSerializer
     model = Export
-    queryset = Export.objects.all()
+    queryset = Export.objects.prefetch_related('logs').all()
+    #Changes to logs are not being shown on update.  Trying a hacky method around it...
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        instance = self.get_object() #get object over again from updated database
+        serializer = self.get_serializer(instance) #serialize object
+        return Response(serializer.data)

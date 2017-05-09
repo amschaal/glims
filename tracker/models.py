@@ -19,7 +19,8 @@ class Log(models.Model):
     category = models.ForeignKey(Category)
     description = models.TextField(null=True,blank=True)
     modified = models.DateTimeField(auto_now=True)
-
+    project = models.ForeignKey(Project)
+    
 class Export(models.Model):
     STATUS_NEW = 'New'
     created = models.DateTimeField(auto_now_add=True)
@@ -27,4 +28,5 @@ class Export(models.Model):
     modified = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,default=STATUS_NEW)
     description = models.TextField(null=True,blank=True)
+    logs = models.ManyToManyField(Log)
     
