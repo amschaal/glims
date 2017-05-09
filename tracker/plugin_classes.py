@@ -3,6 +3,7 @@ from plugins import BasePlugin
 from glims.models import Project
 from django.conf.urls import url, include
 import json
+from tracker.models import Log
 
 class TrackerLogPlugin(BasePlugin):
     id = 'tracker-logs' #Name of directive
@@ -15,8 +16,9 @@ class TrackerLogPlugin(BasePlugin):
 #         return {'project':'project', 'ng-if':'project.id'}
     @staticmethod
     def get_template(obj):
-#         types = json.dumps({key:value for key,value in settings.ACCOUNT_TYPES})
-        return '<tracker-logs project-id="project.id"></tracker>'
+        statuses = json.dumps(dict(Log.STATUS_CHOICES))
+        print statuses
+        return '<tracker-logs project-id="project.id" statuses=\'%s\'></tracker>'%statuses
     @staticmethod
     def get_header_template(obj):
         return 'Time Tracker'

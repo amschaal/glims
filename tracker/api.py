@@ -10,7 +10,8 @@ class LogViewSet(viewsets.ModelViewSet):
 #     permission_classes = [CustomPermission]
 #     search_fields = ('name', 'description')
     model = Log
-#     filter_fields = ('project',)
+    filter_fields = {'project':['exact'],'status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
+    ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.all()
     
 #     def get_queryset(self):

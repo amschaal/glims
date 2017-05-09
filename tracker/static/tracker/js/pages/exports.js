@@ -41,6 +41,9 @@ function ExportController($scope, $routeParams,$location, DRFNgTableParams, grow
     $scope.removeLog = function(log){
     	$scope.instance.logs.splice($scope.instance.logs.indexOf(log),1);
     };
+    $scope.getStatuses = function(){
+    	return _.map($scope.statuses,function(key,val){return {id:key,title:val}});
+    };
 };
 
 app.controller('ExportsController', ['$scope','$location','DRFNgTableParams','growl','Export','Log', ExportsController]);
