@@ -30,27 +30,40 @@ app.controller("RouteController", function($scope, $routeParams) {
 
 app.controller('ExportController', ['$scope', '$routeParams','$location','DRFNgTableParams','growl', 'Export', ExportController]);
 function ExportController($scope, $routeParams,$location, DRFNgTableParams, growl,Export) {
+	
 	console.log('export controller')
+	$scope.selection = {logs:[]};
 	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
     $scope.deleteExport = function(){$scope.instance.$remove(function(){$location.path('/');})}
     $scope.saveExport = function(){$scope.instance.$save(function(){growl.success('Saved',{ttl: 3000})})}
     $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{});
+    $scope.containsLog = function(log){
+    	var ids = $scope.instance.logs.map(function(log){return log.id});
+    	return (ids.indexOf(log.id) >=0)
+    }
     $scope.addLog = function(log){
-    	$scope.instance.logs.push(log);
+    	if (!$scope.containsLog(log))
+    		$scope.instance.logs.push(log);
+    	else
+    		growl.error("That log is already in the export",{ttl:3000});
     };
-    $scope.removeLog = function(log){
-    	$scope.instance.logs.splice($scope.instance.logs.indexOf(log),1);
+    $scope.removeLogs = function(){
+    	_.pullAllBy($scope.instance.logs,$scope.selection.logs,'id');
+    	$scope.selection.logs = [];
     };
     $scope.getStatuses = function(){
     	return _.map($scope.statuses,function(key,val){return {id:key,title:val}});
     };
+    $scope.exports = function(){
+		$location.path('/');
+	}
 };
 
 app.controller('ExportsController', ['$scope','$location','DRFNgTableParams','growl','Export','Log', ExportsController]);
 function ExportsController($scope,$location,DRFNgTableParams,growl,Export,Log) {
 	$scope.tableParams = DRFNgTableParams('/tracker/api/exports/',{});
 	$scope.createExport = function(){
-		var log_export = new Export({});
+		var log_export = new Export({logs:[]});
 		log_export.$create(function(){console.log('log_export',log_export);$location.path('/exports/'+log_export.id+'/');});
 	};
 	$scope.edit = function(id){

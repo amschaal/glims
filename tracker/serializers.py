@@ -23,6 +23,6 @@ class LogSerializer(serializers.ModelSerializer):
 
 class ExportSerializer(serializers.ModelSerializer):
     created_by = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
-    logs = ModelRelatedField(model=Log,serializer=LogSerializer,many=True)
+    logs = ModelRelatedField(model=Log,serializer=LogSerializer,many=True,allow_empty=True)
     class Meta:
         model = Export

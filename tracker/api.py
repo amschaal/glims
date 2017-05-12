@@ -11,6 +11,7 @@ class LogViewSet(viewsets.ModelViewSet):
 #     search_fields = ('name', 'description')
     model = Log
     filter_fields = {'project':['exact'],'status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
+    multi_field_filters = {'user_name':['user__last_name__icontains','user__first_name__icontains'],'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.all()
     
