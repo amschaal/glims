@@ -28,9 +28,35 @@ app.controller("RouteController", function($scope, $routeParams) {
     $scope.param = $routeParams.param;
 });
 
-app.controller('ExportController', ['$scope', '$routeParams','$location','DRFNgTableParams','growl', 'Export', ExportController]);
-function ExportController($scope, $routeParams,$location, DRFNgTableParams, growl,Export) {
-	
+app.controller('ExportController', ['$scope', '$routeParams','$location','DRFNgTableParams','growl', 'Export','SelectModalService', ExportController]);
+function ExportController($scope, $routeParams,$location, DRFNgTableParams, growl,Export,SelectModalService) {
+	function selectLogsModal(options){ 
+		  var defaultOptions = {
+				  title: 'Search logs',
+				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" }}),
+				  template: 'tracker/select_modals/logs_modal.html',
+				  return_difference:true
+		  }
+		  angular.extend(defaultOptions,options?options:{});
+		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+	  }
+	$scope.selectLogs = function(){
+		  selectLogsModal({multi:true,initial:$scope.instance.logs}).result.then(
+				  function(logs){
+					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
+					  
+//					  var url = django_js_utils.urls.resolve('add_pool_libraries',{ pk: pool_id });
+//					  var library_ids = libraries.map(function(library){return library.id});
+//					  $http.post(url,{'library_ids':library_ids})
+//						.success(function(){
+//							$scope.libraries = libraries;	
+//							$scope.tableParams.reload();
+//						})
+//						.error(function(){
+//							alert('Failed to add libraries');
+//						});
+				  });
+	  }
 	console.log('export controller')
 	$scope.selection = {logs:[]};
 	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});

@@ -30,7 +30,21 @@
         </div>
 	</div>
 </script>
-
+<script type="text/ng-template" id="tracker/select_modals/logs_modal.html">
+<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+		      <tr ng-repeat="row in $data track by row.id">
+		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
+				<td data-title="'Status'" filter="{status: 'select'}" filter-data='getStatuses'>{[row.status]}</td>
+		        <td data-title="'User'" sortable="'user__last_name'" filter="{user_name: 'text'}">{[row.user.first_name]} {[row.user.last_name]}</a></td>
+				<td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
+		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[row.category.name]}</td>
+				<td data-title="'Project'" sortable="'project__name'" filter="{project__name__icontains: 'text'}">{[row.project.name]}</td>
+				<td data-title="'Lab'" filter="{lab_name: 'text'}" sortable="'project__lab__last_name'">{[row.project.lab]}</td>
+				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
+		    	<td modal-select-actions></td>  
+			</tr>
+</table>
+</script>
 <script type="text/ng-template" id="export.html">
 	<div class="col-lg-12" ng-init='statuses={{statuses|safe}}'>
       	<div class="widget">
@@ -46,6 +60,8 @@
 				<tr><th>Created by</th><td>{[instance.created_by.first_name]} {[instance.created_by.last_name]}</td></tr>
 				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
 			</table>
+
+<!--
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="log in $data track by log.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[log.modified|date]}</td>
@@ -59,7 +75,8 @@
 				<td><button class="btn btn-success" ng-click="addLog(log)" ng-if="!containsLog(log)">Add</button></td>
 		      </tr>
 		    </table>
-			<h2>Logs</h2>
+-->
+			<h2>Logs <button ng-click="selectLogs()" class="btn btn-success btn-sm pull-right">Add</button></h2>
 			<table ng-if="instance.logs.length > 0" class="table table-bordered table-striped table-condensed">
 			  <tr><td></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
 		      <tr ng-repeat="log in instance.logs track by log.id">

@@ -20,7 +20,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	    		    	  return template;
 	    		      },
 	    		      options: function(){
-	    		    	  return {title:options.title,multi:options.multi,id:options.id?options.id:'id'}
+	    		    	  return {title:options.title,multi:options.multi,id:options.id?options.id:'id',return_difference:options.return_difference}
 	    		      }
 	    	      }
 			    });
@@ -62,7 +62,13 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	  
 })
 .controller('selectModalController', function ($scope, $uibModalInstance,initial,tableParams,template,options) {
-	  $scope.value = angular.copy(initial);
+	  
+	  if (options.return_difference){
+		  $scope.previously_selected = angular.copy(initial);
+		  $scope.value = [];
+	  }
+	  else
+		  $scope.value = angular.copy(initial);
 	  $scope.tableParams = tableParams;
 	  $scope.template = template;
 	  $scope.options = options;
@@ -93,14 +99,19 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 			  }
 		  }
 	  }
+	  $scope.isAllowed = function(row){
+		  if(!angular.isArray($scope.previously_selected))
+			  return true;
+		  var filter = {};
+		  filter[options.id] = row[options.id];
+		  return !_.find($scope.previously_selected, filter);
+	  }
 	  $scope.isSelected = function(row){
 		  if(!angular.isArray($scope.value))
 			  return false;
-		  for(var i in $scope.value){
-			  if ($scope.value[i][options.id] == row[options.id])
-				  return true;
-		  }
-		  return false;
+		  var filter = {};
+		  filter[options.id] = row[options.id];
+		  return _.find($scope.value, filter);
 	  }
 	  
 	}
@@ -123,7 +134,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 )
 .directive('modalSelectActions', function() {  
   return {  
-    template: '<a class="btn btn-xs btn-success" ng-click="select(row)" ng-if="!options.multi">Select</a><a class="btn btn-xs btn-success" ng-hide="isSelected(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)" ng-click="remove(row)" ng-if="options.multi">Remove</a>',  
+    template: '<a class="btn btn-xs btn-success" ng-click="select(row)" ng-if="!options.multi">Select</a><a class="btn btn-xs btn-success" ng-hide="isSelected(row)||!isAllowed(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)&&isAllowed(row)" ng-click="remove(row)" ng-if="options.multi">Remove</a>',  
     restrict: 'AE',  
   }  
 })
