@@ -60,7 +60,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 	'<load-on-select><div ng-init="init()">\
 	<h4 ng-if="!logs.length">There are currently no Logs.</h4>\
 	<table class="table" ng-if="logs.length">\
-	<tr class="no-border-top"><th>User</th><th>Category</th><th>Quantity</th><th>Description</th><th>Status</th><td></td></tr>\
+	<tr class="no-border-top"><th>User</th><th>Category</th><th>Quantity</th><th>Description</th><th>Status</th><th>Exports</th><td></td></tr>\
 	<tr ng-repeat="log in logs">\
 	<td>{[log.user.first_name]} {[log.user.last_name]}</td>\
 	<td ng-if="!log.editing">{[log.category.name]}</span></td>\
@@ -81,6 +81,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 			<select ng-options="key as value for (key,value) in statuses" ng-model="log.status" class="form-control"></select>\
 	</td>\
 	<td ng-if="!log.editing">{[log.status]}</td>\
+	<td><a href="/tracker/exports/#/exports/{[e.id]}/" ng-repeat="e in log.exports" title="{[e.description]}">{[e.created|date]}<span ng-repeat-end ng-if="!$last">, </span></a></td>\
 	<td>\
 		<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog($index)">Delete</button>\
 		<button class="btn btn-xs pull-right" ng-if="!log.editing" ng-click="editLog(log)">Edit</button>\

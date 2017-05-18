@@ -86,7 +86,7 @@
 				<td data-title="'User'" sortable="'user__last_name'" filter="{user__last_name__icontains: 'text'}">{[log.user.first_name]} {[log.user.last_name]}</a></td>
 				<td data-title="'Hours'" sortable="'quantity'">{[log.quantity]}</a></td>
 		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[log.category.name]}</td>
-				<td data-title="'Project'" sortable="'project__name'">{[log.project.name]}</td>
+				<td data-title="'Project'" sortable="'project__name'"><a href="/projects/{[log.project.id]}/">{[log.project.name]}</a></td>
 				<td data-title="'Lab'" sortable="'project__lab__name'">{[log.project.lab]}</td>
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[log.description]}</td>
 		      </tr>

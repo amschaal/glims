@@ -11,10 +11,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('id','name','lab')
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-class LogSerializer(serializers.ModelSerializer):
+
+class ExportLogSerializer(serializers.ModelSerializer):
     user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
     category = ModelRelatedField(model=Category,serializer=CategorySerializer)
     project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
@@ -23,6 +25,20 @@ class LogSerializer(serializers.ModelSerializer):
 
 class ExportSerializer(serializers.ModelSerializer):
     created_by = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
-    logs = ModelRelatedField(model=Log,serializer=LogSerializer,many=True,allow_empty=True)
+    logs = ModelRelatedField(model=Log,serializer=ExportLogSerializer,many=True,allow_empty=True)
     class Meta:
         model = Export
+
+class LogExportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Export
+
+class LogSerializer(serializers.ModelSerializer):
+    user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
+    category = ModelRelatedField(model=Category,serializer=CategorySerializer)
+    project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
+    exports = LogExportSerializer(many=True,read_only=True)
+    class Meta:
+        model = Log
+
+

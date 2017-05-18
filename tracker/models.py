@@ -32,5 +32,5 @@ class Export(models.Model):
     modified = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,default=STATUS_NEW)
     description = models.TextField(null=True,blank=True)
-    logs = models.ManyToManyField(Log,null=True,blank=True)
+    logs = models.ManyToManyField(Log,null=True,blank=True,related_name='exports')
     
