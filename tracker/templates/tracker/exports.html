@@ -31,17 +31,18 @@
 	</div>
 </script>
 <script type="text/ng-template" id="tracker/select_modals/logs_modal.html">
+Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="addAll()">Add all</button>
 <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
-				<td data-title="'Status'" filter="{status: 'select'}" filter-data='getStatuses'>{[row.status]}</td>
+				<td data-title="'Status'" filter="{status: 'select'}" filter-data='context.statuses'>{[row.status]}</td>
 		        <td data-title="'User'" sortable="'user__last_name'" filter="{user_name: 'text'}">{[row.user.first_name]} {[row.user.last_name]}</a></td>
 				<td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
 		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[row.category.name]}</td>
 				<td data-title="'Project'" sortable="'project__name'" filter="{project__name__icontains: 'text'}">{[row.project.name]}</td>
 				<td data-title="'Lab'" filter="{lab_name: 'text'}" sortable="'project__lab__last_name'">{[row.project.lab]}</td>
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
-		    	<td modal-select-actions></td>  
+				<td><a class="btn btn-xs btn-success" ng-hide="isSelected(row)||!isAllowed(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)&&isAllowed(row)" ng-click="remove(row)" ng-disabled="">Remove</a><a class="btn btn-xs btn-danger" ng-show="!isAllowed(row)" disabled>Remove</a></td>  
 			</tr>
 </table>
 </script>
@@ -76,7 +77,7 @@
 		      </tr>
 		    </table>
 -->
-			<h2>Logs <button ng-click="selectLogs()" class="btn btn-success btn-sm pull-right">Add</button></h2>
+			<h2>Logs <span class="pull-right"><button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> <button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button></span></h2>
 			<table ng-if="instance.logs.length > 0" class="table table-bordered table-striped table-condensed">
 			  <tr><td></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
 		      <tr ng-repeat="log in instance.logs track by log.id">
@@ -91,7 +92,8 @@
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[log.description]}</td>
 		      </tr>
 		    </table>
-			<button class="btn btn-danger" ng-click="removeLogs()">Remove</button>
+				<p><label>Totals- </label><br><span ng-repeat="(label,val) in grouped_sums()"><label>{[label]}:</label> {[val]}<br></span></p>
+			
           </div>
         </div>
 	</div>

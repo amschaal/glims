@@ -14,16 +14,17 @@ class Category(models.Model):
     name = models.CharField(max_length=50)
     
 class Log(models.Model):
+    STATUS_NOT_BILLED = 'Not billed'
     STATUS_BILLED = 'Billed'
     STATUS_NOT_BILLABLE = 'Not Billable'
-    STATUS_CHOICES = ((STATUS_BILLED,STATUS_BILLED),(STATUS_NOT_BILLABLE,STATUS_NOT_BILLABLE),)
+    STATUS_CHOICES = ((STATUS_NOT_BILLED,STATUS_NOT_BILLED),(STATUS_BILLED,STATUS_BILLED),(STATUS_NOT_BILLABLE,STATUS_NOT_BILLABLE),)
     user = models.ForeignKey(User)
     quantity = models.FloatField()
     category = models.ForeignKey(Category)
     description = models.TextField(null=True,blank=True)
     modified = models.DateTimeField(auto_now=True)
     project = models.ForeignKey(Project)
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,null=True,blank=True)
+    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default=STATUS_NOT_BILLED)
     
 class Export(models.Model):
     STATUS_NEW = 'New'

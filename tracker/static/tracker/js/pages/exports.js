@@ -33,12 +33,13 @@ function ExportController($scope, $routeParams,$location, DRFNgTableParams, grow
 	function selectLogsModal(options){ 
 		  var defaultOptions = {
 				  title: 'Search logs',
+				  controller: 'selectLogsController',
 				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" }}),
 				  template: 'tracker/select_modals/logs_modal.html',
 				  return_difference:true
 		  }
 		  angular.extend(defaultOptions,options?options:{});
-		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions);
+		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions,{'statuses':$scope.getStatuses()});
 	  }
 	$scope.selectLogs = function(){
 		  selectLogsModal({multi:true,initial:$scope.instance.logs}).result.then(
@@ -83,6 +84,12 @@ function ExportController($scope, $routeParams,$location, DRFNgTableParams, grow
     $scope.exports = function(){
 		$location.path('/');
 	}
+    $scope.grouped_logs = function(){
+    	return _.groupBy($scope.instance.logs, 'status');
+    }
+    $scope.grouped_sums = function(){
+    	return _.mapValues($scope.grouped_logs(),function(logs){return _.sumBy(logs, 'quantity')});
+    }
 };
 
 app.controller('ExportsController', ['$scope','$location','DRFNgTableParams','growl','Export','Log', ExportsController]);
@@ -96,3 +103,77 @@ function ExportsController($scope,$location,DRFNgTableParams,growl,Export,Log) {
 		$location.path('/exports/'+id+'/');
 	}
 }
+
+app.controller('selectLogsController', function ($scope,$http, $uibModalInstance,initial,tableParams,template,options,context) {
+	  $scope.context = context;
+	  if (options.return_difference){
+		  $scope.previously_selected = angular.copy(initial);
+		  $scope.value = [];
+	  }
+	  else
+		  $scope.value = angular.copy(initial);
+	  $scope.tableParams = tableParams;
+	  $scope.template = template;
+	  $scope.options = options;
+	  $scope.select = function(row){
+		  $uibModalInstance.close(row);
+	  }
+	  $scope.addAll = function(){
+		  console.log('adding', $scope.tableParams.total());
+				var params = $scope.tableParams;
+		  		var url_params = params.url();
+				var query_params = {page:url_params.page,page_size:url_params.count,ordering:params.orderBy().join(',').replace('+','')};
+				angular.extend(query_params, params.filter());
+				// ajax request to api
+				return $http.get('/tracker/api/logs/',{params:query_params}).then(function(response){
+					params.total(response.data.count);
+					console.log(response.data.results);
+					$scope.value = _.differenceBy(_.unionBy(response.data.results,$scope.value,'id'),$scope.previously_selected,'id');
+/*					if (resource)
+						return response.data.results.map(function(obj){return new resource(obj);});
+					else
+						return response.data.results;
+						*/
+				});
+	  }
+	  $scope.save = function(){
+		  $uibModalInstance.close($scope.value);
+	  }
+	  $scope.cancel = function(){
+		  $uibModalInstance.dismiss();
+	  }
+	  $scope.add = function(row){
+		  if(!angular.isArray($scope.value))
+			  $scope.value = [row];
+		  else
+			  $scope.value.push(row);
+	  }
+	  $scope.remove = function(row){
+		  if(!angular.isArray($scope.value))
+			  $scope.value=null;
+		  else{
+			  for(var i in $scope.value){
+				  if ($scope.value[i][options.id] == row[options.id]){
+					  $scope.value.splice(i,1);
+					  return;
+				  }
+			  }
+		  }
+	  }
+	  $scope.isAllowed = function(row){
+		  if(!angular.isArray($scope.previously_selected))
+			  return true;
+		  var filter = {};
+		  filter[options.id] = row[options.id];
+		  return !_.find($scope.previously_selected, filter);
+	  }
+	  $scope.isSelected = function(row){
+		  if(!angular.isArray($scope.value))
+			  return false;
+		  var filter = {};
+		  filter[options.id] = row[options.id];
+		  return _.find($scope.value, filter);
+	  }
+	  
+	}
+)

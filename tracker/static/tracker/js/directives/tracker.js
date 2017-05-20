@@ -90,7 +90,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 	</tr>\
 	</table>\
 	<label>Totals:</label> {[total()]}\
-	<br><button ng-click="newLog()" class="btn btn-success">New Log</button>\
+	<br><button ng-click="newLog()" class="btn btn-success">New</button>\
 	</div></load-on-select>'
 	);
 }]);
