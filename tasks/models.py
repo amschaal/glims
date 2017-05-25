@@ -14,7 +14,7 @@ class Task(models.Model):
     STATUS_OPTIONS = ((STATUS_WAITING,'Waiting'),(STATUS_ACTIVE,'Active'),(STATUS_DONE,'Done'))
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     project = models.ForeignKey(Project)
-    dependencies = models.ManyToManyField('self',symmetrical=False,related_name='dependents',null=True,blank=True)
+    dependencies = models.ManyToManyField('self',symmetrical=False,related_name='dependents')
     name = models.CharField(max_length=50)
     content = models.TextField(null=True,blank=True)
     start = models.DateTimeField(null=True,blank=True)

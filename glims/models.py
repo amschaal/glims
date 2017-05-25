@@ -211,7 +211,7 @@ class Pool(ExtensibleModel):
     group = models.ForeignKey(Group,on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True,db_index=True)
     created = models.DateField(auto_now=True,db_index=True)
-    libraries = models.ManyToManyField(Library,related_name='pools',null=True,blank=True)
+    libraries = models.ManyToManyField(Library,related_name='pools')
     library_data = JSONField(null=True,blank=True,default={})
     def __unicode__(self):
         return self.name

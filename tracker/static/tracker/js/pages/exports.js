@@ -28,13 +28,13 @@ app.controller("RouteController", function($scope, $routeParams) {
     $scope.param = $routeParams.param;
 });
 
-app.controller('ExportController', ['$scope', '$routeParams','$location','DRFNgTableParams','growl', 'Export','SelectModalService', ExportController]);
-function ExportController($scope, $routeParams,$location, DRFNgTableParams, growl,Export,SelectModalService) {
+app.controller('ExportController', ['$scope','$http', '$routeParams','$location','DRFNgTableParams','growl', 'Export','SelectModalService', ExportController]);
+function ExportController($scope, $http, $routeParams,$location, DRFNgTableParams, growl,Export,SelectModalService) {
 	function selectLogsModal(options){ 
 		  var defaultOptions = {
 				  title: 'Search logs',
 				  controller: 'selectLogsController',
-				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" }}),
+				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" },filter: { exclude_export: $routeParams.id }}),
 				  template: 'tracker/select_modals/logs_modal.html',
 				  return_difference:true
 		  }
@@ -44,8 +44,17 @@ function ExportController($scope, $routeParams,$location, DRFNgTableParams, grow
 	$scope.selectLogs = function(){
 		  selectLogsModal({multi:true,initial:$scope.instance.logs}).result.then(
 				  function(logs){
-					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
-					  
+//					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
+					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
+					  var log_ids = logs.map(function(log){return log.id});
+					  $http.post(url,{'log_ids':log_ids})
+						.success(function(){
+							$scope.instance.logs = $scope.instance.logs.concat(logs);
+//							$scope.tableParams.reload();
+						})
+						.error(function(){
+							growl.error('Failed to add libraries',{ttl:3000});
+						});
 //					  var url = django_js_utils.urls.resolve('add_pool_libraries',{ pk: pool_id });
 //					  var library_ids = libraries.map(function(library){return library.id});
 //					  $http.post(url,{'library_ids':library_ids})
@@ -136,6 +145,7 @@ app.controller('selectLogsController', function ($scope,$http, $uibModalInstance
 						*/
 				});
 	  }
+	  $scope.removeAll = function(){ $scope.value=[];}
 	  $scope.save = function(){
 		  $uibModalInstance.close($scope.value);
 	  }

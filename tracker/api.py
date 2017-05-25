@@ -1,16 +1,30 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 # from models import 
 from models import Log, Category, Export
 from serializers import LogSerializer
 from tracker.serializers import CategorySerializer, ExportSerializer
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
+
+class ExcludeExportFilter(filters.BaseFilterBackend):
+    """
+    Filter that only allows users to see their own objects.
+    """
+    def filter_queryset(self, request, queryset, view):
+        export_id = view.request.query_params.get('exclude_export',None)
+        if not export_id:
+            return queryset
+        return queryset.exclude(exports__id__in=[export_id])
 
 class LogViewSet(viewsets.ModelViewSet):
     serializer_class = LogSerializer
+    filter_backends = viewsets.ModelViewSet.filter_backends + [ExcludeExportFilter]
 #     permission_classes = [CustomPermission]
 #     search_fields = ('name', 'description')
     model = Log
-    filter_fields = {'project':['exact'],'status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
+    filter_fields = {'exports__id':['exact'],'project':['exact'],'status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
     multi_field_filters = {'user_name':['user__last_name__icontains','user__first_name__icontains'],'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.all()
@@ -36,3 +50,11 @@ class ExportViewSet(viewsets.ModelViewSet):
         instance = self.get_object() #get object over again from updated database
         serializer = self.get_serializer(instance) #serialize object
         return Response(serializer.data)
+    
+@api_view(['POST'])
+def add_export_logs(request,pk):
+    log_ids = request.data.get('log_ids',[])
+    export = Export.objects.get(pk=pk)
+    for l in Log.objects.filter(id__in=log_ids):
+        export.logs.add(l)
+    return Response({'status':'ok'})

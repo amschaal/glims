@@ -5,17 +5,18 @@ admin.autodiscover()
 urlpatterns = patterns('',)
 
 from rest_framework import routers
-from api import LogViewSet, CategoryViewSet, ExportViewSet
+import api
 import views
 
 router = routers.DefaultRouter()
-router.register(r'logs', LogViewSet,'Log')
-router.register(r'categories', CategoryViewSet,'Category')
-router.register(r'exports', ExportViewSet,'Export')
+router.register(r'logs', api.LogViewSet,'Log')
+router.register(r'categories', api.CategoryViewSet,'Category')
+router.register(r'exports', api.ExportViewSet,'Export')
 
 
 urlpatterns = patterns('',
     url(r'^api/', include(router.urls)),
     url(r'^exports/$', views.exports, name='exports'),
+    url(r'^api/exports/(?P<pk>\d+)/add_libraries/$', api.add_export_logs, name='add_export_logs'),
 )
 

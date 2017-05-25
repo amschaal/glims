@@ -15,6 +15,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
+        fields = '__all__'
 
 class ExportLogSerializer(serializers.ModelSerializer):
     user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
@@ -22,23 +23,27 @@ class ExportLogSerializer(serializers.ModelSerializer):
     project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
     class Meta:
         model = Log
+        fields = '__all__'
 
 class ExportSerializer(serializers.ModelSerializer):
     created_by = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
     logs = ModelRelatedField(model=Log,serializer=ExportLogSerializer,many=True,allow_empty=True)
     class Meta:
         model = Export
+        fields = '__all__'
 
 class LogExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Export
+        fields = '__all__'
 
 class LogSerializer(serializers.ModelSerializer):
-    user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
-    category = ModelRelatedField(model=Category,serializer=CategorySerializer)
-    project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
-    exports = LogExportSerializer(many=True,read_only=True)
+#     user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
+#     category = ModelRelatedField(model=Category,serializer=CategorySerializer)
+#     project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
+#     exports = LogExportSerializer(many=True,read_only=True)
     class Meta:
         model = Log
+        fields = '__all__'
 
 

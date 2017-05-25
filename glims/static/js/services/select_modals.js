@@ -7,7 +7,7 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 		 selectLibraries: selectLibraries,
 		 selectFiles: selectFiles
 	 };
-	 function openSelectModal (template,tableParams,options) { 
+	 function openSelectModal (template,tableParams,options,context) { 
 		 console.log('openSelectModal',template,tableParams,options)	;
 		    var modalInstance = $uibModal.open({
 			      templateUrl: 'glims/select_modals/select_modal.html',
@@ -21,7 +21,8 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	    		      },
 	    		      options: function(){
 	    		    	  return {title:options.title,multi:options.multi,id:options.id?options.id:'id',return_difference:options.return_difference}
-	    		      }
+	    		      },
+	    		      context: function(){return context;}
 	    	      }
 			    });
 			    return modalInstance;
@@ -61,8 +62,8 @@ angular.module('selectModals',['ui.bootstrap', 'ngTable','utility.directives'])
 	  }
 	  
 })
-.controller('selectModalController', function ($scope, $uibModalInstance,initial,tableParams,template,options) {
-	  
+.controller('selectModalController', function ($scope, $uibModalInstance,initial,tableParams,template,options,context) {
+	  $scope.context = context;
 	  if (options.return_difference){
 		  $scope.previously_selected = angular.copy(initial);
 		  $scope.value = [];

@@ -31,7 +31,7 @@
 	</div>
 </script>
 <script type="text/ng-template" id="tracker/select_modals/logs_modal.html">
-Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="addAll()">Add all</button>
+Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="addAll()" class="btn btn-xs btn-success">Add all</button> <button ng-click="removeAll()" class="btn btn-xs btn-danger">Remove all</button>
 <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
