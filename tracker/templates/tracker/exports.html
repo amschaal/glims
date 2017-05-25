@@ -53,15 +53,15 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
             <button ng-click="exports()" class="btn btn-sm button-default">Back</button> Export
           </div>
           <div class="widget-body">
-			<div class="pull-right"><button ng-click="saveExport()" class="btn btn-sm btn-success">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger">Delete</button></div>
-			<table class="table table-condensed">
+			
+			<table class="table table-condensed borderless">
 				<tr><th>Status</th><td>{[instance.status]}</td></tr>
 				<tr><th>Created</th><td>{[instance.created|date]}</td></tr>
 				<tr><th>Modified</th><td>{[instance.modified|date]}</td></tr>
 				<tr><th>Created by</th><td>{[instance.created_by.first_name]} {[instance.created_by.last_name]}</td></tr>
 				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
 			</table>
-
+<div class="pull-right"><button ng-click="saveExport()" class="btn btn-sm btn-success">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger">Delete</button></div>
 <!--
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="log in $data track by log.id">
@@ -77,7 +77,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
 		      </tr>
 		    </table>
 -->
-			<h2>Logs <span class="pull-right"><button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> <button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button></span></h2>
+			<h2>Logs</h2>
 			<table ng-if="instance.logs.length > 0" class="table table-bordered table-striped table-condensed">
 			  <tr><td></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
 		      <tr ng-repeat="log in instance.logs track by log.id">
@@ -92,6 +92,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[log.description]}</td>
 		      </tr>
 		    </table>
+			<span class="pull-right"><button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> <button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button></span>
 				<p><label>Totals- </label><br><span ng-repeat="(label,val) in grouped_sums()"><label>{[label]}:</label> {[val]}<br></span></p>
 			
           </div>

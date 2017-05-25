@@ -45,16 +45,22 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
 		  selectLogsModal({multi:true,initial:$scope.instance.logs}).result.then(
 				  function(logs){
 //					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
-					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
-					  var log_ids = logs.map(function(log){return log.id});
-					  $http.post(url,{'log_ids':log_ids})
-						.success(function(){
-							$scope.instance.logs = $scope.instance.logs.concat(logs);
-//							$scope.tableParams.reload();
-						})
-						.error(function(){
-							growl.error('Failed to add libraries',{ttl:3000});
-						});
+//					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
+					  var ids = logs.map(function(log){return log.id});
+					  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
+						  $scope.instance.logs = $scope.instance.logs.concat(logs);
+				    	},function(response){
+				    		growl.error('Unable to add logs',{ttl:3000});
+				    	})
+					  
+//					  $http.post(url,{'log_ids':log_ids})
+//						.success(function(){
+//							$scope.instance.logs = $scope.instance.logs.concat(logs);
+////							$scope.tableParams.reload();
+//						})
+//						.error(function(){
+//							growl.error('Failed to add libraries',{ttl:3000});
+//						});
 //					  var url = django_js_utils.urls.resolve('add_pool_libraries',{ pk: pool_id });
 //					  var library_ids = libraries.map(function(library){return library.id});
 //					  $http.post(url,{'library_ids':library_ids})
@@ -70,7 +76,7 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
 	console.log('export controller')
 	$scope.selection = {logs:[]};
 	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
-    $scope.deleteExport = function(){$scope.instance.$remove(function(){$location.path('/');})}
+    $scope.deleteExport = function(){if(!confirm('Are you sure you want to delete this export?'))return;$scope.instance.$remove(function(){$location.path('/');})}
     $scope.saveExport = function(){$scope.instance.$save(function(){growl.success('Saved',{ttl: 3000})})}
     $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{});
     $scope.containsLog = function(log){
@@ -84,8 +90,14 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
     		growl.error("That log is already in the export",{ttl:3000});
     };
     $scope.removeLogs = function(){
-    	_.pullAllBy($scope.instance.logs,$scope.selection.logs,'id');
-    	$scope.selection.logs = [];
+    	var ids = $scope.selection.logs.map(function(log){return log.id});
+    	Export.remove_logs({id:$scope.instance.id},{log_ids:ids},function(response){
+    		_.pullAllBy($scope.instance.logs,$scope.selection.logs,'id');
+        	$scope.selection.logs = [];
+    	},function(response){
+    		growl.error('Unable to remove logs',{ttl:3000});
+    	})
+    	
     };
     $scope.getStatuses = function(){
     	return _.map($scope.statuses,function(key,val){return {id:key,title:val}});

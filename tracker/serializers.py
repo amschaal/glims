@@ -38,10 +38,10 @@ class LogExportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class LogSerializer(serializers.ModelSerializer):
-#     user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
-#     category = ModelRelatedField(model=Category,serializer=CategorySerializer)
-#     project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
-#     exports = LogExportSerializer(many=True,read_only=True)
+    user = ModelRelatedField(model=User,serializer=UserSerializer,default=CurrentUserDefault())#serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),default=CurrentUserDefault())
+    category = ModelRelatedField(model=Category,serializer=CategorySerializer)
+    project = ModelRelatedField(model=Project,serializer=ProjectSerializer)
+    exports = LogExportSerializer(many=True,read_only=True)
     class Meta:
         model = Log
         fields = '__all__'

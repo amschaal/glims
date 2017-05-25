@@ -34,7 +34,9 @@ angular.module('tracker-plugin',['ngResource'])
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
     create : { method : 'POST' },
-    remove : { method : 'DELETE' }
+    remove : { method : 'DELETE' },
+    remove_logs : {url:'/tracker/api/exports/:id/remove_logs/',method:'POST'},
+    add_logs : {url:'/tracker/api/exports/:id/add_logs/',method:'POST'}
   });
 }]);
 

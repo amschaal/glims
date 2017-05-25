@@ -4,7 +4,7 @@ from models import Log, Category, Export
 from serializers import LogSerializer
 from tracker.serializers import CategorySerializer, ExportSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, detail_route
 
 
 
@@ -50,6 +50,20 @@ class ExportViewSet(viewsets.ModelViewSet):
         instance = self.get_object() #get object over again from updated database
         serializer = self.get_serializer(instance) #serialize object
         return Response(serializer.data)
+    @detail_route(methods=['post'])
+    def remove_logs(self,request,pk):
+        export = self.get_object()
+        log_ids = request.data.get('log_ids',[])
+        for l in Log.objects.filter(id__in=log_ids):
+            export.logs.remove(l)
+        return Response({'status':'ok'})
+    @detail_route(methods=['post'])
+    def add_logs(self,request,pk):
+        export = self.get_object()
+        log_ids = request.data.get('log_ids',[])
+        for l in Log.objects.filter(id__in=log_ids):
+            export.logs.add(l)
+        return Response({'status':'ok'})
     
 @api_view(['POST'])
 def add_export_logs(request,pk):
