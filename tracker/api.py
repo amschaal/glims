@@ -4,7 +4,7 @@ from models import Log, Category, Export
 from serializers import LogSerializer
 from tracker.serializers import CategorySerializer, ExportSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, detail_route
+from rest_framework.decorators import api_view, detail_route, list_route
 
 
 
@@ -28,6 +28,12 @@ class LogViewSet(viewsets.ModelViewSet):
     multi_field_filters = {'user_name':['user__last_name__icontains','user__first_name__icontains'],'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.all()
+    @list_route(methods=['post'])
+    def set_statuses(self,request):
+        status = request.data.get('status')
+        log_ids = request.data.get('log_ids',[])
+        Log.objects.filter(id__in=log_ids).update(status=status)
+        return Response({'status':'ok'})
     
 #     def get_queryset(self):
 #         return File.objects.all()

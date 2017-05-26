@@ -28,8 +28,8 @@ app.controller("RouteController", function($scope, $routeParams) {
     $scope.param = $routeParams.param;
 });
 
-app.controller('ExportController', ['$scope','$http', '$routeParams','$location','DRFNgTableParams','growl', 'Export','SelectModalService', ExportController]);
-function ExportController($scope, $http, $routeParams,$location, DRFNgTableParams, growl,Export,SelectModalService) {
+app.controller('ExportController', ['$scope','$http', '$routeParams','$location','DRFNgTableParams','growl', 'Export','Log','SelectModalService', ExportController]);
+function ExportController($scope, $http, $routeParams,$location, DRFNgTableParams, growl,Export,Log,SelectModalService) {
 	function selectLogsModal(options){ 
 		  var defaultOptions = {
 				  title: 'Search logs',
@@ -90,26 +90,41 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
     		growl.error("That log is already in the export",{ttl:3000});
     };
     $scope.removeLogs = function(){
-    	var ids = $scope.selection.logs.map(function(log){return log.id});
-    	Export.remove_logs({id:$scope.instance.id},{log_ids:ids},function(response){
-    		_.pullAllBy($scope.instance.logs,$scope.selection.logs,'id');
+    	Export.remove_logs({id:$scope.instance.id},{log_ids:$scope.selection.logs},function(response){
+    		_.remove($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
         	$scope.selection.logs = [];
     	},function(response){
     		growl.error('Unable to remove logs',{ttl:3000});
     	})
     	
     };
+    $scope.setStatuses = function(status){
+    	Log.set_statuses({},{log_ids:$scope.selection.logs,status:status},function(response){
+    		_.each(
+    				_.filter($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1}),
+    				function(log){log.status = status}
+			)
+//    		_.remove($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
+//        	$scope.selection.logs = [];
+    	},function(response){
+    		growl.error('Unable to remove logs',{ttl:3000});
+    	})
+    }
     $scope.getStatuses = function(){
     	return _.map($scope.statuses,function(key,val){return {id:key,title:val}});
     };
     $scope.exports = function(){
 		$location.path('/');
 	}
-    $scope.grouped_logs = function(){
-    	return _.groupBy($scope.instance.logs, 'status');
+    $scope.grouped_logs = function(groupBy){
+    	return _.groupBy($scope.instance.logs, groupBy);
     }
-    $scope.grouped_sums = function(){
-    	return _.mapValues($scope.grouped_logs(),function(logs){return _.sumBy(logs, 'quantity')});
+    $scope.grouped_sums = function(groupBy){
+    	return _.mapValues($scope.grouped_logs(groupBy),function(logs){return _.sumBy(logs, 'quantity')});
+    }
+    $scope.toggle_select = function(val){
+    	$scope.selection.logs = val ? $scope.instance.logs.map(function(log){return log.id}) : [];
+    		
     }
 };
 

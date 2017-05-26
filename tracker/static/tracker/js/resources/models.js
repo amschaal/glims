@@ -26,7 +26,8 @@ angular.module('tracker-plugin',['ngResource'])
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true },
     save : { method : 'PUT' },
     create : { method : 'POST' },
-    remove : { method : 'DELETE' }
+    remove : { method : 'DELETE' },
+    set_statuses : {url:'/tracker/api/logs/set_statuses/',method:'POST'}
   });
 }])
 .factory('Export', ['$resource', function ($resource) {

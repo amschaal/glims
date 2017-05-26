@@ -79,9 +79,9 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
 -->
 			<h2>Logs</h2>
 			<table ng-if="instance.logs.length > 0" class="table table-bordered table-striped table-condensed">
-			  <tr><td></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
+			  <tr><td><input type="checkbox" ng-model="select_all" ng-change="toggle_select(select_all)"/></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
 		      <tr ng-repeat="log in instance.logs track by log.id">
-		        <td><input type="checkbox" checklist-model="selection.logs" checklist-value="log"></td>
+		        <td><input type="checkbox" checklist-model="selection.logs" checklist-value="log.id"></td>
 				<td data-title="'Modified'" sortable="'modified'">{[log.modified|date]}</td>
 		        <td data-title="'Status'" sortable="'status'">{[log.status]}</td>
 				<td data-title="'User'" sortable="'user__last_name'" filter="{user__last_name__icontains: 'text'}">{[log.user.first_name]} {[log.user.last_name]}</a></td>
@@ -92,12 +92,22 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[log.description]}</td>
 		      </tr>
 		    </table>
-			<span class="pull-right"><button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> <button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button></span>
-				<p><label>Totals- </label><br><span ng-repeat="(label,val) in grouped_sums()"><label>{[label]}:</label> {[val]}<br></span></p>
-			
+			<span class="pull-right">
+				<div class="btn-group" uib-dropdown is-open="status.isopen">
+      			<button id="single-button" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled">
+			        Set selected statuses <span class="caret"></span>
+			      </button>
+			      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+			        <li ng-repeat="status in statuses"><a ng-click="setStatuses(status)">{[status]}</a></li>
+			      </ul>
+    			</div>
+				<button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> 
+				<button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button>
+			</span>
+				<p><label>Totals by status- </label><br><span ng-repeat="(label,val) in grouped_sums('status')"><label>{[label]}:</label> {[val]}<br></span></p>
+				<p><label>Totals by category- </label><br><span ng-repeat="(label,val) in grouped_sums('category.name')"><label>{[label]}:</label> {[val]}<br></span></p>
           </div>
         </div>
 	</div>
 </script>
-
 {% endblock %}
