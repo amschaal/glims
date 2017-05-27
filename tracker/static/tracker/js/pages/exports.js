@@ -154,8 +154,8 @@ app.controller('selectLogsController', function ($scope,$http, $uibModalInstance
 	  $scope.select = function(row){
 		  $uibModalInstance.close(row);
 	  }
-	  $scope.addAll = function(){
-		  console.log('adding', $scope.tableParams.total());
+	  $scope.selectAll = function(){
+		  console.log('selecting', $scope.tableParams.total());
 				var params = $scope.tableParams;
 		  		var url_params = params.url();
 				var query_params = {page:url_params.page,page_size:url_params.count,ordering:params.orderBy().join(',').replace('+','')};
@@ -210,6 +210,12 @@ app.controller('selectLogsController', function ($scope,$http, $uibModalInstance
 		  var filter = {};
 		  filter[options.id] = row[options.id];
 		  return _.find($scope.value, filter);
+	  }
+	  $scope.grouped_logs = function(groupBy){
+		  return _.groupBy($scope.value, groupBy);
+      }
+	  $scope.grouped_sums = function(groupBy){
+		  return _.mapValues($scope.grouped_logs(groupBy),function(logs){return _.sumBy(logs, 'quantity')});
 	  }
 	  
 	}

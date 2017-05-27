@@ -31,7 +31,7 @@
 	</div>
 </script>
 <script type="text/ng-template" id="tracker/select_modals/logs_modal.html">
-Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="addAll()" class="btn btn-xs btn-success">Add all</button> <button ng-click="removeAll()" class="btn btn-xs btn-danger">Remove all</button>
+Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="selectAll()" class="btn btn-xs btn-success">Select all</button> <button ng-click="removeAll()" class="btn btn-xs btn-danger">Remove all</button>
 <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
@@ -45,6 +45,14 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="add
 				<td><a class="btn btn-xs btn-success" ng-hide="isSelected(row)||!isAllowed(row)" ng-click="add(row)" ng-if="options.multi">Add</a><a class="btn btn-xs btn-danger" ng-show="isSelected(row)&&isAllowed(row)" ng-click="remove(row)" ng-disabled="">Remove</a><a class="btn btn-xs btn-danger" ng-show="!isAllowed(row)" disabled>Remove</a></td>  
 			</tr>
 </table>
+<div class="row" ng-if="value.length > 0">
+<div class="col-sm-6">
+<label>Totals by status- </label><br><span ng-repeat="(label,val) in grouped_sums('status')"><label>{[label]}:</label> {[val]}<br></span>
+</div>
+<div class="col-sm-6">
+<p><label>Totals by category- </label><br><span ng-repeat="(label,val) in grouped_sums('category.name')"><label>{[label]}:</label> {[val]}<br></span>
+</div>
+</div>
 </script>
 <script type="text/ng-template" id="export.html">
 	<div class="col-lg-12" ng-init='statuses={{statuses|safe}}'>
