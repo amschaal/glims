@@ -52,6 +52,7 @@ class StatusSerializer(serializers.ModelSerializer):
 #     name = serializers.CharField(source="status.name")
     class Meta:
         model = Status
+        fields = '__all__'
 #         fields = ('id','name','order')
          
 class LabSerializer(serializers.ModelSerializer):
@@ -60,6 +61,7 @@ class LabSerializer(serializers.ModelSerializer):
         return lab.name
     class Meta:
         model = Lab
+        fields = '__all__'
 
 class BasicProjectSerializer(serializers.ModelSerializer):
     lab__name = serializers.CharField(source='lab.name',read_only=True)
@@ -97,6 +99,7 @@ class SampleSerializer(ExtensibleSerializer):
     class Meta:
         model = Sample
         read_only_fields = ('sample_id',)
+        fields = '__all__'
 #         extra_kwargs = {'created': {'required': 'False'},'received':{'required':'False'}}
 
 class FlatSampleSerializer(ExtensibleSerializer):
@@ -107,6 +110,7 @@ class FlatSampleSerializer(ExtensibleSerializer):
 class AdapterSerializer(ExtensibleSerializer):
     class Meta:
         model = Adapter
+        fields = '__all__'
         
 class FlatAdapterSerializer(ExtensibleSerializer):
     class Meta:
@@ -124,12 +128,14 @@ class LibrarySerializer(ExtensibleSerializer):
     pools = FlatPoolSerializer(many=True,read_only=True)
     class Meta:
         model = Library
+        fields = '__all__'
 
 class FlatLibrarySerializer(ExtensibleSerializer):
 #     sample = ModelRelatedField(model=Sample,serializer=FlatSampleSerializer)
     adapter = FlatAdapterSerializer(read_only=True)
     class Meta:
         model = Library
+        fields = '__all__'
 
 class PoolSerializer(ExtensibleSerializer):
     library_data = DictField(default={},required=False)
@@ -147,6 +153,7 @@ class PoolSerializer(ExtensibleSerializer):
 #         return obj.get_barcode_duplicates() 
     class Meta:
         model = Pool
+        fields = '__all__'
 
 class JobSerializer(serializers.ModelSerializer):
     data = JSONField()

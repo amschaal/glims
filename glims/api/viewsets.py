@@ -109,7 +109,7 @@ class SampleViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
-    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains'],'data':['contains'],'project__lab':['exact']}
+    filter_fields = {'sample_id':['exact', 'icontains'],'name':['exact', 'icontains'], 'project__name':['exact', 'icontains'],'project':['exact'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains'],'project__lab':['exact']}
     multi_field_filters = {'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('id','sample_id','name', 'description','project__name','received','created','type__name')
     search_fields = ('name', 'description','project__name')
@@ -150,31 +150,11 @@ class SampleViewSet(ExtensibleViewset,FileManagerMixin):
 
         return obj
     def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
         queryset = Sample.objects.select_related('type','project').all()
         pool = self.request.query_params.get('pool', None)
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
         return queryset
-    #Make this a mixin
-    #/api/samples/191/upload_file/
-    #curl -X POST -H "Content-Type:multipart/form-data" -H 'Authorization: Token 12345' -F "file=@{filename};" -F "subdir=subdir_name" http://localhost/api/samples/191/upload_file/
-#     @detail_route(methods=['post'])
-#     def upload_file(self, request, pk=None):
-#         obj = self.get_object()
-#         if not hasattr(obj, 'directory'):
-#             raise Exception('%s does not have a directory property'%str(obj))
-#         form = UploadFileForm(request.POST,request.FILES)
-#         if form.is_valid():
-#             path = os.path.join(FILES_ROOT,obj.directory,'files',form.cleaned_data['subdir'])
-#             handle_uploaded_file(request.FILES['file'],path)
-#             return Response({'status': 'success'})
-#         else:
-#             return Response(form.errors,
-#                             status=status.HTTP_400_BAD_REQUEST)
     
 class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer
@@ -201,7 +181,7 @@ class AdapterViewSet(ExtensibleViewset):
 class LibraryViewSet(ExtensibleViewset):
     serializer_class = LibrarySerializer
     permission_classes = [IsAuthenticated,GroupPermission]
-    filter_fields = {'sample':['exact'],'sample__sample_id':['exact', 'icontains'],'sample__name':['exact', 'icontains'], 'sample__project__name':['exact', 'icontains'],'sample__project':['exact'], 'description':['exact', 'icontains'],'sample__type__name':['exact', 'icontains'],'data':['contains'],'sample__project__lab':['exact']}
+    filter_fields = {'sample':['exact'],'sample__sample_id':['exact', 'icontains'],'sample__name':['exact', 'icontains'], 'sample__project__name':['exact', 'icontains'],'sample__project':['exact'], 'description':['exact', 'icontains'],'sample__type__name':['exact', 'icontains'],'sample__project__lab':['exact']}
 #     multi_field_filters = {'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('id','sample__sample_id','name', 'description','sample__project__name','sample__received','created','type__name','adapter__name')
     model = Library
