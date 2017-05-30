@@ -28,8 +28,8 @@ app.controller("RouteController", function($scope, $routeParams) {
     $scope.param = $routeParams.param;
 });
 
-app.controller('ExportController', ['$scope','$http', '$routeParams','$location','DRFNgTableParams','growl', 'Export','Log','SelectModalService', ExportController]);
-function ExportController($scope, $http, $routeParams,$location, DRFNgTableParams, growl,Export,Log,SelectModalService) {
+app.controller('ExportController', ['$scope','$http', '$routeParams','$location','NgTableParams','DRFNgTableParams','growl', 'Export','Log','SelectModalService', ExportController]);
+function ExportController($scope, $http, $routeParams,$location, NgTableParams, DRFNgTableParams, growl,Export,Log,SelectModalService) {
 	function selectLogsModal(options){ 
 		  var defaultOptions = {
 				  title: 'Search logs',
@@ -42,13 +42,16 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
 		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions,{'statuses':$scope.getStatuses()});
 	  }
 	$scope.selectLogs = function(){
-		  selectLogsModal({multi:true,initial:$scope.instance.logs}).result.then(
+		  selectLogsModal({multi:true,initial:$scope.logs}).result.then(
 				  function(logs){
 //					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
 //					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
 					  var ids = logs.map(function(log){return log.id});
 					  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
-						  $scope.instance.logs = $scope.instance.logs.concat(logs);
+						  $scope.logs = $scope.logs.concat(logs);
+//						  $scope.tableParams.reload(); 
+						  console.log('logs',logs,$scope.logs);
+						  $scope.reloadLogs();
 				    	},function(response){
 				    		growl.error('Unable to add logs',{ttl:3000});
 				    	})
@@ -78,30 +81,45 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
 	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
     $scope.deleteExport = function(){if(!confirm('Are you sure you want to delete this export?'))return;$scope.instance.$remove(function(){$location.path('/');})}
     $scope.saveExport = function(){$scope.instance.$save(function(){growl.success('Saved',{ttl: 3000})})}
-    $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{});
+    $scope.reloadLogs = function(){
+    	$scope.tableParams.settings({
+            dataset: $scope.logs
+          });
+    };
+    $scope.loadLogs = function(){
+    	$scope.logs = Log.query({exports__id:$routeParams.id,page_size:10000},function(response){
+    		console.log('logs',response,$scope.logs);
+    		$scope.tableParams = new NgTableParams({}, {
+    		      dataset: $scope.logs
+    		    });
+    	})
+    }
+    $scope.loadLogs();
+//    $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{filter:{exports__id:$routeParams.id}});
     $scope.containsLog = function(log){
-    	var ids = $scope.instance.logs.map(function(log){return log.id});
+    	var ids = $scope.logs.map(function(log){return log.id});
     	return (ids.indexOf(log.id) >=0)
     }
     $scope.addLog = function(log){
     	if (!$scope.containsLog(log))
-    		$scope.instance.logs.push(log);
+    		$scope.logs.push(log);
     	else
     		growl.error("That log is already in the export",{ttl:3000});
     };
     $scope.removeLogs = function(){
     	Export.remove_logs({id:$scope.instance.id},{log_ids:$scope.selection.logs},function(response){
-    		_.remove($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
+    		_.remove($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
         	$scope.selection.logs = [];
+        	$scope.tableParams.reload();
+//        	$scope.reloadLogs();
     	},function(response){
     		growl.error('Unable to remove logs',{ttl:3000});
     	})
-    	
     };
     $scope.setStatuses = function(status){
     	Log.set_statuses({},{log_ids:$scope.selection.logs,status:status},function(response){
     		_.each(
-    				_.filter($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1}),
+    				_.filter($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1}),
     				function(log){log.status = status}
 			)
 //    		_.remove($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
@@ -117,13 +135,13 @@ function ExportController($scope, $http, $routeParams,$location, DRFNgTableParam
 		$location.path('/');
 	}
     $scope.grouped_logs = function(groupBy){
-    	return _.groupBy($scope.instance.logs, groupBy);
+    	return _.groupBy($scope.logs, groupBy);
     }
     $scope.grouped_sums = function(groupBy){
     	return _.mapValues($scope.grouped_logs(groupBy),function(logs){return _.sumBy(logs, 'quantity')});
     }
     $scope.toggle_select = function(val){
-    	$scope.selection.logs = val ? $scope.instance.logs.map(function(log){return log.id}) : [];
+    	$scope.selection.logs = val ? $scope.logs.map(function(log){return log.id}) : [];
     		
     }
 };
