@@ -17,6 +17,5 @@ router.register(r'exports', api.ExportViewSet,'Export')
 urlpatterns = patterns('',
     url(r'^api/', include(router.urls)),
     url(r'^exports/$', views.exports, name='exports'),
-    url(r'^api/exports/(?P<pk>\d+)/add_libraries/$', api.add_export_logs, name='add_export_logs'),
 )
 

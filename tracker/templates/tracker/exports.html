@@ -36,9 +36,9 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
 				<td data-title="'Status'" filter="{status: 'select'}" filter-data='context.statuses'>{[row.status]}</td>
-		        <td data-title="'User'" sortable="'user__last_name'" filter="{user_name: 'text'}">{[row.user.first_name]} {[row.user.last_name]}</a></td>
 				<td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
 		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[row.category.name]}</td>
+				<td data-title="'User'" sortable="'user__last_name'" filter="{user_name: 'text'}">{[row.user.first_name]} {[row.user.last_name]}</a></td>
 				<td data-title="'Project'" sortable="'project__name'" filter="{project__name__icontains: 'text'}">{[row.project.name]}</td>
 				<td data-title="'Lab'" filter="{lab_name: 'text'}" sortable="'project__lab__last_name'">{[row.project.lab]}</td>
 				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
@@ -55,16 +55,15 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 </div>
 </script>
 <script type="text/ng-template" id="headerCheckbox.html">
-    <input type="checkbox" ng-model="select_all" ng-change="toggle_select(select_all)"/>
+    <input title="Select/Deselect All" type="checkbox" ng-model="select_all" ng-change="toggle_select(select_all)"/>
   </script>
 <script type="text/ng-template" id="export.html">
-	<div class="col-lg-12" ng-init='statuses={{statuses|safe}}'>
+	<div class="col-lg-12" ng-init='init({statuses:{{statuses|safe}}})'>
       	<div class="widget">
           <div class="widget-header">
             <button ng-click="exports()" class="btn btn-sm button-default">Back</button> Export
           </div>
           <div class="widget-body">
-			
 			<table class="table table-condensed borderless">
 				<tr><th>Status</th><td>{[instance.status]}</td></tr>
 				<tr><th>Created</th><td>{[instance.created|date]}</td></tr>
@@ -73,50 +72,40 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
 			</table>
 <div><button ng-click="saveExport()" class="btn btn-sm btn-success">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger">Delete</button></div>
-			<h2>Logs</h2>
-<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+			<h2>Logs <a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv" class="btn btn-default btn-sm pull-right">Export logs</a></h2><span class="pull-left">{[selection.logs.length]} selected</span>
+			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 				<td header="'headerCheckbox.html'"><input type="checkbox" checklist-model="selection.logs" checklist-value="row.id"></td>
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
-				<td data-title="'Status'" filter="{status: 'select'}" filter-data='context.statuses'>{[row.status]}</td>
-		        <td data-title="'User'" sortable="'user.name'" filter="{'user.name': 'text'}">{[row.user.name]}</a></td>
-				<td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
-		        <td data-title="'Category'" sortable="'category.name'" filter="{'category.name': 'text'}">{[row.category.name]}</td>
-				<td data-title="'Project'" sortable="'project.name'" filter="{'project.name': 'text'}">{[row.project.name]}</td>
+				<td data-title="'Status'" sortable="'status'" filter="{status: 'select'}" filter-data='getStatuses()'>{[row.status]}</td>
+		        <td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
+				<td data-title="'Category'" sortable="'category.name'" filter="{'category.name': 'text'}">{[row.category.name]}</td>				
+				<td data-title="'User'" sortable="'user.name'" filter="{'user.name': 'text'}">{[row.user.name]}</a></td>
+				<td data-title="'Project'" sortable="'project.name'" filter="{'project.name': 'text'}"><a href="{[getURL('project',{pk:row.project.id})]}">{[row.project.name]}</a></td>
 				<td data-title="'Lab'" filter="{'project.lab': 'text'}" sortable="'project.lab'">{[row.project.lab]}</td>
 				<td data-title="'Description'" filter="{description: 'text'}">{[row.description]}</td>
-			</tr>
-</table>
-<!--
-			<table ng-if="instance.logs.length > 0" class="table table-bordered table-striped table-condensed">
-			  <tr><td><input type="checkbox" ng-model="select_all" ng-change="toggle_select(select_all)"/></td><th>Modified</th><th>Status</th><th>User</th><th>Hours</th><th>Category</th><th>Project</th><th>Lab</th><th>Description</th></tr>
-		      <tr ng-repeat="log in instance.logs track by log.id">
-		        <td><input type="checkbox" checklist-model="selection.logs" checklist-value="log.id"></td>
-				<td data-title="'Modified'" sortable="'modified'">{[log.modified|date]}</td>
-		        <td data-title="'Status'" sortable="'status'">{[log.status]}</td>
-				<td data-title="'User'" sortable="'user__last_name'" filter="{user__last_name__icontains: 'text'}">{[log.user.first_name]} {[log.user.last_name]}</a></td>
-				<td data-title="'Hours'" sortable="'quantity'">{[log.quantity]}</a></td>
-		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[log.category.name]}</td>
-				<td data-title="'Project'" sortable="'project__name'"><a href="/projects/{[log.project.id]}/">{[log.project.name]}</a></td>
-				<td data-title="'Lab'" sortable="'project__lab__name'">{[log.project.lab]}</td>
-				<td data-title="'Description'" filter="{description__icontains: 'text'}">{[log.description]}</td>
-		      </tr>
-		    </table>
--->
+				</tr>
+			</table>
 			<span>
 				<div class="btn-group" uib-dropdown is-open="status.isopen">
       			<button id="single-button" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled">
 			        Set selected statuses <span class="caret"></span>
 			      </button>
 			      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-			        <li ng-repeat="status in statuses"><a ng-click="setStatuses(status)">{[status]}</a></li>
+			        <li ng-repeat="status in config.statuses"><a ng-click="setStatuses(status)">{[status]}</a></li>
 			      </ul>
     			</div>
 				<button class="btn btn-danger btn-sm" ng-click="removeLogs()">Remove selected</button> 
 				<button ng-click="selectLogs()" class="btn btn-success btn-sm">Add</button>
 			</span>
-				<p><label>Totals by status- </label><br><span ng-repeat="(label,val) in grouped_sums('status')"><label>{[label]}:</label> {[val]}<br></span></p>
-				<p><label>Totals by category- </label><br><span ng-repeat="(label,val) in grouped_sums('category.name')"><label>{[label]}:</label> {[val]}<br></span></p>
+				<div class="row" ng-if="logs.length > 0">
+<div class="col-sm-6">
+<label>Totals by status- </label><br><span ng-repeat="(label,val) in grouped_sums('status')"><label>{[label]}:</label> {[val]}<br></span>
+</div>
+<div class="col-sm-6">
+<p><label>Totals by category- </label><br><span ng-repeat="(label,val) in grouped_sums('category.name')"><label>{[label]}:</label> {[val]}<br></span>
+</div>
+</div>
           </div>
         </div>
 	</div>

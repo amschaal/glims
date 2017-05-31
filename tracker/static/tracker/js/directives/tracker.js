@@ -49,8 +49,6 @@ angular.module("tracker-plugin")
 			$scope.total = function(){
 				return _.sumBy($scope.logs, function(o) { return o.quantity ? parseFloat(o.quantity) : 0; });
 			}
-			
-			
 		}
 	}
 });

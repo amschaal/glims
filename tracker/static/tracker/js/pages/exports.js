@@ -76,7 +76,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 //						});
 				  });
 	  }
-	console.log('export controller')
 	$scope.selection = {logs:[]};
 	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
     $scope.deleteExport = function(){if(!confirm('Are you sure you want to delete this export?'))return;$scope.instance.$remove(function(){$location.path('/');})}
@@ -94,7 +93,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     		    });
     	})
     }
-    $scope.loadLogs();
 //    $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{filter:{exports__id:$routeParams.id}});
     $scope.containsLog = function(log){
     	var ids = $scope.logs.map(function(log){return log.id});
@@ -129,7 +127,7 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     	})
     }
     $scope.getStatuses = function(){
-    	return _.map($scope.statuses,function(key,val){return {id:key,title:val}});
+    	return _.map($scope.config.statuses,function(key,val){return {id:key,title:val}});
     };
     $scope.exports = function(){
 		$location.path('/');
@@ -144,6 +142,12 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     	$scope.selection.logs = val ? $scope.logs.map(function(log){return log.id}) : [];
     		
     }
+    $scope.init = function(config){
+      console.log('init');
+	  $scope.config = config;
+	  $scope.loadLogs();
+//	  $scope.options = options;
+  	}
 };
 
 app.controller('ExportsController', ['$scope','$location','DRFNgTableParams','growl','Export','Log', ExportsController]);
@@ -176,7 +180,7 @@ app.controller('selectLogsController', function ($scope,$http, $uibModalInstance
 		  console.log('selecting', $scope.tableParams.total());
 				var params = $scope.tableParams;
 		  		var url_params = params.url();
-				var query_params = {page:url_params.page,page_size:url_params.count,ordering:params.orderBy().join(',').replace('+','')};
+				var query_params = {page:url_params.page,page_size:10000,ordering:params.orderBy().join(',').replace('+','')};
 				angular.extend(query_params, params.filter());
 				// ajax request to api
 				return $http.get('/tracker/api/logs/',{params:query_params}).then(function(response){
