@@ -28,9 +28,14 @@ angular.module("tracker-plugin")
 				}
 			};
 			$scope.editLog = function(log){
-				//log.editing = true;
 				FormlyModal.create(fields,log,{title:'Edit log'}).result.then(function(new_log){//,by_reference:true
 					angular.copy(new_log, log);
+					$scope.tableParams.reload();
+				});
+			};
+			$scope.createLog = function(log){
+				FormlyModal.create(fields,new Log({project:$scope.projectId}),{title:'Create log'}).result.then(function(new_log){//,by_reference:true
+					$scope.logs.push(new_log);
 					$scope.tableParams.reload();
 				});
 			};
@@ -64,14 +69,22 @@ angular.module("tracker-plugin")
 								    }
 								  },
 								  {
-								    "key": "category",
+								    "key": "category.id",
 								    "type": "select",
 								    "templateOptions": {
-								      "label": "Category",
-								      "options":
-								    	  _.map($scope.categories,function(cat){return {name:cat.name,value:cat.id}})
+								      "label": "Category","options":[]
+								    },
+								    "expressionProperties":{
+								    	'templateOptions.options': function(){return _.map($scope.categories,function(cat){return {name:cat.name,value:cat.id}})}//category_options_deferred.promise//_.map($scope.categories,function(cat){return {name:cat.name,value:cat.id}})
 								    }
-								  }
+								  },
+								  {
+									    "key": "description",
+									    "type": "textarea",
+									    "templateOptions": {
+									      "label": "Description",
+									    }
+								 }
 							];
 			}
 			
@@ -123,7 +136,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 			</tr>\
 			</table>\
 	<label>Totals:</label> {[total()]}\
-	<br><button ng-click="newLog()" class="btn btn-success">New</button>\
+	<br><button ng-click="createLog()" class="btn btn-success">New</button>\
 	</div></load-on-select>'
 	);
 }]);
