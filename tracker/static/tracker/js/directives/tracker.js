@@ -11,8 +11,9 @@ angular.module("tracker-plugin")
 			projectId:'=',
 			statuses:'='
 		},
-		controller: function ($scope,$rootScope,NgTableParams,FormlyModal) {
-			console.log('statuses',$scope.statuses,_.map($scope.statuses,function(key,val){return {name:val,value:key}}));
+		controller: function ($scope,$rootScope,$q,NgTableParams,FormlyModal) {
+			$scope.status_options = _.map($scope.statuses,function(key,val){return {"title":val,"id":key}})
+			var category_options_deferred = $q.defer();
 			var fields = [];
 			$scope.logs = [];
 			$scope.deleteLog = function(index){
@@ -28,10 +29,8 @@ angular.module("tracker-plugin")
 			};
 			$scope.editLog = function(log){
 				//log.editing = true;
-				console.log('log',log);
 				FormlyModal.create(fields,log,{title:'Edit log'}).result.then(function(new_log){//,by_reference:true
-					console.log('log',new_log,log);
-					log = new_log
+					angular.copy(new_log, log);
 					$scope.tableParams.reload();
 				});
 			};
@@ -47,7 +46,6 @@ angular.module("tracker-plugin")
 				$scope.logs.push(log);
 			};
 			function configureFields(){
-				console.log('categories',$scope.categories,_.map($scope.categories,function(key,val){return {name:val,value:key}}));
 				fields = [
 								{
 								    "key": "quantity",
@@ -76,20 +74,26 @@ angular.module("tracker-plugin")
 								  }
 							];
 			}
+			
 			$scope.init = function(){
 				$scope.$watch('projectId',function(projectId,oldValue){
 					if (!projectId)
 						return;
+					$scope.categories = Category.query({project:projectId},function(categories){
+						configureFields();
+						category_options_deferred.resolve(_.map($scope.categories,function(cat){return {"title":cat.name,"id":cat.id}}));
+					});
 					$scope.logs = Log.query({project:projectId,page_size:10000},function(response){
-			    		console.log('logs',response,$scope.logs);
 			    		$scope.tableParams = new NgTableParams({}, {
 			    		      dataset: $scope.logs
 			    		    });
 			    	})
 //					$scope.logs = Log.query({project:projectId},function(){});
-					$scope.categories = Category.query({project:projectId},function(){configureFields();});
 				});
 			};
+			$scope.getCategoryOptions = function(){
+				return category_options_deferred.promise;
+			}
 			$scope.total = function(){
 				return _.sumBy($scope.logs, function(o) { return o.quantity ? parseFloat(o.quantity) : 0; });
 			}
@@ -104,9 +108,9 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
 		      <tr ng-repeat="row in $data track by row.id">\
 		        <td data-title="\'Modified\'" sortable="\'modified\'">{[row.modified|date]}</td>\
-				<td data-title="\'Status\'" sortable="\'status\'" filter="{status: \'select\'}" filter-data=\'getStatuses()\'>{[row.status]}</td>\
+				<td data-title="\'Status\'" sortable="\'status\'" filter="{status: \'select\'}" filter-data=\'status_options\'>{[row.status]}</td>\
 		        <td data-title="\'Hours\'" sortable="\'quantity\'">{[row.quantity]}</a></td>\
-				<td data-title="\'Category\'" sortable="\'category.name\'" filter="{\'category.name\': \'text\'}">{[row.category.name]}</td>\
+				<td data-title="\'Category\'" sortable="\'category.name\'" filter="{\'category.id\': \'select\'}" filter-data=\'getCategoryOptions\'>{[row.category.name]}</td>\
 				<td data-title="\'User\'" sortable="\'user.name\'" filter="{\'user.name\': \'text\'}">{[row.user.name]}</a></td>\
 				<td data-title="\'Project\'" sortable="\'project.name\'" filter="{\'project.name\': \'text\'}"><a href="{[getURL(\'project\',{pk:row.project.id})]}">{[row.project.name]}</a></td>\
 				<td data-title="\'Lab\'" filter="{\'project.lab\': \'text\'}" sortable="\'project.lab\'">{[row.project.lab]}</td>\
