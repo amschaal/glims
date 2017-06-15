@@ -12,7 +12,7 @@
 	<div class="col-lg-12">
       	<div class="widget">
           <div class="widget-header">
-            Exports <a ng-click="createExport()" class="btn btn-success btn-sm pull-right">New</a>
+            Exports <a ng-click="createExport()" class="btn btn-success btn-sm pull-right">Create</a> <a href="#/exports/new/" class="btn btn-success btn-sm pull-right">New</a>
           </div>
           <div class="widget-body">
           	<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
@@ -65,7 +65,22 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
           </div>
           <div class="widget-body">
 			<table class="table table-condensed borderless">
-				<tr><th>Status</th><td>{[instance.status]}</td></tr>
+				<tr><th>Date range</th>
+					<td>
+					<p class="input-group">
+          			<input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="instance.start_date" is-open="start_date_popup.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          				<span class="input-group-btn">
+            				<button type="button" class="btn btn-default" ng-click="start_date_popup.opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
+          				</span>
+        			</p>
+					<p class="input-group">
+          			<input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="instance.end_date" is-open="end_date_popup.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          				<span class="input-group-btn">
+            				<button type="button" class="btn btn-default" ng-click="end_date_popup.opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
+          				</span>
+        			</p>
+					</td>
+				</tr>
 				<tr><th>Created</th><td>{[instance.created|date]}</td></tr>
 				<tr><th>Modified</th><td>{[instance.modified|date]}</td></tr>
 				<tr><th>Created by</th><td>{[instance.created_by.first_name]} {[instance.created_by.last_name]}</td></tr>

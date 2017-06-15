@@ -11,10 +11,10 @@ app.config(['$routeProvider',
                 templateUrl: 'exports.html',
                 controller: 'ExportsController'
             }).
-//            when('/exports/new/', {
-//                templateUrl: 'export.html',
-//                controller: 'RouteController'
-//            }).
+            when('/exports/new/', {
+                templateUrl: 'export.html',
+                controller: 'ExportController'
+            }).
             when('/exports/:id/', {
                 templateUrl: 'export.html',
                 controller: 'ExportController'
@@ -76,8 +76,7 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 //						});
 				  });
 	  }
-	$scope.selection = {logs:[]};
-	$scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
+	
     $scope.deleteExport = function(){if(!confirm('Are you sure you want to delete this export?'))return;$scope.instance.$remove(function(){$location.path('/');})}
     $scope.saveExport = function(){$scope.instance.$save(function(){growl.success('Saved',{ttl: 3000})})}
     $scope.reloadLogs = function(){
@@ -143,9 +142,20 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     		
     }
     $scope.init = function(config){
-      console.log('init');
+      console.log('init export',config,$routeParams);
+      $scope.selection = {logs:[]};
 	  $scope.config = config;
-	  $scope.loadLogs();
+	  if($routeParams.id){
+		  $scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
+		  $scope.loadLogs();
+	  }else{
+		  var today = new Date();
+		  var start_date = new Date();
+		  start_date.setMonth(start_date.getMonth()-1);
+		  $scope.instance = new Export({start_date:start_date,end_date:today});
+	  }
+		  
+    	  
 //	  $scope.options = options;
   	}
 };
