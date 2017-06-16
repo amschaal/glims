@@ -21,8 +21,9 @@
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
 		        <td data-title="'Created by'" sortable="'created_by__last_name'" filter="{created_by__last_name__icontains: 'text'}">{[row.created_by.first_name]} {[row.created_by.last_name]}</a></td>
 		        <td data-title="'Description'" filter="{description__icontains: 'text'}">{[row.description]}</td>
-		        <td data-title="'Status'" sortable="'status'" filter="{status__icontains: 'text'}">{[row.status]}</td>
 		        <td data-title="'Logs'">{[row.logs.length]}</td>
+				<td data-title="'Start date'" sortable="'start_date'">{[row.start_date|date:'shortDate']}</td>
+				<td data-title="'End date'" sortable="'end_date'">{[row.end_date|date:'shortDate']}</td>
 				<td><button ng-click="edit(row.id)" class="btn btn-default btn-sm">Edit</button></td>
 		      </tr>
 		    </table>
@@ -64,30 +65,37 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
             <button ng-click="exports()" class="btn btn-sm button-default">Back</button> Export
           </div>
           <div class="widget-body">
-			<table class="table table-condensed borderless">
-				<tr><th>Date range</th>
-					<td>
+			<table class="table table-condensed borderless" ng-if="instance.id">
+				<tr><th>Created</th><td>{[instance.created|date]}</td></tr>
+				<tr><th>Modified</th><td>{[instance.modified|date]}</td></tr>
+				<tr><th>Created by</th><td>{[instance.created_by.first_name]} {[instance.created_by.last_name]}</td></tr>
+				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
+			</table>
+<div><button ng-click="saveExport()" class="btn btn-sm btn-success" ng-if="instance.id">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger" ng-if="instance.id">Delete</button></div>
+			<h2>Logs <span class="pull-right"><a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv" class="btn btn-default btn-sm">Download logs</a> <a ng-click="createExport()" ng-if="!instance.id" class="btn btn-success btn-sm">Save export</a></span></h2>
+			<div class="row" class="form-group form-horizontal form-inline">
+				<label class="col-md-2"> Start date: </label> 
+				<span class="col-md-4">	
 					<p class="input-group">
-          			<input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="instance.start_date" is-open="start_date_popup.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          				<input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="instance.start_date" is-open="start_date_popup.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
           				<span class="input-group-btn">
             				<button type="button" class="btn btn-default" ng-click="start_date_popup.opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
           				</span>
         			</p>
+				</span>
+				<label class="col-md-2"> End date: </label>
+				<div class="col-md-4">
 					<p class="input-group">
           			<input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="instance.end_date" is-open="end_date_popup.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
           				<span class="input-group-btn">
             				<button type="button" class="btn btn-default" ng-click="end_date_popup.opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
           				</span>
         			</p>
-					</td>
-				</tr>
-				<tr><th>Created</th><td>{[instance.created|date]}</td></tr>
-				<tr><th>Modified</th><td>{[instance.modified|date]}</td></tr>
-				<tr><th>Created by</th><td>{[instance.created_by.first_name]} {[instance.created_by.last_name]}</td></tr>
-				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
-			</table>
-<div><button ng-click="saveExport()" class="btn btn-sm btn-success">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger">Delete</button></div>
-			<h2>Logs <a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv" class="btn btn-default btn-sm pull-right">Export logs</a></h2><span class="pull-left">{[selection.logs.length]} selected</span>
+				</div>
+			</div>
+
+			<span class="pull-left">{[selection.logs.length]} selected</span>
+			
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 				<td header="'headerCheckbox.html'"><input type="checkbox" checklist-model="selection.logs" checklist-value="row.id"></td>
@@ -103,7 +111,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 			</table>
 			<span>
 				<div class="btn-group" uib-dropdown is-open="status.isopen">
-      			<button id="single-button" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled">
+      			<button id="single-button" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled" ng-if="instance.id">
 			        Set selected statuses <span class="caret"></span>
 			      </button>
 			      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">

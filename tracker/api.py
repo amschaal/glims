@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.settings import api_settings
 from tracker.csvrenderer import PaginatedCSVRenderer
+from django.db.models import Max, Min
 
 
 class ExcludeExportFilter(filters.BaseFilterBackend):
@@ -26,7 +27,7 @@ class LogViewSet(viewsets.ModelViewSet):
 #     permission_classes = [CustomPermission]
 #     search_fields = ('name', 'description')
     model = Log
-    filter_fields = {'exports__id':['exact'],'project':['exact'],'status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
+    filter_fields = {'exports__id':['exact'],'project':['exact'],'created':'__all__','status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
     multi_field_filters = {'user_name':['user__last_name__icontains','user__first_name__icontains'],'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
     ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.select_related('user','category').all()
@@ -47,7 +48,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ExportViewSet(viewsets.ModelViewSet):
     serializer_class = ExportSerializer
     model = Export
-    queryset = Export.objects.all()
+    queryset = Export.objects.annotate(start_date=Min('logs__created'), end_date=Max('logs__created')).prefetch_related('logs').all()
+#     ordering_fields
     #Changes to logs are not being shown on update.  Trying a hacky method around it...
 #     def update(self, request, *args, **kwargs):
 #         partial = kwargs.pop('partial', False)

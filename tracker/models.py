@@ -22,6 +22,7 @@ class Log(models.Model):
     quantity = models.FloatField()
     category = models.ForeignKey(Category)
     description = models.TextField(null=True,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     project = models.ForeignKey(Project)
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default=STATUS_NOT_BILLED)
@@ -31,7 +32,6 @@ class Export(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
     modified = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50,default=STATUS_NEW)
     description = models.TextField(null=True,blank=True)
     logs = models.ManyToManyField(Log,related_name='exports')
     

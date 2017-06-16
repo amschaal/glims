@@ -34,7 +34,7 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 		  var defaultOptions = {
 				  title: 'Search logs',
 				  controller: 'selectLogsController',
-				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" },filter: { exclude_export: $routeParams.id }}),
+				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" },filter: { exclude_export: $routeParams.id,created__gte:$scope.instance.start_date,created__lte:$scope.instance.end_date, }}),
 				  template: 'tracker/select_modals/logs_modal.html',
 				  return_difference:true
 		  }
@@ -46,15 +46,20 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 				  function(logs){
 //					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
 //					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
-					  var ids = logs.map(function(log){return log.id});
-					  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
-						  $scope.logs = $scope.logs.concat(logs);
-//						  $scope.tableParams.reload(); 
-						  console.log('logs',logs,$scope.logs);
+					  
+					  if ($scope.instance.id){
+						  var ids = logs.map(function(log){return log.id});
+						  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
+							  $scope.logs = $scope.logs.concat(logs);
+							  console.log('logs',logs,$scope.logs);
+							  $scope.reloadLogs();
+					    	},function(response){
+					    		growl.error('Unable to add logs',{ttl:3000});
+					    	});
+					  }else{
+						  $scope.logs = $scope.instance.logs.concat(logs);
 						  $scope.reloadLogs();
-				    	},function(response){
-				    		growl.error('Unable to add logs',{ttl:3000});
-				    	})
+					  }
 					  
 //					  $http.post(url,{'log_ids':log_ids})
 //						.success(function(){
@@ -79,18 +84,42 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 	
     $scope.deleteExport = function(){if(!confirm('Are you sure you want to delete this export?'))return;$scope.instance.$remove(function(){$location.path('/');})}
     $scope.saveExport = function(){$scope.instance.$save(function(){growl.success('Saved',{ttl: 3000})})}
+    $scope.createExport = function(){
+    	if (!$scope.instance.id)
+    		$scope.instance.$create(function(){
+    			  var ids = $scope.logs.map(function(log){return log.id});
+				  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
+					  $location.path('/exports/'+$scope.instance.id+'/');
+//					  $scope.logs = $scope.logs.concat(logs);
+//					  console.log('logs',logs,$scope.logs);
+//					  $scope.reloadLogs();
+			    	},function(response){
+			    		growl.error('Unable to add logs',{ttl:3000});
+			    	});
+    		},function(){
+    			growl.error('Unable to save export',{ttl:3000});
+    		});
+    		
+    };
     $scope.reloadLogs = function(){
     	$scope.tableParams.settings({
             dataset: $scope.logs
           });
     };
     $scope.loadLogs = function(){
-    	$scope.logs = Log.query({exports__id:$routeParams.id,page_size:10000},function(response){
-    		console.log('logs',response,$scope.logs);
-    		$scope.tableParams = new NgTableParams({}, {
-    		      dataset: $scope.logs
-    		    });
-    	})
+    	if ($routeParams.id)
+	    	$scope.logs = Log.query({exports__id:$routeParams.id,page_size:10000},function(response){
+	    		console.log('logs',response,$scope.logs);
+	    		$scope.tableParams = new NgTableParams({}, {
+	    		      dataset: $scope.logs
+	    		    });
+	    	})
+	    else{
+	    	$scope.logs = [];
+	    	$scope.tableParams = new NgTableParams({}, {
+  		      dataset: $scope.logs
+  		    });
+	    }
     }
 //    $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{filter:{exports__id:$routeParams.id}});
     $scope.containsLog = function(log){
@@ -104,14 +133,21 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     		growl.error("That log is already in the export",{ttl:3000});
     };
     $scope.removeLogs = function(){
-    	Export.remove_logs({id:$scope.instance.id},{log_ids:$scope.selection.logs},function(response){
-    		_.remove($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
+    	if ($scope.instance.id)
+	    	Export.remove_logs({id:$scope.instance.id},{log_ids:$scope.selection.logs},function(response){
+	    		_.remove($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
+	        	$scope.selection.logs = [];
+	        	$scope.tableParams.reload();
+	//        	$scope.reloadLogs();
+	    	},function(response){
+	    		growl.error('Unable to remove logs',{ttl:3000});
+	    	})
+	    else{
+	    	_.remove($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
         	$scope.selection.logs = [];
         	$scope.tableParams.reload();
-//        	$scope.reloadLogs();
-    	},function(response){
-    		growl.error('Unable to remove logs',{ttl:3000});
-    	})
+	    }
+	    	
     };
     $scope.setStatuses = function(status){
     	Log.set_statuses({},{log_ids:$scope.selection.logs,status:status},function(response){
@@ -147,13 +183,13 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 	  $scope.config = config;
 	  if($routeParams.id){
 		  $scope.instance = Export.get({id:$routeParams.id},function(foo){console.log(foo)});
-		  $scope.loadLogs();
 	  }else{
 		  var today = new Date();
 		  var start_date = new Date();
 		  start_date.setMonth(start_date.getMonth()-1);
-		  $scope.instance = new Export({start_date:start_date,end_date:today});
+		  $scope.instance = new Export({start_date:start_date,end_date:today,logs:[]});
 	  }
+	  $scope.loadLogs();
 		  
     	  
 //	  $scope.options = options;
