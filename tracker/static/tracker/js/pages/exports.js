@@ -101,6 +101,13 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     		});
     		
     };
+    $scope.download_report = function (url){
+    	console.log('download_report');
+    	if ($scope.instance.id)
+    		window.location = url+'?export_id='+$scope.instance.id;
+    	else
+    		window.location = url+'?log_ids='+$scope.logs.map(function(log){return log.id}).join(',');
+    }
     $scope.reloadLogs = function(){
     	$scope.tableParams.settings({
             dataset: $scope.logs

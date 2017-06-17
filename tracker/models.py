@@ -24,7 +24,7 @@ class Log(models.Model):
     description = models.TextField(null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project,related_name='tracker_logs')
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default=STATUS_NOT_BILLED)
     
 class Export(models.Model):

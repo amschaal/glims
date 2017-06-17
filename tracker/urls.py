@@ -17,5 +17,6 @@ router.register(r'exports', api.ExportViewSet,'Export')
 urlpatterns = patterns('',
     url(r'^api/', include(router.urls)),
     url(r'^exports/$', views.exports, name='exports'),
+    url(r'^project_report/$', views.project_report, name='project_report'),
 )
 
