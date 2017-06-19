@@ -72,7 +72,18 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 				<tr><th>Description</th><td><textarea style="width:100%" ng-model="instance.description" class="form-control"></textarea></td></tr>
 			</table>
 <div><button ng-click="saveExport()" class="btn btn-sm btn-success" ng-if="instance.id">Save</button> <button ng-click="deleteExport()" class="btn btn-sm btn-danger" ng-if="instance.id">Delete</button></div>
-			<h2>Logs <span class="pull-right"><a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv" class="btn btn-default btn-sm">Download logs</a> <a ng-click="download_report('{% url 'project_report' %}')" class="btn btn-default btn-sm">Download report</a> <a ng-click="createExport()" ng-if="!instance.id" class="btn btn-success btn-sm">Save export</a></span></h2>
+			<h2>Logs 
+				<span class="pull-right">
+				<div class="btn-group" uib-dropdown is-open="download_dropdown.isopen">
+      				<button id="single-button" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled">
+        				Download <span class="caret"></span>
+      				</button>
+      			<ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+        			<li role="menuitem"><a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv">Logs</a></li>
+        			<li role="menuitem"><a ng-click="download_report('{% url 'project_report' %}')">Project report</a></li>
+      			</ul>
+    			</div>
+			<a ng-click="createExport()" ng-if="!instance.id" class="btn btn-success btn-sm">Save export</a></span></h2>
 			<div class="row" class="form-group form-horizontal form-inline">
 				<label class="col-md-2"> Start date: </label> 
 				<span class="col-md-4">	
