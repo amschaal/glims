@@ -57,7 +57,7 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 					    		growl.error('Unable to add logs',{ttl:3000});
 					    	});
 					  }else{
-						  $scope.logs = $scope.instance.logs.concat(logs);
+						  $scope.logs = $scope.logs.concat(logs);
 						  $scope.reloadLogs();
 					  }
 					  
@@ -205,7 +205,7 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 
 app.controller('ExportsController', ['$scope','$location','DRFNgTableParams','growl','Export','Log', ExportsController]);
 function ExportsController($scope,$location,DRFNgTableParams,growl,Export,Log) {
-	$scope.tableParams = DRFNgTableParams('/tracker/api/exports/',{});
+	$scope.tableParams = DRFNgTableParams('/tracker/api/exports/',{sorting: { created: "desc" }});
 	$scope.createExport = function(){
 		var log_export = new Export({logs:[]});
 		log_export.$create(function(){console.log('log_export',log_export);$location.path('/exports/'+log_export.id+'/');});

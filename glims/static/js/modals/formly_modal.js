@@ -40,7 +40,7 @@ angular.module('formly.modal',[])
 		          return fields;
 		      },
 		      model: function () {
-		          return angular.copy(model);
+		          return options.by_reference ? model : angular.copy(model);
 		      },
 		      options: function(){
 		    	  return options||{title:'Edit!!'};
@@ -97,7 +97,7 @@ angular.module('formly.modal',[])
 	}
 })
 .controller('FormlyModalController', function FormlyModalController($scope, $http, $modalInstance, fields, model, options) {
-	$scope.model = angular.copy(model);
+	$scope.model = model;
 	$scope.options = {};
 	fields = angular.copy(fields);
 	$scope.title = options.title ? options.title : 'Edit';
@@ -146,7 +146,8 @@ angular.module('formly.modal',[])
 		});
 		return fields;
 	}
-	$scope.original_fields = $scope.alterFields(fields);
+	$scope.fields = $scope.alterFields(fields);
+	$scope.original_fields = $scope.fields;
 	$scope.validateForm = function(){
 		angular.forEach($scope.fields,function(field,index){
 			field.formControl.$validate();

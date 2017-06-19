@@ -28,7 +28,6 @@ class Log(models.Model):
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default=STATUS_NOT_BILLED)
     
 class Export(models.Model):
-    STATUS_NEW = 'New'
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
     modified = models.DateTimeField(auto_now=True)

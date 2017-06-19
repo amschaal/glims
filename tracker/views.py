@@ -6,6 +6,7 @@ import json
 from tracker.models import Log, Export
 from glims.models import Project
 import csv
+from django.utils import timezone
 
 @login_required
 def exports(request):
@@ -13,8 +14,9 @@ def exports(request):
 
 @login_required
 def project_report(request):
-    export_id = request.GET.get('export_id')
-    log_ids = request.GET.getlist('log_ids',None)
+    export_id = request.GET.get('export_id',None)
+    log_ids = request.GET.get('log_ids',None)
+    log_ids = log_ids.split(',') if log_ids else []
     if export_id:
         log_ids = Export.objects.get(id=export_id).logs.values_list('id')
     print export_id
@@ -22,7 +24,7 @@ def project_report(request):
     projects = Project.objects.filter(tracker_logs__id__in=log_ids).distinct().prefetch_related('tracker_logs')
     print projects
     response = HttpResponse(content_type='text/tsv')
-    response['Content-Disposition'] = 'attachment; filename="log_project_report.tsv"'
+    response['Content-Disposition'] = 'attachment; filename="log_project_report_%s.tsv"'%(timezone.now().strftime("%Y_%m_%d__%H_%M"))
 
     writer = csv.writer(response,dialect=csv.excel_tab)
     writer.writerow(['Project','Lab','Count','Total','Users','Start date','End date'])
@@ -31,7 +33,6 @@ def project_report(request):
         total = sum(l.quantity for l in logs)
         users = ",".join(set(l.user.name for l in logs))
         writer.writerow([p.name, p.lab.name,logs.count(),total,users,logs.order_by('created').first().created,logs.order_by('-created').first().created])
-
     return response
     
     
