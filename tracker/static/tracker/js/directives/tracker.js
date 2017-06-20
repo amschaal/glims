@@ -128,6 +128,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 				<td data-title="\'Project\'" sortable="\'project.name\'" filter="{\'project.name\': \'text\'}"><a href="{[getURL(\'project\',{pk:row.project.id})]}">{[row.project.name]}</a></td>\
 				<td data-title="\'Lab\'" filter="{\'project.lab\': \'text\'}" sortable="\'project.lab\'">{[row.project.lab]}</td>\
 				<td data-title="\'Description\'" filter="{description: \'text\'}">{[row.description]}</td>\
+				<td data-title="\'Exports\'"><span ng-repeat="export in row.exports"><a title="{[export.description]}" href="/tracker/exports/#/exports/{[export.id]}/">{[export.created|date:\'short\']}</a>, </span></td>\
 				<td>\
 					<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog($index)">Delete</button>\
 					<button class="btn btn-xs pull-right" ng-if="!log.editing" ng-click="editLog(row)">Edit</button>\

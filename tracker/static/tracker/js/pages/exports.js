@@ -20,7 +20,7 @@ app.config(['$routeProvider',
                 controller: 'ExportController'
             }).
             otherwise({
-                redirectTo: '/exports/'
+                redirectTo: '/'
             });
     }]);
 
@@ -44,9 +44,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 	$scope.selectLogs = function(){
 		  selectLogsModal({multi:true,initial:$scope.logs}).result.then(
 				  function(logs){
-//					  $scope.instance.logs = $scope.instance.logs.concat(logs); 
-//					  var url = django_js_utils.urls.resolve('add_export_logs',{ pk: $scope.instance.id });
-					  
 					  if ($scope.instance.id){
 						  var ids = logs.map(function(log){return log.id});
 						  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
@@ -61,24 +58,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
 						  $scope.reloadLogs();
 					  }
 					  
-//					  $http.post(url,{'log_ids':log_ids})
-//						.success(function(){
-//							$scope.instance.logs = $scope.instance.logs.concat(logs);
-////							$scope.tableParams.reload();
-//						})
-//						.error(function(){
-//							growl.error('Failed to add libraries',{ttl:3000});
-//						});
-//					  var url = django_js_utils.urls.resolve('add_pool_libraries',{ pk: pool_id });
-//					  var library_ids = libraries.map(function(library){return library.id});
-//					  $http.post(url,{'library_ids':library_ids})
-//						.success(function(){
-//							$scope.libraries = libraries;	
-//							$scope.tableParams.reload();
-//						})
-//						.error(function(){
-//							alert('Failed to add libraries');
-//						});
 				  });
 	  }
 	
@@ -90,9 +69,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     			  var ids = $scope.logs.map(function(log){return log.id});
 				  Export.add_logs({id:$scope.instance.id},{log_ids:ids},function(response){
 					  $location.path('/exports/'+$scope.instance.id+'/');
-//					  $scope.logs = $scope.logs.concat(logs);
-//					  console.log('logs',logs,$scope.logs);
-//					  $scope.reloadLogs();
 			    	},function(response){
 			    		growl.error('Unable to add logs',{ttl:3000});
 			    	});
@@ -136,7 +112,6 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
   		    });
 	    }
     }
-//    $scope.tableParams = DRFNgTableParams('/tracker/api/logs/',{filter:{exports__id:$routeParams.id}});
     $scope.containsLog = function(log){
     	var ids = $scope.logs.map(function(log){return log.id});
     	return (ids.indexOf(log.id) >=0)
@@ -170,10 +145,9 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     				_.filter($scope.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1}),
     				function(log){log.status = status}
 			)
-//    		_.remove($scope.instance.logs,function(log){return $scope.selection.logs.indexOf(log.id) >-1});
-//        	$scope.selection.logs = [];
+			growl.success('Statuses updated to "'+status+'"',{ttl:3000});
     	},function(response){
-    		growl.error('Unable to remove logs',{ttl:3000});
+    		growl.error('Unable to set statuses',{ttl:3000});
     	})
     }
     $scope.getStatuses = function(){
@@ -248,11 +222,6 @@ app.controller('selectLogsController', function ($scope,$http, $uibModalInstance
 					params.total(response.data.count);
 					console.log(response.data.results);
 					$scope.value = _.differenceBy(_.unionBy(response.data.results,$scope.value,'id'),$scope.previously_selected,'id');
-/*					if (resource)
-						return response.data.results.map(function(obj){return new resource(obj);});
-					else
-						return response.data.results;
-						*/
 				});
 	  }
 	  $scope.removeAll = function(){ $scope.value=[];}

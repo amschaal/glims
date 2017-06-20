@@ -124,6 +124,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 				<td data-title="'Project'" sortable="'project.name'" filter="{'project.name': 'text'}"><a href="{[getURL('project',{pk:row.project.id})]}">{[row.project.name]}</a></td>
 				<td data-title="'Lab'" filter="{'project.lab': 'text'}" sortable="'project.lab'">{[row.project.lab]}</td>
 				<td data-title="'Description'" filter="{description: 'text'}">{[row.description]}</td>
+				<!--<td data-title="'Exports'"><span ng-repeat="export in row.exports"><a>{[export.created|date:'short']}</a>, </span></td>-->
 				</tr>
 			</table>
 			<span>
