@@ -85,7 +85,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
         				Download <span class="caret"></span>
       				</button>
       			<ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-        			<li role="menuitem"><a href="/tracker/api/logs/?exports__id={[instance.id]}&page_size=10000&format=csv">Logs</a></li>
+        			<li role="menuitem"><a ng-click="download_logs()">Logs</a></li>
         			<li role="menuitem"><a ng-click="download_report('{% url 'project_report' %}')">Project report</a></li>
       			</ul>
     			</div>

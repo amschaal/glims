@@ -107,7 +107,15 @@ function ExportController($scope, $http, $routeParams,$location, NgTableParams, 
     		window.location = url+'?export_id='+$scope.instance.id;
     	else
     		window.location = url+'?log_ids='+$scope.logs.map(function(log){return log.id}).join(',');
-    }
+    };
+    $scope.download_logs = function (){
+    	console.log('download_logs');
+    	var url = '/tracker/api/logs/';
+    	if ($scope.instance.id)
+    		window.location = url+'?exports__id='+$scope.instance.id+'&page_size=10000&format=csv';
+    	else
+    		window.location = url+'?id__in='+$scope.logs.map(function(log){return log.id}).join(',')+'&page_size=10000&format=csv';
+    };
     $scope.reloadLogs = function(){
     	$scope.tableParams.settings({
             dataset: $scope.logs
