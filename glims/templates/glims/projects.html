@@ -46,11 +46,25 @@
 		        <td data-title="'Subscription'" ng-if="cols['Subscription']"><div  notification-subscription object-id="{[row.id]}" content-type="{{content_type_id}}"></div></td>
 		      </tr>
 		    </table>
-		    <select ng-model="export.type" class="form-control inline-input"><option selected="selected" value="">Select project type...</option><option ng-repeat="type in types" value="{[type.id]}">{[type.name]}</option></select>
-		    <select ng-model="export.format" class="form-control inline-input"><option selected="selected" value="">Select format...</option><option value="csv">CSV</option><option value="xls">XLS</option></select>
-		    <a class="btn btn-primary btn" href="/api/projects/export/?type={[export.type]}&file_format={[export.format]}" ng-disabled="!export.type||!export.format">Export</a>
-            
+		    <div class="form-inline">
+		    <select ng-model="export.type" class="form-control"><option selected="selected" value="">Select project type...</option><option ng-repeat="type in types" value="{[type.id]}">{[type.name]}</option></select>
+		    <select ng-model="export.format" class="form-control"><option selected="selected" value="">Select format...</option><option value="csv">CSV</option><option value="xls">XLS</option></select>
+		    <span class="input-group">
+	          <input size="10" type="text" class="form-control" uib-datepicker-popup ng-model="export.start_date" is-open="export.start_date_opened" close-text="Close"  placeholder="Start date"/>
+	          <span class="input-group-btn">
+	            <button type="button" class="btn btn-default" ng-click="export.start_date_opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
+	          </span>
+	        </span>
+	        <span class="input-group">
+	          <input size="10" type="text" class="form-control" uib-datepicker-popup ng-model="export.end_date" is-open="export.end_date_opened" close-text="Close" placeholder="End date"/>
+	          <span class="input-group-btn">
+	            <button type="button" class="btn btn-default" ng-click="export.end_date_opened = true;"><i class="glyphicon glyphicon-calendar"></i></button>
+	          </span>
+	        </span>
+		    <a class="btn btn-primary btn" href="/api/projects/export/?type={[export.type]}&file_format={[export.format]}&created__gte={[export.start_date | date:'yyyy-MM-ddTHH:mm:ssZ']}&created__lte={[export.end_date | date:'yyyy-MM-ddTHH:mm:ssZ']}" ng-disabled="!export.type||!export.format">Export</a>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 {% endblock %}
