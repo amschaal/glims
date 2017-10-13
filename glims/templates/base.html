@@ -103,7 +103,7 @@
 		  uiSelectConfig.theme = 'bootstrap';
 		});
   angular.module('glims.formly',['formly','formlyBootstrap','ngMessages','formly.widgets','formly.modal']);
-  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','checklist-model','notifications','utility.directives','files.directives']);//, 'ui.router', 'ngCookies'
+  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','checklist-model','notifications','utility.directives','files.directives','selectModals']);//, 'ui.router', 'ngCookies'
   angular.module('glims.core',['ngResource', 'glimsModels','glimsServices','glims.samplecart']);
   angular.module('mainapp', ['glims.ui','glims.core','attachments','plugins'])
   	.config(['$httpProvider', function($httpProvider) {
