@@ -28,15 +28,16 @@ app.controller("RouteController", function($scope, $routeParams) {
     $scope.param = $routeParams.param;
 });
 
-app.controller('ExportController', ['$scope','$http', '$routeParams','$location','NgTableParams','DRFNgTableParams','growl', 'Export','Log','SelectModalService', ExportController]);
-function ExportController($scope, $http, $routeParams,$location, NgTableParams, DRFNgTableParams, growl,Export,Log,SelectModalService) {
+app.controller('ExportController', ['$scope','$http', '$routeParams','$location','$filter','NgTableParams','DRFNgTableParams','growl', 'Export','Log','SelectModalService', ExportController]);
+function ExportController($scope, $http, $routeParams,$location,$filter, NgTableParams, DRFNgTableParams, growl,Export,Log,SelectModalService) {
 	function selectLogsModal(options){ 
 		  var defaultOptions = {
-				  title: 'Search logs',
+				  title: 'Search logs ('+$filter('date')($scope.instance.start_date,'shortDate')+' - '+$filter('date')($scope.instance.end_date,'shortDate')+')',
 				  controller: 'selectLogsController',
 				  tableParams: DRFNgTableParams('/tracker/api/logs/',{sorting: { modified: "desc" },filter: { exclude_export: $routeParams.id,created__gte:$scope.instance.start_date,created__lte:$scope.instance.end_date, }}),
 				  template: 'tracker/select_modals/logs_modal.html',
-				  return_difference:true
+				  return_difference:true,
+				  instance: $scope.instance
 		  }
 		  angular.extend(defaultOptions,options?options:{});
 		  return SelectModalService.openSelectModal(defaultOptions.template,defaultOptions.tableParams,defaultOptions,{'statuses':$scope.getStatuses()});
