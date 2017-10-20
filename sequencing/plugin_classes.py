@@ -13,7 +13,7 @@ class PoolRunsPlugin(BasePlugin):
         return '<sequencing-runs pool="pool"></sequencing-runs>'
     @staticmethod
     def get_header_template(obj):
-        return 'Runs ({[run_count]})'
+        return 'Sequencing Runs ({[run_count]})'
 
 class SampleRunsPlugin(BasePlugin):
     id = 'sample-runs-plugin' #Name of directive
@@ -26,4 +26,4 @@ class SampleRunsPlugin(BasePlugin):
         return '<sequencing-runs sample="sample"></sequencing-runs>'
     @staticmethod
     def get_header_template(obj):
-        return 'Runs ({[run_count]})'
+        return 'Sequencing Runs ({[run_count]})'

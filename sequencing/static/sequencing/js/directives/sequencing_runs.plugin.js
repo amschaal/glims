@@ -33,7 +33,7 @@ angular.module("sequencing-runs-plugin")
 			});
 			$scope.$watch('sample.id',function(newValue,oldValue){
 				if (newValue)
-					$scope.refreshRuns({'lanes__pool__library__sample__id':newValue});
+					$scope.refreshRuns({'lanes__pool__libraries__sample__id':newValue});
 			});
 		}
 
