@@ -81,7 +81,7 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
-    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains']}
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
     search_fields = ('name', 'description','type__name','lab__first_name','lab__last_name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'participants':['participants__last_name__icontains','participants__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
     ordering_fields = ('created', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name','group__name','archived')
@@ -91,20 +91,13 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
             Prefetch('type__status_options'),Prefetch('participants'),Prefetch('related_projects'))#, queryset=Status.objects.order_by('order')
     @list_route(methods=['get'],permission_classes=[IsAuthenticated])
     def export(self, request):
-        queryset = self.get_queryset()#self.filter_queryset(self.get_queryset())
+        queryset = self.filter_queryset(self.get_queryset())#self.get_queryset()
         type = request.query_params.get('type')
         format = request.query_params.get('file_format','xls')
-        queryset = queryset.filter(type=type)
+#         queryset = queryset.filter(type=type)
         exporter = ProjectExport(type=type)
         return exporter.export(request,queryset,file_type=format)
-#         data = tablib.Dataset(headers=self.generate_headers())
-#         for p in queryset:
-#             data = serializer(p).data
-#             row = [s.sample_id,s.name,s.description,s.received,'','','']
-#             for field in project.sample_type.fields:
-#                 row.append(s.data.get(field['name'],''))
-#             data.append(row)
-#         return self.response(request,data,filename_base,file_type)
+
 class SampleViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = SampleSerializer
 #     permission_classes = [CustomPermission]

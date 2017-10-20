@@ -61,6 +61,8 @@ class Lab(models.Model):
     description = models.TextField(db_index=True)
     url = models.URLField(blank=True,null=True)
     slug = models.SlugField(max_length=50,unique=True,null=True)
+    class Meta:
+        unique_together = (("first_name", "last_name"),)
     @property
     def name(self):
         return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name

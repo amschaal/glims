@@ -28,10 +28,10 @@
   {% compress js%}
   <!-- SCRIPTS -->
   <script src="/static/vendor/jquery.min.js"></script>
-  <script src="{{ STATIC_URL }}/vendor/lodash.min.js"></script>
+  <script src="/static/vendor/lodash.min.js"></script>
   {% include 'autocomplete_light/static.html' %}
   <!--  <script src="/static/responsive/lib/angular/angular.js"></script>-->
-  <script src="{{ STATIC_URL }}django_js_utils.js"></script>
+  <script src="/static/django_js_utils.js"></script>
   <!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script> -->
   <script src="/static/vendor/angular/angular.js"></script>
   
@@ -103,7 +103,7 @@
 		  uiSelectConfig.theme = 'bootstrap';
 		});
   angular.module('glims.formly',['formly','formlyBootstrap','ngMessages','formly.widgets','formly.modal']);
-  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','checklist-model','notifications','utility.directives','files.directives']);//, 'ui.router', 'ngCookies'
+  angular.module('glims.ui',['ui.bootstrap','angular-growl', 'ngTable','checklist-model','notifications','utility.directives','files.directives','selectModals']);//, 'ui.router', 'ngCookies'
   angular.module('glims.core',['ngResource', 'glimsModels','glimsServices','glims.samplecart']);
   angular.module('mainapp', ['glims.ui','glims.core','attachments','plugins'])
   	.config(['$httpProvider', function($httpProvider) {
