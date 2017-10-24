@@ -165,5 +165,4 @@ def create_update_notification(sender, instance,**kwargs):
 def UpdateProjectModified(sender,instance=None,**kwargs):
     if isinstance(instance, Project):
         Project.objects.filter(id=instance.id).update(modified=timezone.now())
-#         Log.objects.create(text=kwargs['text'],description=kwargs['description'],content_type=ct,object_id=str(instance.pk),url=kwargs['url'])
 notification_created.connect(UpdateProjectModified, Notification)
