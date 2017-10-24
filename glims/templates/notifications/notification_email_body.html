@@ -1,0 +1,10 @@
+Dear {{user}},
+
+You have {{notifications|length}} new notification{%if notifications|length > 1%}s{%endif%} in BioBin:
+<ul>
+{% for n in notifications %}
+<li>
+       	<a href="{{n.get_url}}" title="{{n.description}}"><b>{{n.short_datetime}}</b> {{n.text}}</a>
+</li>
+{% endfor %}
+</ul>
