@@ -13,6 +13,18 @@ angular.module('glimsServices')
 					   options: []
 					 }
 				},
+				{
+					 key: 'project',
+					 type: 'ui-select-search',
+					 templateOptions: {
+					   optionsAttr: 'bs-options',
+					   label: 'Project',
+					   valueProp: 'id',
+					   labelProp: 'name',
+					   url: '/api/projects/',
+					   options: []
+					 }
+				},
 	   		     {"templateOptions": {"required": false, "description": "", "label": "Name"}, "type": "input", "key": "name"}, 
 	   			 {"templateOptions": {"required": false, "description": "", "label": "Description"}, "type": "textarea", "key": "description"},
 	   			];
