@@ -14,6 +14,8 @@ from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification
 from glims.middlewares.ThreadLocal import get_current_user
+from notifications.signals import notification_created
+from django.utils import timezone
 
 
 @receiver(pre_save,sender=Project)
@@ -158,3 +160,10 @@ def create_update_notification(sender, instance,**kwargs):
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW,exclude_user=get_current_user())
     except sender.DoesNotExist, e:
         pass
+
+#Any time a notification is created for a project, update the modified date.
+def UpdateProjectModified(sender,instance=None,**kwargs):
+    if isinstance(instance, Project):
+        Project.objects.filter(id=instance.id).update(modified=timezone.now())
+#         Log.objects.create(text=kwargs['text'],description=kwargs['description'],content_type=ct,object_id=str(instance.pk),url=kwargs['url'])
+notification_created.connect(UpdateProjectModified, Notification)
