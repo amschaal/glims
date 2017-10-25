@@ -79,19 +79,20 @@ post_delete.connect(delete_attachments, sender=Pool)
 
 @receiver(m2m_changed,sender=Project.participants.through)
 def update_participant_subscriptions(sender,instance,pk_set,**kwargs):
-    print 'update participant subscriptions'
-    print kwargs
     if kwargs.pop('action',None) == 'post_add': 
         project_type = ContentType.objects.get_for_model(Project)
         for user in User.objects.filter(pk__in=pk_set):
             subscription, created = UserSubscription.objects.get_or_create(user=user,content_type=project_type,object_id=instance.id)
+            subscription.subscribed = True
+            subscription.save()
 
 @receiver(post_save,sender=Project)
 def set_manager_subscription(sender,instance,created,**kwargs):
     if instance.manager:
         project_type = ContentType.objects.get_for_model(Project)
         subscription, created = UserSubscription.objects.get_or_create(user=instance.manager,content_type=project_type,object_id=instance.id)
-
+        subscription.subscribed = True
+        subscription.save()
 @receiver(pre_save,sender=Lab)
 def set_lab_slug(sender,instance,**kwargs):
     if not instance.slug:
