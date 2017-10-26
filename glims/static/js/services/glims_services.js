@@ -1,5 +1,5 @@
 angular.module('glimsServices',['glims.formly','glims.ui'])
-.factory('DRFNgTableParams', ['NgTableParams','$http', function(NgTableParams,$http) {
+.factory('DRFNgTableParams', ['NgTableParams','$http','$location', function(NgTableParams,$http,$location) {
 	return function(url,ngparams,resource) {
 		var params = {
 //				page: 1, // show first page
@@ -16,6 +16,9 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 				// ajax request to api
 				return $http.get(url,{params:query_params}).then(function(response){
 					params.total(response.data.count);
+//					console.log('old state', $location.search())
+//					angular.forEach(query_params,function(value,key){$location.search(key, value);});
+//					console.log('query_params',query_params); 
 					if (resource)
 						return response.data.results.map(function(obj){return new resource(obj);});
 					else
@@ -25,6 +28,64 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 		});
 	};
 }])
+.factory('LocationSearchState', function($location) {
+	function flatten(data) {
+	    var result = {};
+	    function recurse (cur, prop) {
+	        if (Object(cur) !== cur) {
+	            result[prop] = cur;
+	        } else if (Array.isArray(cur)) {
+	             for(var i=0, l=cur.length; i<l; i++)
+	                 recurse(cur[i], prop + "[" + i + "]");
+	            if (l == 0)
+	                result[prop] = [];
+	        } else {
+	            var isEmpty = true;
+	            for (var p in cur) {
+	                isEmpty = false;
+	                recurse(cur[p], prop ? prop+"."+p : p);
+	            }
+	            if (isEmpty && prop)
+	                result[prop] = {};
+	        }
+	    }
+	    recurse(data, "");
+	    return result;
+	}
+	function unflatten(data) {
+	    "use strict";
+	    if (Object(data) !== data || Array.isArray(data))
+	        return data;
+	    var regex = /\.?([^.\[\]]+)|\[(\d+)\]/g,
+	        resultholder = {};
+	    for (var p in data) {
+	        var cur = resultholder,
+	            prop = "",
+	            m;
+	        while (m = regex.exec(p)) {
+	            cur = cur[prop] || (cur[prop] = (m[2] ? [] : {}));
+	            prop = m[2] || m[1];
+	        }
+	        cur[prop] = data[p];
+	    }
+	    return resultholder[""] || resultholder;
+	}
+	return {
+    set: function(data) {
+//      $location.search(
+//        { state: encodeURIComponent(JSON.stringify(data)) }
+//      );
+    	angular.forEach(flatten(data),function(value,key){$location.search(key, value);});
+    },
+
+    get: function() {
+      return unflatten($location.search());
+      var json = $location.search();
+      return json ? JSON.parse(decodeURIComponent(json)) : null;
+    }
+
+  };
+})
  .service('cartService', function($rootScope,$http) {
 	 return {
 		 setSamples: setSamples,

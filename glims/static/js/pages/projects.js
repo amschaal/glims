@@ -1,9 +1,9 @@
 
 var app = angular.module('mainapp');
 app.requires.push('glims.formly','project');
-app.controller('ProjectController', ['$scope','$http','DRFNgTableParams','FormlyModal', 'Project','ModelType','projectService','growl', ProjectController]);
+app.controller('ProjectController', ['$scope','$http','LocationSearchState','DRFNgTableParams','FormlyModal', 'Project','ModelType','projectService','growl', ProjectController]);
 
-function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,ModelType,projectService,growl) {
+function ProjectController($scope,$http,LocationSearchState,DRFNgTableParams, FormlyModal, Project,ModelType,projectService,growl) {
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
@@ -20,6 +20,7 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,M
 			angular.extend($scope.cols,profile.preferences.pages.projects.tableSettings.cols);
 //		if (_.has(profile,'preferences.pages.projects.tableSettings.sorting')){
 //				$scope.tableSettings.sorting = profile.preferences.pages.projects.tableSettings.filter;
+		console.log('tableSettings',$scope.tableSettings);
 		$scope.tableParams = DRFNgTableParams('/api/projects/',$scope.tableSettings ,Project);
 	});
 	$scope.saveFilters = function(){
@@ -46,8 +47,20 @@ function ProjectController($scope,$http,DRFNgTableParams, FormlyModal, Project,M
 		console.log('project',project);
 		project.status = project.new_status.id;
 	}
-	
+	$scope.loadState = function(){
+		console.log('load',LocationSearchState.get());
+	};
+	$scope.saveState = function(){
+		var url_params = $scope.tableParams.url();
+		
+		var state = {tableParams:{page:url_params.page,count:url_params.count,sorting:$scope.tableParams.sorting(),filter:$scope.tableParams.filter()},cols:$scope.cols};
+		LocationSearchState.set(state);
+//		angular.extend(query_params, $scope.tableParams.filter());
+//		console.log('save state',query_params);
+//		angular.forEach(query_params,function(value,key){$location.search(key, value);});
+	}
 	$scope.createProject = function(){
 		projectService.create();
 	}
+	$scope.loadState();
 }
