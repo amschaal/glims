@@ -1,5 +1,5 @@
-Dear {{user}},
-
+<p>Dear {{user.name}},</p>
+<p>
 You have {{notifications|length}} new notification{%if notifications|length > 1%}s{%endif%} in BioBin:
 <ul>
 {% for n in notifications %}
@@ -8,3 +8,4 @@ You have {{notifications|length}} new notification{%if notifications|length > 1%
 </li>
 {% endfor %}
 </ul>
+</p>
