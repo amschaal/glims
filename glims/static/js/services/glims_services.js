@@ -29,6 +29,7 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 	};
 }])
 .factory('LocationSearchState', function($location) {
+	//flatten/unflatten come from here: https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objects
 	function flatten(data) {
 	    var result = {};
 	    function recurse (cur, prop) {
@@ -72,16 +73,11 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 	}
 	return {
     set: function(data) {
-//      $location.search(
-//        { state: encodeURIComponent(JSON.stringify(data)) }
-//      );
     	angular.forEach(flatten(data),function(value,key){$location.search(key, value);});
     },
 
     get: function() {
       return unflatten($location.search());
-      var json = $location.search();
-      return json ? JSON.parse(decodeURIComponent(json)) : null;
     }
 
   };
