@@ -73,7 +73,8 @@ angular.module('glimsServices',['glims.formly','glims.ui'])
 	}
 	return {
     set: function(data) {
-    	angular.forEach(flatten(data),function(value,key){$location.search(key, value);});
+    	$location.search(flatten(data));
+//    	angular.forEach(flatten(data),function(value,key){$location.search(key, value);});
     },
 
     get: function() {
