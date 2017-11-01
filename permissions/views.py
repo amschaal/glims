@@ -19,7 +19,7 @@ def manage_permissions(request, model, pk):
         print k
         print v
     users = User.objects.all()
-    return render(request, settings.PERMISSIONS_APP['manage_template'], {'user_form':user_form,'group_form':group_form,'obj':obj,'permissions':permissions,'users':users,'model':model,'inherited':inherited} ,context_instance=RequestContext(request))
+    return render(request, settings.PERMISSIONS_APP['manage_template'], {'user_form':user_form,'group_form':group_form,'obj':obj,'permissions':permissions,'users':users,'model':model,'inherited':inherited} )
     
     
 def manage_user_permissions(request, model, pk, user_id):
@@ -42,7 +42,7 @@ def manage_user_permissions(request, model, pk, user_id):
             status = 'Permissions have been successfully updated'
         else:
             status = 'There was an error with assigning permissions'
-    return render(request, settings.PERMISSIONS_APP['manage_user_template'], {'form':form,'obj':obj, 'model':model,'user':user,'status':status}, context_instance=RequestContext(request))
+    return render(request, settings.PERMISSIONS_APP['manage_user_template'], {'form':form,'obj':obj, 'model':model,'user':user,'status':status})
 
 def manage_group_permissions(request, model, pk, group_id):
     ct = ContentType.objects.get(model=model)
@@ -64,4 +64,4 @@ def manage_group_permissions(request, model, pk, group_id):
             status = 'Permissions have been successfully updated'
         else:
             status = 'There was an error with assigning permissions'
-    return render(request, settings.PERMISSIONS_APP['manage_group_template'], {'form':form,'obj':obj, 'model':model,'group':group,'status':status}, context_instance=RequestContext(request))
+    return render(request, settings.PERMISSIONS_APP['manage_group_template'], {'form':form,'obj':obj, 'model':model,'group':group,'status':status})
