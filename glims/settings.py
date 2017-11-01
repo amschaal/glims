@@ -56,7 +56,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'extensible',
     'django_compute',
-    'autocomplete_light',
+#     'autocomplete_light',
     'django_cloudstore',
     'notifications',
     'accounts',
