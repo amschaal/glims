@@ -7,3 +7,4 @@ class TaskSerializer(serializers.ModelSerializer):
     modified_by = serializers.StringRelatedField(many=False,read_only=True)
     class Meta:
         model = Task
+        fields = '__all__'

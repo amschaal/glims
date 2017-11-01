@@ -24,7 +24,7 @@ SECRET_KEY = 'jn+=$cikt$$$*mazyt2bz!nvmfmx2_nyn62cp3nhnx=6h1=p_f'
 DEBUG = True
 COMPRESS_ENABLED = True
 
-TEMPLATE_DEBUG = True
+# TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -87,19 +87,38 @@ MIDDLEWARE_CLASSES = (
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "glims.context_processors.menus",
-    "glims.context_processors.tab",
-    "glims.context_processors.plugins",
-    'notifications.context_processors.notifications'
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                "glims.context_processors.menus",
+                "glims.context_processors.tab",
+                "glims.context_processors.plugins",
+                'notifications.context_processors.notifications'
+                ]
+            }
+    },
+]
+
+# TEMPLATE_CONTEXT_PROCESSORS = [
+#     "django.contrib.auth.context_processors.auth",
+#     "django.core.context_processors.debug",
+#     "django.core.context_processors.i18n",
+#     "django.core.context_processors.media",
+#     "django.core.context_processors.static",
+#     "django.core.context_processors.tz",
+#     "django.contrib.messages.context_processors.messages",
+#     "glims.context_processors.menus",
+#     "glims.context_processors.tab",
+#     "glims.context_processors.plugins",
+#     'notifications.context_processors.notifications'
+# ]
 
 
 AUTHENTICATION_BACKENDS = (
