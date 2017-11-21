@@ -29,8 +29,8 @@ class RunViewSet(viewsets.ModelViewSet):
     }
     serializer_class = RunSerializer
     model = Run
-    filter_fields = {'name':['icontains'],'machine__name':['icontains'],'description':['icontains'],'lanes__pool__name':['icontains']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
-    queryset = Run.objects.all()
+    filter_fields = {'name':['icontains'],'machine__name':['icontains'],'description':['icontains'],'lanes__pool__name':['icontains'],'lanes__pool__libraries__sample__id':['exact'],'lanes__pool__id':['exact']}#,'lanes__pool__library__name':['icontains'],'lanes__pool__name':['icontains']
+    queryset = Run.objects.distinct()
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
             if self.action in self.action_serializers.keys():
