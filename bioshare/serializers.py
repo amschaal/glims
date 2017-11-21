@@ -8,4 +8,5 @@ class ProjectShareSerializer(serializers.ModelSerializer):
     url = serializers.CharField(read_only=True)
     class Meta:
         model = ProjectShare
+        fields = '__all__'
 #         read_only_fields = ('project','labshare','directory')

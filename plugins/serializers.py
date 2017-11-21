@@ -6,11 +6,10 @@ from extensible.drf.fields import ModelRelatedField
 class PluginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plugin
-#         fields = ('id','name')
+        fields = '__all__'
 
 class ModelTypePluginSerializer(serializers.ModelSerializer):
-#     model
-#     plugin_details = 
     plugin = ModelRelatedField(model=Plugin,serializer=PluginSerializer)
     class Meta:
         model = ModelTypePlugin
+        fields = '__all__'

@@ -14,6 +14,8 @@ from glims.signals.signals import object_updated, object_updated_callback
 from notifications.models import Notification, UserSubscription
 from notifications.utils import create_notification
 from glims.middlewares.ThreadLocal import get_current_user
+from notifications.signals import notification_created
+from django.utils import timezone
 
 
 @receiver(pre_save,sender=Project)
@@ -77,19 +79,20 @@ post_delete.connect(delete_attachments, sender=Pool)
 
 @receiver(m2m_changed,sender=Project.participants.through)
 def update_participant_subscriptions(sender,instance,pk_set,**kwargs):
-    print 'update participant subscriptions'
-    print kwargs
     if kwargs.pop('action',None) == 'post_add': 
         project_type = ContentType.objects.get_for_model(Project)
         for user in User.objects.filter(pk__in=pk_set):
             subscription, created = UserSubscription.objects.get_or_create(user=user,content_type=project_type,object_id=instance.id)
+            subscription.subscribed = True
+            subscription.save()
 
 @receiver(post_save,sender=Project)
 def set_manager_subscription(sender,instance,created,**kwargs):
     if instance.manager:
         project_type = ContentType.objects.get_for_model(Project)
         subscription, created = UserSubscription.objects.get_or_create(user=instance.manager,content_type=project_type,object_id=instance.id)
-
+        subscription.subscribed = True
+        subscription.save()
 @receiver(pre_save,sender=Lab)
 def set_lab_slug(sender,instance,**kwargs):
     if not instance.slug:
@@ -158,3 +161,9 @@ def create_update_notification(sender, instance,**kwargs):
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW,exclude_user=get_current_user())
     except sender.DoesNotExist, e:
         pass
+
+#Any time a notification is created for a project, update the modified date.
+def UpdateProjectModified(sender,instance=None,**kwargs):
+    if isinstance(instance, Project):
+        Project.objects.filter(id=instance.id).update(modified=timezone.now())
+notification_created.connect(UpdateProjectModified, Notification)

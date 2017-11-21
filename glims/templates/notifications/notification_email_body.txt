@@ -1,0 +1,6 @@
+Dear {{user.name}},
+
+You have {{notifications|length}} new notification{%if notifications|length > 1%}s{%endif%} in BioBin:
+{% for n in notifications %}
+-{{n.short_datetime}}: {{n.text}}
+{% endfor %}
