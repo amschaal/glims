@@ -29,7 +29,7 @@ angular.module("project-pools-plugin")
 //					    });
 					updateCount();
 				});
-				$scope.pools = Pool.query({libraries__sample__project__id:$scope.project.id,page_size:100},function() {
+				$scope.pools = Pool.query({project:$scope.project.id,page_size:100},function() {
 					updateCount();
 				});
 			}
