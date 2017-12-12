@@ -79,10 +79,10 @@ angular.module('formly.modal',[])
 			
 			field_description.templateOptions.options = field.choices.map(function(obj){
 				var choice = {'name':obj.name||obj.value,'value':obj.value||obj.name};
-				console.log('choice',choice);
+//				console.log('choice',choice);
 				return choice;
 			});
-			console.log('select',field,field_description);
+//			console.log('select',field,field_description);
 		}
 		return field_description;
 		
@@ -115,10 +115,10 @@ angular.module('formly.modal',[])
 			var error_key = field.key;
 			if (field.data)
 				error_key = field.data.error_key ? field.data.error_key : field.key;
-			console.log('alterFields',field);
+//			console.log('alterFields',field);
 			field.validators['server'] = {
 					expression: function(viewValue, modelValue, scope) {
-//						console.log('expression',field.key,viewValue,modelValue,error_key);
+//						console.log('expression',field.key,viewValue,modelValue,error_key,$scope.errors);
 						if (!$scope.errors)
 							return true;
 						if (error_key.indexOf('data.')==0){
@@ -126,12 +126,12 @@ angular.module('formly.modal',[])
 								return true;
 							return $scope.errors['data'][error_key.substr(5)] == null;
 						}
-						console.log('error key',error_key,$scope.errors[error_key] == null,$scope.errors[error_key]);
+//						console.log('error key',error_key,$scope.errors[error_key] == null,$scope.errors[error_key]);
 						return $scope.errors[error_key] == null;
 					},
 					message: function()
 					{	
-						console.log('message',field.key,error_key.substr(5));
+//						console.log('message',field.key,error_key.substr(5));
 						if (!$scope.errors)
 							return;
 						if (error_key.indexOf('data.')==0){
@@ -149,13 +149,17 @@ angular.module('formly.modal',[])
 	$scope.fields = $scope.alterFields(fields);
 	$scope.original_fields = $scope.fields;
 	$scope.validateForm = function(){
+//		console.log('validateForm',$scope.fields,$scope.errors);
 		angular.forEach($scope.fields,function(field,index){
-			field.formControl.$validate();
-			field.formControl.$setTouched(); //necessary to show message
+//			console.log('validate field',field);
+			if (field.formControl){
+				field.formControl.$validate();
+				field.formControl.$setTouched(); //necessary to show message
+			}
 		});
 	}
 	$scope.onSubmit = function() {
-		console.log('save model',$scope.model)
+//		console.log('save model',$scope.model)
 		var method = $scope.model.id ? '$save' : '$create';
 		$scope.model[method](
 				function(){
@@ -163,8 +167,8 @@ angular.module('formly.modal',[])
 //					$scope.validateForm();
 					$modalInstance.close($scope.model);
 				},
-				function(data){
-					$scope.errors = data.data;
+				function(response){
+					$scope.errors = response.data;
 					$scope.validateForm();
 				}
 		);
@@ -209,7 +213,7 @@ angular.module('formly.modal',[])
 	}
 	
 	$scope.$watch('model.type',function(newValue,oldValue){
-		console.log('model.type',newValue,oldValue);
+//		console.log('model.type',newValue,oldValue);
 		if (!newValue)
 			return;
 		if (angular.isNumber(newValue))
@@ -220,7 +224,7 @@ angular.module('formly.modal',[])
 	$scope.$watch('model_type',function(newValue,oldValue){
 		if (newValue)
 			newValue.$promise.then(function(data){
-				console.log(data.fields,FormlyDynamicFields.translateFields(data.fields));
+//				console.log(data.fields,FormlyDynamicFields.translateFields(data.fields));
 				var fields = FormlyDynamicFields.translateFields(data.fields);
 				setExtraFields(fields);
 			});
