@@ -153,7 +153,7 @@ class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
-    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains'],'project':['exact','in']}
     ordering_fields = ('name', 'created','type__name')
     search_fields = ('name', 'description','type__name')
     model = Pool

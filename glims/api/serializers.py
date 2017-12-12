@@ -140,6 +140,7 @@ class FlatLibrarySerializer(ExtensibleSerializer):
 class PoolSerializer(ExtensibleSerializer):
     library_data = DictField(default={},required=False)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
+    project = ModelRelatedField(model=Project,serializer=FlatProjectSerializer)
     libraries = FlatLibrarySerializer(many=True,read_only=True)
     labs = serializers.SerializerMethodField()
     #labs = LabSerializer(many=True,read_only=True)

@@ -1,6 +1,4 @@
-from django.conf.urls import patterns, include, url
-
-urlpatterns = patterns('',)
+from django.conf.urls import include, url
 
 from rest_framework import routers
 from api import LogViewSet
@@ -9,7 +7,7 @@ router = routers.DefaultRouter()
 router.register(r'logs', LogViewSet,'Log')
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^api/', include(router.urls)),
-)
+]
 

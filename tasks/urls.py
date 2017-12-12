@@ -1,8 +1,4 @@
-from django.conf.urls import patterns, include, url
-from django.contrib import admin
-admin.autodiscover()
-
-urlpatterns = patterns('',)
+from django.conf.urls import include, url
 # if USE_CAS:
 #     admin.site.login = login_required(admin.site.login)
 #     urlpatterns += patterns('',
@@ -17,12 +13,11 @@ from api import TaskViewSet
 router = routers.DefaultRouter()
 router.register(r'tasks', TaskViewSet,'Task')
 
-
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
 #     url(r'^$', 'glims.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^api/', include(router.urls)),
-)
+]
 

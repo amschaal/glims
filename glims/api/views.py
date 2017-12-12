@@ -25,7 +25,7 @@ from rest_framework.views import APIView
 def get_cart(cart):
 #     cart = request.session['sample_cart']
     
-    return dict((s.id,SampleSerializer(s).data) for s in Sample.objects.filter(pk__in=cart).select_related('project__name'))
+    return dict((s.id,SampleSerializer(s).data) for s in Sample.objects.filter(pk__in=cart).select_related('project'))
     
 @api_view(['POST','GET'])
 def add_samples_to_cart(request):

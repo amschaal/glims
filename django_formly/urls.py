@@ -1,8 +1,7 @@
-from django.conf.urls import patterns, include, url
-urlpatterns = patterns('',)
+from django.conf.urls import url
+import views
 
-
-urlpatterns += patterns('',
-    url(r'^form/(?P<key>[\-\w]+)/$', 'django_formly.views.get_formly_form', name='get_formly_form'),
-)
+urlpatterns = [
+    url(r'^form/(?P<key>[\-\w]+)/$', views.get_formly_form, name='get_formly_form'),
+]
 

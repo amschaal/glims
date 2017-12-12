@@ -20,7 +20,7 @@ from glims.api.views import FileBrowser
 
 @login_required
 def fasta_files(request):
-    return render(request, 'proteomics/fasta_files.html', {} ,context_instance=RequestContext(request))
+    return render(request, 'proteomics/fasta_files.html', {} )
 
 
 @login_required
@@ -41,7 +41,7 @@ def create_fasta_from_url(request):
 
 def fasta_file(request,pk):
     instance = get_object_or_404(FastaFile,id=pk)
-    return render(request, 'proteomics/fasta_file.html', {'instance':instance} ,context_instance=RequestContext(request))
+    return render(request, 'proteomics/fasta_file.html', {'instance':instance} )
 def view_fasta(request,pk):
     from proteomics.utils import create_reverse, concatenate_files
     from proteomics import CRAP_FILE
@@ -82,11 +82,11 @@ class FastaFileUpdate(UpdateView):
 
 @login_required
 def parameter_files(request):
-    return render(request, 'proteomics/parameter_files.html', {} ,context_instance=RequestContext(request))
+    return render(request, 'proteomics/parameter_files.html', {} )
 
 @login_required
 def uniprot(request):
-    return render(request, 'proteomics/uniprot.html', {} ,context_instance=RequestContext(request))
+    return render(request, 'proteomics/uniprot.html', {} )
 
 class ParameterFileCreate(CreateView):
     template_name = 'proteomics/create_parameter_file.html'
@@ -118,7 +118,7 @@ def searchcli(request):
 #             job = JobFactory.create_job(SGE,**{'args':args,'name':'Tandem','path':'/var/www/virtualenv/glims/include/glims/proteomics/scripts/test.sh'})
 #             job.run()
 #             return redirect('proteomics__fasta_files') 
-    return render(request, 'proteomics/searchcli.html', {'form':form} ,context_instance=RequestContext(request))
+    return render(request, 'proteomics/searchcli.html', {'form':form} )
 
 
 @api_view(['POST'])

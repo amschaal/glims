@@ -9,17 +9,20 @@ from django.db import transaction
 class MachineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Machine
+        fields = '__all__'
 
 class RunPoolSerializer(serializers.ModelSerializer):
     libraries = FlatLibrarySerializer(many=True,read_only=True)
     class Meta:
         model = Pool
+        fields = '__all__'
 
 class RunLaneSerializer(serializers.ModelSerializer):
     pool = ModelRelatedField(model=Pool,serializer=RunPoolSerializer)
     id = serializers.IntegerField(required=False) #Need this otherwise it won't show up in validated data when updating a run
     class Meta:
         model = Lane
+        fields = '__all__'
         read_only_fields = ('run',)
         extra_kwargs = {'run': {'required': 'False'},'id':{'required':'False'}}
         validators = []  # Remove default global validators
@@ -29,6 +32,7 @@ class RunSerializer(serializers.ModelSerializer):
     lanes = RunLaneSerializer(many=True,read_only=False,required=False)
     class Meta:
         model = Run
+        fields = '__all__'
     def validate(self,data):
         keys = []
         for l in data.get('lanes',[]):
@@ -73,7 +77,7 @@ class RunSerializer(serializers.ModelSerializer):
 #         model = Pool
 class RunLaneDetailSerializer(RunLaneSerializer):
 #     pool = ModelRelatedField(model=Pool,serializer=RunPoolDetailSerializer)
-    pool = ModelRelatedField(model=Pool,serializer=PoolSerializer)
+    pool = ModelRelatedField(model=Pool,serializer=PoolSerializer,required=False,allow_null=True)
 
 class RunDetailSerializer(RunSerializer):
     def __init__(self,*args,**kwargs):
