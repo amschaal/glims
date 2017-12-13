@@ -84,7 +84,7 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
     search_fields = ('name', 'description','type__name','lab__first_name','lab__last_name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'participants':['participants__last_name__icontains','participants__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
-    ordering_fields = ('created', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name','group__name','archived')
+    ordering_fields = ('created','modified', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name','group__name','archived')
     def get_queryset(self):
         return Project.objects.select_related('type','sample_type','manager','lab','group').prefetch_related(  
 #             Prefetch('statuses', queryset=ProjectStatus.objects.select_related('status').order_by('timestamp')),
@@ -153,7 +153,7 @@ class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer
 #     permission_classes = [CustomPermission]
     permission_classes = [IsAuthenticated,GroupPermission]
-    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains']}
+    filter_fields = {'name':['exact', 'icontains'], 'description':['exact', 'icontains'],'type__name':['exact', 'icontains'],'project':['exact','in']}
     ordering_fields = ('name', 'created','type__name')
     search_fields = ('name', 'description','type__name')
     model = Pool

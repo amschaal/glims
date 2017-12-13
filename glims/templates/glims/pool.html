@@ -25,6 +25,7 @@
 	        	<table class="table">
 	        		<tr><th>Name</th><td>{[pool.name]}</td></tr>
 	        		<tr><th>Group</th><td>{[pool.group.name]}</td></tr>
+	        		<tr><th>Project</th><td><a href="{[getURL('project',{'pk':pool.project.id})]}">{[pool.project.name]}</a></td></tr>
 	        		<tr><th>Description</th><td>{[pool.description]}</td></tr>
 	        		<tr><th>Created</th><td>{[pool.created | date]}</td></tr>
 	        		<tr ng-repeat="field in pool.type.fields"><th>{[field.label]}</th><td>{[pool.data[field.name]]}</td></tr>

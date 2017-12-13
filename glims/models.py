@@ -83,6 +83,7 @@ class Project(ExtensibleModel):
     project_id = models.CharField(max_length=4,default=generate_project_id,unique=True,null=True,blank=True,db_index=True)
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
     created = models.DateTimeField(auto_now_add=True,db_index=True)
+    modified = models.DateTimeField(auto_now=True,db_index=True)
     lab = models.ForeignKey(Lab, on_delete=models.PROTECT,related_name='projects')
     name = models.CharField(max_length=100,db_index=True)
     description = models.TextField(null=True,blank=True,db_index=True)
@@ -209,6 +210,7 @@ class Library(ExtensibleModel):
         return self.name
 
 class Pool(ExtensibleModel):
+    project = models.ForeignKey(Project,null=True,blank=True)
     name = models.CharField(max_length=100,unique=True,db_index=True)
     group = models.ForeignKey(Group,on_delete=models.PROTECT)
     description = models.TextField(null=True,blank=True,db_index=True)

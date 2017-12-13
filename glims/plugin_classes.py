@@ -78,7 +78,22 @@ class FilePlugin(BasePlugin):
     @staticmethod
     def get_header_template(obj):
         return 'Files ({[attachments_object.files]})'
-    
+
+class ProjectPoolsPlugin(BasePlugin):
+    id = 'project-pools-plugin' #Name of directive
+    name = 'Project Pools Plugin'
+    description = 'Allows management of project sample pools'
+    js_files = ['js/directives/project.pools.plugin.js']
+#     template = 'glims/plugins/manage_samples.html'
+    models = [Project]
+    def get_attributes(self, obj):
+        return {'project':'project', 'ng-if':'project.id'}
+    @staticmethod
+    def get_template(obj):
+        return '<project-pools project="project"></project-pools>'
+    @staticmethod
+    def get_header_template(obj):
+        return 'Pools ({[pool_count]})'
 
 """
 class BiosharePlugin(object):

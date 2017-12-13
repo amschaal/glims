@@ -128,7 +128,7 @@
 		
 		formlyConfig.setType({
 	        name: 'objectMultiCheckbox',
-//	        extends: 'multiCheckbox',
+	        extends: 'multiCheckbox',
 	        template: '<div class="radio-group">\
 					        	  <div ng-repeat="(key, option) in checkbox_options" class="checkbox">\
 					        <label>\
@@ -151,7 +151,7 @@
 	        	//If the options change, remove invalid options from selection
 		        $scope.$watch('to.options', function(options,oldOptions) {
 		        	console.log('checkbox_options',options);
-		        	if(!options.$promise || options.$resolved){
+		        	if(options && (!options.$promise || options.$resolved)){
 		        		$scope.checkbox_options = angular.copy(options);
 		        		$scope.model[$scope.options.key] = _.intersectionWith(
 		        				$scope.model[$scope.options.key], $scope.checkbox_options, 

@@ -87,7 +87,7 @@ class ProjectSerializer(ExtensibleSerializer):
     history = JSONField(read_only=True)
     class Meta:
         model = Project
-        fields = ('id','type','name','sample_type','data','status_options','lab','group','manager','participants','related_projects','history','project_id','created','description','contact','archived','status')
+        fields = ('id','type','name','sample_type','data','status_options','lab','group','manager','participants','related_projects','history','project_id','created','modified','description','contact','archived','status')
 #         fields = ('id','name','type','type__name','sample_type','description','lab','lab__name','data','created','status','history','status_options','referencing_projects','related_projects','group','participants','manager')
 
 class SampleSerializer(ExtensibleSerializer):
@@ -140,6 +140,7 @@ class FlatLibrarySerializer(ExtensibleSerializer):
 class PoolSerializer(ExtensibleSerializer):
     library_data = DictField(default={},required=False)
     group = ModelRelatedField(model=Group,serializer=GroupSerializer)
+    project = ModelRelatedField(model=Project,serializer=FlatProjectSerializer)
     libraries = FlatLibrarySerializer(many=True,read_only=True)
     labs = serializers.SerializerMethodField()
     #labs = LabSerializer(many=True,read_only=True)

@@ -10,7 +10,7 @@ from django.utils import timezone
 
 @login_required
 def exports(request):
-    return render(request, 'tracker/exports.html', {'statuses':json.dumps(dict(Log.STATUS_CHOICES))} ,context_instance=RequestContext(request))
+    return render(request, 'tracker/exports.html', {'statuses':json.dumps(dict(Log.STATUS_CHOICES))})
 
 @login_required
 def project_report(request):
