@@ -106,7 +106,7 @@ angular.module('glimsServices')
 	 };
 
 	 function update(project,options) {
-		    options = angular.extend({model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController'},options||{});
+		    options = angular.extend({subtype:true,model_type_query:{content_type__model:'project'},title:'Create project',controller:'ExtendedFormlyModalController'},options||{});
 			return FormlyModal.create(fields,project || new Project({}),options);
 			
 	 }

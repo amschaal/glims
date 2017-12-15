@@ -28,6 +28,9 @@ angular.module('glimsModels', ['ngResource'])
     query: { method: 'GET', transformResponse:transformDjangoRestResponse, isArray:true }
   });
 }])
+.factory('ModelSubType', ['$resource', function ($resource) {
+  return $resource('/api/model_subtypes/:id/', {id:'@id'}, standard_methods);
+}])
 .factory('Status', ['$resource', function ($resource) {
   return $resource('/api/statuses/:id/', {id:'@id'}, standard_methods);
 }])

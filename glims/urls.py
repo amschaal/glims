@@ -27,12 +27,14 @@ from django.contrib.auth import views as auth_views
 
 from rest_framework import routers
 from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet,\
-    StatusSerializerViewSet, AdapterViewSet, LibraryViewSet
+    StatusSerializerViewSet, AdapterViewSet, LibraryViewSet,\
+    ModelSubTypeSerializerViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
 router.register(r'groups', GroupViewSet,'Group')
 router.register(r'model_types', ModelTypeSerializerViewSet,'ModelType')
+router.register(r'model_subtypes', ModelSubTypeSerializerViewSet,'ModelSubType')
 router.register(r'projects', ProjectViewSet,'Project')
 router.register(r'samples', SampleViewSet,'Sample')
 router.register(r'adapters', AdapterViewSet,'Adapter')

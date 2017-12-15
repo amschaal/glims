@@ -7,7 +7,7 @@
 <script>
 
 angular.module('glims.core').requires.push('pluginModels');
-angular.module('mainapp').controller('DesignerController', function($scope,$http,ModelTypePlugin,Status) {
+angular.module('mainapp').controller('DesignerController', function($scope,$http,ModelTypePlugin,Status,ModelSubType) {
     $scope.field_types = ['text','textarea','file','radio','float','integer','select','checkbox'];
     $scope.fields=[];
     $scope.initialize = function(init){
@@ -24,6 +24,7 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
     	$scope.urls = init.urls;
     	$scope.plugins = ModelTypePlugin.query({type:init.id});
     	$scope.statuses = Status.query({model_type:init.id});
+    	$scope.subtypes = ModelSubType.query({type:init.id})
     	$http.get($scope.getURL('available_model_type_plugins',{pk:init.id})).then(function(response){
     		$scope.available_plugins = response.data;
     	});
@@ -97,6 +98,28 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
         		status.$create(null,null,function(response){status.errors=response.data;});    		
     	});
     	alert('Statuses updated');
+    }
+    $scope.addSubtype = function(){
+    	$scope.subtypes.push(new ModelSubType({type:$scope.id}))
+    }
+    $scope.deleteSubtype = function(subtype,index){
+    	var removeSubtype = function(){
+    		$scope.subtypes.splice($scope.subtypes.indexOf(subtype),1);
+    	};
+    	if (subtype.id)
+	    	subtype.$remove(removeSubtype);
+    	else
+    		removeSubtype();
+    		
+    }
+    $scope.saveSubtypes = function(){
+    	angular.forEach($scope.subtypes,function(subtype,index){
+    		if(subtype.id)
+    			subtype.$save(null,null,function(response){subtype.errors=response.data;});
+        	else
+        		subtype.$create(null,null,function(response){subtype.errors=response.data;});    		
+    	});
+    	alert('Subtypes updated');
     }
   });
 
@@ -172,15 +195,27 @@ angular.module('mainapp').controller('DesignerController', function($scope,$http
 						<h4 ng-if="statuses.length < 1">There are no statuses configured</h4>
 						<table class="table" ng-if="statuses.length > 0">
 						<tr><th>Order</th><th>Name</th><th>Description</th><th></th></tr>
-						<tr ng-repeat="status in statuses|orderBy:'order' track by $index" ng-class="{error:status.errors}">
-							<td style="width:100px">{[status.errors]}<input ng-model="status.order" type="number" class="form-control" ng-class="{error:status.errors.order}"/></td>
-							<td><input ng-model="status.name" class="form-control" ng-class="{error:status.errors.name}"/></td>
-							<td><textarea ng-model="status.description" class="form-control" ng-class="{error:status.errors.description}"></textarea> </td>
+						<tr ng-repeat="status in statuses|orderBy:'order' track by $index">
+							<td style="width:100px" ng-class="{'has-error':status.errors.order}">{[status.errors]}<input ng-model="status.order" type="number" class="form-control"/></td>
+							<td ng-class="{'has-error':status.errors.name}"><input ng-model="status.name" class="form-control"/></td>
+							<td ng-class="{'has-error':status.errors.description}"><textarea ng-model="status.description" class="form-control"></textarea> </td>
 							<td><button class="btn btn-danger pull-right" ng-click="deleteStatus(status,$index)">Remove</button></td>
 						</tr>
 						</table>
 						<button class="btn btn-success" ng-click="addStatus()">Add Status</button> <button class="btn btn-primary" ng-click="saveStatuses()" ng-if="statuses.length > 0">Save</button>
-						</tab>
+					</tab>
+					<tab heading="Subtypes">
+						<h4 ng-if="subtypes.length < 1">There are no subtypes</h4>
+						<table class="table" ng-if="subtypes.length > 0">
+						<tr><th>Name</th><th>Description</th><th></th></tr>
+						<tr ng-repeat="subtype in subtypes|orderBy:'id' track by $index">
+							<td ng-class="{'has-error':subtype.errors.name}"><input ng-model="subtype.name" class="form-control"/></td>
+							<td ng-class="{'has-error':subtype.errors.description}"><textarea ng-model="subtype.description" class="form-control"></textarea> </td>
+							<td><button class="btn btn-danger pull-right" ng-click="deleteSubtype(subtype,$index)">Remove</button></td>
+						</tr>
+						</table>
+						<button class="btn btn-success" ng-click="addSubtype()">Add Subtype</button> <button class="btn btn-primary" ng-click="saveSubtypes()" ng-if="subtypes.length > 0">Save</button>
+					</tab>
 				</tabset>
 		</div>
 		</div>

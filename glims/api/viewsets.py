@@ -4,7 +4,7 @@ from rest_framework import viewsets, status
 
 from django_compute.models import Job
 from extensible.drf.viewsets import ExtensibleViewset
-from extensible.models import ModelType
+from extensible.models import ModelType, ModelSubType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer,\
@@ -20,6 +20,7 @@ from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter
 from rest_framework.response import Response
 from glims.samples.importer import ProjectExport
+from extensible.drf.serializers import ModelSubTypeSerializer
 
 
 # from glims.api.permissions import CustomPermission
@@ -67,6 +68,15 @@ class ModelTypeSerializerViewSet(viewsets.ModelViewSet):
 #     def get_queryset(self):
 #         return get_all_user_objects(self.request.user, ['view'], Experiment)
 
+class ModelSubTypeSerializerViewSet(viewsets.ModelViewSet):
+    serializer_class = ModelSubTypeSerializer
+    permission_classes = [IsAuthenticated,AdminOrReadOnlyPermission]
+    filter_fields = {'type':['exact'],'name':['exact', 'icontains']}
+    search_fields = ('name','description')
+    ordering_fields = ('type__content_type__model', 'type','name')
+    model = ModelSubType
+    queryset = ModelSubType.objects.all()
+
 class StatusSerializerViewSet(viewsets.ModelViewSet):
     serializer_class = StatusSerializer
     permission_classes = [IsAuthenticated,AdminOrReadOnlyPermission]
@@ -81,7 +91,7 @@ class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
-    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
+    filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'subtype':['exact'],'subtype__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
     search_fields = ('name', 'description','type__name','lab__first_name','lab__last_name','project_id')
     multi_field_filters = {'manager':['manager__last_name__icontains','manager__first_name__icontains'],'participants':['participants__last_name__icontains','participants__first_name__icontains'],'lab_name':['lab__first_name__icontains','lab__last_name__icontains']}
     ordering_fields = ('created','modified', 'id','project_id','name','type','type__name','description','manager__last_name','status__name','lab__last_name','group__name','archived')
@@ -148,7 +158,7 @@ class SampleViewSet(ExtensibleViewset,FileManagerMixin):
         if pool is not None:
             queryset = queryset.filter(pools__id=pool)
         return queryset
-    
+
 class PoolViewSet(ExtensibleViewset):
     serializer_class = PoolSerializer
 #     permission_classes = [CustomPermission]

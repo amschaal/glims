@@ -178,10 +178,36 @@ angular.module('formly.modal',[])
 	};
 }
 )
-.controller('ExtendedFormlyModalController', function FormlyModalController($scope,$controller, $http, $modalInstance,ModelType,FormlyDynamicFields, fields, model, options) {
+.controller('ExtendedFormlyModalController', function FormlyModalController($scope,$controller, $http, $modalInstance,ModelType,ModelSubType,FormlyDynamicFields, fields, model, options) {
 	angular.extend(this, $controller('FormlyModalController', {$scope, $http, $modalInstance, fields, model, options}));
 	if (!$scope.model.data)
 		$scope.model.data = {};
+	if (options.subtype){
+		var subtype_field ={
+			    "key": "subtype",
+			    "type": "select",
+			    "templateOptions": {
+			      "label": "Subtype",
+			      "ngOptions": "option as option.name for option in to.options track by option.id",
+			      "options": [],
+			      "valueProp": "id",
+			      "labelProp": "name"
+			    },
+			    "expressionProperties": {
+			    	"hide": "!to.options.length"
+			    }
+			};
+		$scope.original_fields.unshift(subtype_field);
+		$scope.fields = $scope.original_fields;
+		if ($scope.model.data.type)
+			ModelSubType.query({type:$scope.model.data.type.id},function(options){
+				$scope.fields[1].templateOptions.options = options;
+				$scope.fields[1].hide = !options.length;
+				console.log('subtype_options',$scope.fields[1].templateOptions.options);
+			});
+		
+		
+	}
 	if (options.model_type_query){
 		var model_types = ModelType.query(options.model_type_query||{}).$promise.then(
 			function(types){
@@ -196,6 +222,14 @@ angular.module('formly.modal',[])
 					      "labelProp": "name"
 					    }
 				    };
+				if (options.subtype)
+					type_field.templateOptions.onChange = function(model,two,scope){
+						ModelSubType.query({type:model.id},function(options){
+							scope.fields[1].templateOptions.options = options;
+							scope.fields[1].hide = !options.length;
+							console.log('subtype_options',scope.fields[1].templateOptions.options);
+						});//[{id:model.id,name:model.name}];//
+					};
 				$scope.original_fields.unshift(type_field);
 				$scope.fields = $scope.original_fields;//angular.copy($scope.original_fields);
 			}
