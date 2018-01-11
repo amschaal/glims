@@ -193,9 +193,9 @@ angular.module('formly.modal',[])
 			      "valueProp": "id",
 			      "labelProp": "name"
 			    },
-			    "expressionProperties": {
-			    	"hide": "!to.options.length"
-			    }
+//			    "expressionProperties": {
+//			    	"hide": "!to.options.length"
+//			    }
 			};
 		$scope.original_fields.unshift(subtype_field);
 		$scope.fields = $scope.original_fields;
@@ -203,7 +203,7 @@ angular.module('formly.modal',[])
 			ModelSubType.query({type:$scope.model.data.type.id},function(options){
 				$scope.fields[1].templateOptions.options = options;
 				$scope.fields[1].hide = !options.length;
-				console.log('subtype_options',$scope.fields[1].templateOptions.options);
+				console.log('get subtype options',$scope.fields[1].templateOptions.options);
 			});
 		
 		
