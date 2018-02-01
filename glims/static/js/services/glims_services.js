@@ -1,4 +1,32 @@
-angular.module('glimsServices',['glims.formly','glims.ui'])
+angular.module('glimsServices',['glims.formly','glims.ui']);
+
+
+
+'<input type="checkbox" name="{{name}}" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="\'True\'" ng-true-value="\'True\'" ng-false-value="\'False\'" />'
+
+angular.module('glimsServices').config(setConfigPhaseSettings);
+setConfigPhaseSettings.$inject = ["ngTableFilterConfigProvider"];
+function setConfigPhaseSettings(ngTableFilterConfigProvider) {
+    var filterAliasUrls = {
+      "checkbox": 'ng-table/checkbox.html'
+    };
+    ngTableFilterConfigProvider.setConfig({
+      aliasUrls: filterAliasUrls
+    });
+//    // optionally set a default url to resolve alias names that have not been explicitly registered
+//    // if you don't set one, then 'ng-table/filters/' will be used by default
+//    ngTableFilterConfigProvider.setConfig({
+//      defaultBaseUrl: "ng-table/filters/"
+//    });
+
+  }
+angular.module('glimsServices').run(['$templateCache', function($templateCache) {
+	$templateCache.put('ng-table/checkbox.html',
+			'<input type="checkbox" name="{{name}}" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="\'True\'" ng-true-value="\'True\'" ng-false-value="\'False\'" />'
+	);
+}])
+
+angular.module('glimsServices')
 .factory('DRFNgTableParams', ['NgTableParams','$http','$location', function(NgTableParams,$http,$location) {
 	return function(url,ngparams,resource) {
 		var params = {
