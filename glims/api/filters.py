@@ -24,4 +24,17 @@ class FollowingProjectFilter(filters.BaseFilterBackend):
 #             pass
         query = reduce(operator.or_,clauses)
         queryset =  queryset.filter(query)
-        return queryset 
+        return queryset
+
+class ProjectStatusFilter(filters.BaseFilterBackend):
+    """
+    filter by status name or 'none' to see null status
+    """
+    def filter_queryset(self, request, queryset, view):
+        status = view.request.query_params.get('status',None)
+        if not status:
+            return queryset
+        if status.upper() in ['NONE','BLANK','EMPTY','NULL']:
+            return queryset.filter(status__isnull=True)
+        else:
+            return queryset.filter(status__name__icontains=status)

@@ -40,7 +40,7 @@
 		        <td data-title="'Participants (search by last name)'" filter="{participants__last_name__icontains: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
 		        <td data-title="'Description'" filter="{description__icontains: 'text'}" ng-if="cols['Description']"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td data-title="'Contact'" filter="{contact__icontains: 'text'}" ng-if="cols['Contact']"><show-more text="row.contact" limit="50" lines="1" delimiter="'\n'"></show-more></td>
-		        <td data-title="'Status'" sortable="'status__name'" filter="{status__name__icontains: 'text'}" ng-if="cols['Status']">
+		        <td data-title="'Status'" sortable="'status__name'" filter="{status: 'status'}" ng-if="cols['Status']">
 		        	<resource-field-select resource="row" field="status" options="row.status_options" order-by-field="order"></resource-field-select>
 		        </td>
 		        <td data-title="'Archived'"  sortable="'archived'" ng-if="cols['Archived']"><archive-project project="row"></archive-project></td>
@@ -68,4 +68,10 @@
         </div>
       </div>
     </div>
+<script type="text/ng-template" id="ng-table/filters/checkbox.html">
+    <input type="checkbox" name="[{name}]" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="'True'" ng-true-value="'True'" ng-false-value="'False'" />
+</script>
+<script type="text/ng-template" id="ng-table/filters/status.html">
+    <label><i class="fa fa-question-circle" title="Search by status name.  Enter 'none', 'blank', 'empty', or 'null' to filter by empty status"></i><input type="input" name="[{name}]" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="params.filter()[name]"/></label>
+</script>
 {% endblock %}
