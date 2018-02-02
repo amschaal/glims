@@ -72,6 +72,6 @@
     <input type="checkbox" name="[{name}]" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="'True'" ng-true-value="'True'" ng-false-value="'False'" />
 </script>
 <script type="text/ng-template" id="ng-table/filters/status.html">
-    <label><i class="fa fa-question-circle" title="Search by status name.  Enter 'none', 'blank', 'empty', or 'null' to filter by empty status"></i><input type="input" name="[{name}]" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="params.filter()[name]"/></label>
+    <input type="input" name="[{name}]" ng-model="params.filter()[name]" class="input-filter form-control" ng-value="params.filter()[name]" uib-popover="Search by status name.  Enter 'none', 'blank', 'empty', or 'null' to filter by empty status"  popover-trigger="focus" class="form-control"/>
 </script>
 {% endblock %}
