@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.name
     
 class Log(models.Model):
     STATUS_NOT_BILLED = 'Not billed'
