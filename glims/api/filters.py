@@ -38,3 +38,22 @@ class ProjectStatusFilter(filters.BaseFilterBackend):
             return queryset.filter(status__isnull=True)
         else:
             return queryset.filter(status__name__icontains=status)
+
+class MultiFilter(filters.BaseFilterBackend):
+    """
+    Set multi_filters property like:
+    multi_filters = ['id__in']
+    
+    You can then use a querystring like:
+    ?id__in=1&id__in=2&id__in=3
+    """
+    def filter_queryset(self, request, queryset, view):
+        multi_filters = getattr(view, 'multi_filters',[])
+        filters = {}
+        for mf in multi_filters:
+            val = view.request.query_params.getlist(mf,None)
+            if val:
+                filters[mf]=val
+        if len(filters):
+            queryset = queryset.filter(**filters)
+        return queryset
