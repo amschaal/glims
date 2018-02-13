@@ -1,4 +1,4 @@
-angular.module('glimsServices',['glims.formly','glims.ui'])
+angular.module('glimsServices',['glims.formly','glims.ui','btorfs.multiselect'])
 .factory('DRFNgTableParams', ['NgTableParams','$http','$location', function(NgTableParams,$http,$location) {
 	return function(url,ngparams,resource) {
 		var params = {
