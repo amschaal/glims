@@ -20,6 +20,7 @@ from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter, ProjectStatusFilter
 from rest_framework.response import Response
 from glims.samples.importer import ProjectExport
+from rest_framework.exceptions import PermissionDenied
 
 
 # from glims.api.permissions import CustomPermission
@@ -204,3 +205,8 @@ class LabViewSet(viewsets.ModelViewSet):
     model = Lab
     def get_queryset(self):
         return Lab.objects.all().order_by('id')#get_all_user_objects(self.request.user, ['view'], Experiment)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.projects.all().count() > 0:
+            raise PermissionDenied('Labs with projects may not be deleted.  Delete or reassign all lab projects before attempting to delete this lab.')
+        return super(LabViewSet, self).destroy(request,*args,**kwargs)

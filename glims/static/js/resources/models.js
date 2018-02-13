@@ -56,4 +56,7 @@ angular.module('glimsModels', ['ngResource'])
 }])
 .factory('Pool', ['$resource', function ($resource) {
   return $resource('/api/pools/:id/', {id:'@id'}, standard_methods);
+}])
+.factory('Lab', ['$resource', function ($resource) {
+  return $resource('/api/labs/:id/', {id:'@id'}, standard_methods);
 }]);

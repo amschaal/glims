@@ -1,7 +1,8 @@
 
 angular.module('mainapp')
 .controller('ProjectController', ['$scope','DRFNgTableParams','Project','projectService', ProjectController])
-.controller('SampleController', ['$scope','$http','DRFNgTableParams','cartService', SampleController]);
+.controller('SampleController', ['$scope','$http','DRFNgTableParams','cartService', SampleController])
+.controller('LabController', ['$scope','$log', 'Lab','growl',LabController]);
 function ProjectController($scope,DRFNgTableParams,Project,projectService) {
 	$scope.permissionLink = function(project){return django_js_utils.urls.resolve('permissions', { model: 'project', pk: project.id })};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
@@ -31,4 +32,16 @@ function SampleController($scope, $http,DRFNgTableParams, cartService) {
 	    $scope.cartSamples = cartService.getSamples();
 	  });
 	
+}
+
+function LabController($scope , $log, Lab,growl){
+	$scope.init = function (id){
+		$scope.id = id;
+		$scope.lab = Lab.get({id:id});
+	};
+	$scope.deleteLab = function(){
+		if (!confirm('Are you sure you want to delete this lab?  This action cannot be undone!'))
+			return;
+		$scope.lab.$delete(function(){window.location.href = $scope.getURL('labs');},function(response){growl.error('Error deleting lab: "'+response.data.detail+'"',{ttl: 10000});})
+	}
 }
