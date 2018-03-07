@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django.contrib.postgres.search',
     'django_js_utils',
     'compressor',
     'glims.apps.GlimsConfig',
@@ -208,6 +209,8 @@ NOTIFICATION_TYPES = (
 )
 
 NOTIFICATION_EMAIL_FREQUENCY_HOURS=1
+
+NOTIFICATIONS_DELETE = True
 
 ATTACHMENT_UPLOAD_TO_FUNCTION = 'glims.attachments_config.attachment_upload_to'
 
