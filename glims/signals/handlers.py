@@ -159,6 +159,9 @@ def create_update_notification(sender, instance,**kwargs):
             text = '"%s" has been updated'%(str(instance))
             description = "The following fields have been modified: %s" % ', '.join(changed)
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW,exclude_user=get_current_user())
+        #Send notification to new manager
+        if instance.manager and instance.manager != pre_update.manager:
+            create_notification(url,'%s has been assigned manager for project %s'%(instance.manager,instance),instance=instance,importance=Notification.IMPORTANCE_LOW,users=[instance.manager.id])#,exclude_user=get_current_user()
     except sender.DoesNotExist, e:
         pass
 
