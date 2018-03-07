@@ -125,7 +125,7 @@ def create_note_notification(sender,**kwargs):
         obj = instance.content_object#ct.get_object_for_this_type(instance.object_id)
 #         if hasattr(obj, 'get_notification_users'):
 #             users = obj.get_notification_users().exclude(id=instance.created_by.id).distinct()
-        url = settings.SITE_URL + obj.get_absolute_url()+'?tab=notes'
+        url = obj.get_absolute_url()+'?tab=notes'
         description = '%s wrote: "%s..."'%(str(instance.created_by), instance.content[:200])
         text = '%s: %s wrote "%s..."'%(str(obj),str(instance.created_by),instance.content[:20])
         create_notification(url,text,type_id='note_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.created_by)
@@ -138,7 +138,7 @@ def create_file_notification(sender,**kwargs):
         obj = instance.content_object#ct.get_object_for_this_type(instance.object_id)
 #         if hasattr(obj, 'get_notification_users'):
 #             users = obj.get_notification_users().exclude(id=instance.uploaded_by.id).distinct()
-        url = settings.SITE_URL + obj.get_absolute_url()+'?tab=files'
+        url = obj.get_absolute_url()+'?tab=files'
         description = instance.description
         text = '%s: %s uploaded %s'%(str(obj),str(instance.uploaded_by),str(instance))
         create_notification(url,text,type_id='file_created',description=description,instance=obj,importance=Notification.IMPORTANCE_LOW,exclude_user=instance.uploaded_by)
@@ -155,7 +155,7 @@ def create_update_notification(sender, instance,**kwargs):
             if getattr(pre_update, field.name,None) != getattr(instance, field.name,None):
                 changed.append(field.name)
         if len(changed) > 0:
-            url = settings.SITE_URL + instance.get_absolute_url()
+            url = instance.get_absolute_url()
             text = '"%s" has been updated'%(str(instance))
             description = "The following fields have been modified: %s" % ', '.join(changed)
             create_notification(url,text,type_id='object_updated',description=description,instance=instance,importance=Notification.IMPORTANCE_LOW,exclude_user=get_current_user())
