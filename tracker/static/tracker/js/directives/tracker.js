@@ -16,14 +16,17 @@ angular.module("tracker-plugin")
 			var category_options_deferred = $q.defer();
 			var fields = [];
 			$scope.logs = [];
-			$scope.deleteLog = function(index){
-				if (!$scope.logs[index].id)
-					$scope.logs.splice(index,1);
+			$scope.deleteLog = function(log){
+				if (!log.id){
+					$scope.logs.splice($scope.logs.indexOf(log),1);
+					$scope.tableParams.reload();
+				}
 				else {
 					if (!confirm("Are you sure you want to delete this log?"))
 						return;
-					$scope.logs[index].$remove(function(){
-						$scope.logs.splice(index,1);
+					log.$remove(function(){
+						$scope.logs.splice($scope.logs.indexOf(log),1);
+						$scope.tableParams.reload();
 					});
 				}
 			};
@@ -130,7 +133,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 				<td data-title="\'Description\'" filter="{description: \'text\'}">{[row.description]}</td>\
 				<td data-title="\'Exports\'"><span ng-repeat="export in row.exports"><a title="{[export.description]}" href="/tracker/exports/#/exports/{[export.id]}/">{[export.created|date:\'short\']}</a>, </span></td>\
 				<td>\
-					<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog($index)">Delete</button>\
+					<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog(row)">Delete</button>\
 					<button class="btn btn-xs pull-right" ng-if="!log.editing" ng-click="editLog(row)">Edit</button>\
 					<button class="btn btn-xs btn-success pull-right" ng-if="log.editing" ng-click="save(row)">Save</button>\
 				</td>\

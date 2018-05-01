@@ -16,14 +16,14 @@ angular.module("accounts-plugin")
 			function setAccountsCount(){
 				$rootScope.accounts_count = $scope.accounts.length;
 			}
-			$scope.deleteAccount = function(index){
-				if (!$scope.accounts[index].id)
-					$scope.accounts.splice(index,1);
+			$scope.deleteAccount = function(account){
+				if (!account.id)
+					$scope.accounts.splice($scope.accounts.indexOf(account),1);
 				else {
 					if (!confirm("Are you sure you want to delete this account?"))
 						return;
-					$scope.accounts[index].$remove(function(){
-						$scope.accounts.splice(index,1);
+					account.$remove(function(){
+						$scope.accounts.splice($scope.accounts.indexOf(account),1);
 						setAccountsCount();
 					});
 				}
@@ -71,7 +71,7 @@ angular.module("accounts-plugin").run(['$templateCache', function($templateCache
 	<td ng-if="account.editing"><input ng-model="account.account" class="form-control"/></td>\
 	<td ng-if="!account.editing">{[account.description]}</td><td ng-if="account.editing"><textarea ng-model="account.description" class="form-control"></textarea></td>\
 	<td>\
-		<button class="btn btn-xs btn-danger pull-right" ng-click="deleteAccount($index)">Delete</button>\
+		<button class="btn btn-xs btn-danger pull-right" ng-click="deleteAccount(account)">Delete</button>\
 		<button class="btn btn-xs pull-right" ng-if="!account.editing" ng-click="editAccount(account)">Edit</button>\
 		<button class="btn btn-xs btn-success pull-right" ng-if="account.editing" ng-click="save(account)">Save</button>\
 	</td>\
