@@ -17,7 +17,6 @@ from glims.middlewares.ThreadLocal import get_current_user
 from notifications.signals import notification_created
 from django.utils import timezone
 
-
 @receiver(pre_save,sender=Project)
 def handle_status(sender,instance,**kwargs):
     if not hasattr(instance, 'id'):
@@ -113,7 +112,7 @@ def set_manager_subscription(sender,instance,created,**kwargs):
 @receiver(pre_save,sender=Lab)
 def set_lab_slug(sender,instance,**kwargs):
     if not instance.slug:
-        instance.slug = instance.get_directory_name()
+        instance.slug = instance.generate_slug()
         
 @receiver(pre_save,sender=Library)
 def set_library_name(sender,instance,**kwargs):

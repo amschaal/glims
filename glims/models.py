@@ -66,6 +66,9 @@ class Lab(models.Model):
     @property
     def name(self):
         return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name
+    def generate_slug(self):
+        parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
+        return make_directory_name('_'.join(parts))
     def get_directory_name(self):
         return call_directory_function('get_lab_directory_name',self)
 #         parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
