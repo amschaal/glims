@@ -152,7 +152,6 @@ function ExportController($scope, $http, $routeParams,$location,$filter, NgTable
     	})
     }
     $scope.getStatuses = function(){
-    	console.log('statuses',_.map($scope.config.statuses,function(key,val){return {id:key,title:val}}))
     	return _.map($scope.config.statuses,function(key,val){return {id:key,title:val}});
     };
     $scope.exports = function(){

@@ -33,33 +33,50 @@ def handle_status(sender,instance,**kwargs):
             instance.history['statuses'].append({'name':instance.status.name,'id':instance.status.id,'updated':datetime.now().isoformat()})
 
 #This could be avoided if the directory structures only depended on immutable values!!!
-@receiver(object_updated,sender=Project)
-def update_project_directory(sender,instance,old_instance,**kwargs):
+# @receiver(object_updated,sender=Sample)
+def move_directory(sender,instance,old_instance,**kwargs):
     old_directory = old_instance.directory(full=True)
     new_directory = instance.directory(full=True)
     if old_directory != new_directory and os.path.isdir(old_directory):
+        print 'moving from {0} to {1}'.format(old_directory,new_directory)
         shutil.move(old_directory, new_directory)
-#         for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
-#             file.file.name = file.file.name.replace(old_directory,new_directory)
-#             file.save()
+        print 'updating Files...'
+        relative_old = old_instance.directory(full=False)
+        relative_new = instance.directory(full=False)
+        for file in File.objects.filter(file__startswith=relative_old):#, object_id=instance.id, content_type=ContentType.objects.get_for_model(type(instance))
+            print file.file.name
+            file.file = file.file.name.replace(relative_old,relative_new)
+            file.save()
 
-@receiver(object_updated,sender=Lab)
+object_updated.connect(move_directory, sender=Project)
+object_updated.connect(move_directory, sender=Sample)
+# object_updated.connect(move_directory, sender=Lab)
+
+
+# Lab directories are a different case?  Probably should actually disable this and just prevent the lab slug from being changed.  VERY DANGEROUS!
+# @receiver(object_updated,sender=Lab)
 def update_lab_directories(sender,instance,old_instance,**kwargs):
+    print 'lab updated'
+    print instance.slug
+    print old_instance.slug
     for g in Group.objects.all():
+        print g
         old_directory = old_instance.get_group_directory(g,full=True)
         new_directory = instance.get_group_directory(g,full=True)
-        if old_directory != new_directory and os.path.isdir(old_directory):
+        print old_directory
+        print new_directory
+        if os.path.isdir(old_directory) and old_directory != new_directory:
+            print 'MOVE'
             shutil.move(old_directory, new_directory)
-#             for file in File.objects.filter(file__startswith=old_directory,object_id=instance.id, issue_ct=ContentType.objects.get_for_model(Project)):
-#                 file.file.name = file.file.name.replace(old_directory,new_directory)
-#                 file.save()
-
-@receiver(object_updated,sender=Sample)
-def update_sample_directory(sender,instance,old_instance,**kwargs):
-    old_directory = old_instance.directory(full=True)
-    new_directory = instance.directory(full=True)
-    if old_directory != new_directory and os.path.isdir(old_directory):
-        shutil.move(old_directory, new_directory)
+            print 'moving from {0} to {1}'.format(old_directory,new_directory)
+            print 'updating Files...'
+            relative_old = old_instance.get_group_directory(g,full=False)
+            relative_new = instance.get_group_directory(g,full=False)
+            for file in File.objects.filter(file__startswith=relative_old):#, object_id=instance.id, content_type=ContentType.objects.get_for_model(type(instance))
+                print file.file.name
+                file.file = file.file.name.replace(relative_old,relative_new)
+                file.save()
+    
 
 
 @receiver(post_save,sender=Project)

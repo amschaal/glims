@@ -30,8 +30,9 @@ def create_project_directories(project):
 #Lab directory functions below
 
 def get_lab_directory_name(lab):
-    parts = [lab.last_name,lab.first_name] if lab.first_name else [lab.last_name]
-    return make_directory_name('_'.join(parts))
+    return lab.slug
+#     parts = [lab.last_name,lab.first_name] if lab.first_name else [lab.last_name]
+#     return make_directory_name('_'.join(parts))
 
 def get_group_lab_directory(lab,group,full=True):
     path = os.path.join(make_directory_name(group.name),'labs',lab.get_directory_name())#self.slug
