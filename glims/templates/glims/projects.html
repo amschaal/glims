@@ -37,7 +37,7 @@
 		        <td data-title="'Group'" sortable="'group__name'" filter="{group__name__icontains: 'text'}" ng-if="cols['Group']">{[row.group.name]}</td>
 		        <td data-title="'Lab'" sortable="'lab__last_name'" filter="{lab_name: 'text'}" ng-if="cols['Lab']"><a ng-click="saveState()" href="{[ labLink(row) ]}">{[row.lab.name]}</a></td>
 		        <td data-title="'Manager'" sortable="'manager__last_name'" filter="{manager: 'text'}" ng-if="cols['Manager']"><span ng-if="row.manager">{[row.manager.last_name]}, {[row.manager.first_name]}</span></td>
-		        <td data-title="'Participants (search by last name)'" filter="{participants__last_name__icontains: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
+		        <td data-title="'Participants'" filter="{participant: 'text'}" ng-if="cols['Participants']"><span ng-repeat="p in row.participants">{[p.first_name]} {[p.last_name]}, </span></td>
 		        <td data-title="'Description'" filter="{description__icontains: 'text'}" ng-if="cols['Description']"><show-more text="row.description" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td data-title="'Contact'" filter="{contact__icontains: 'text'}" ng-if="cols['Contact']"><show-more text="row.contact" limit="50" lines="1" delimiter="'\n'"></show-more></td>
 		        <td data-title="'Status'" sortable="'status__name'" filter="{status: 'status'}" ng-if="cols['Status']">

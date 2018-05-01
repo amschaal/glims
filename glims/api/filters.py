@@ -2,6 +2,7 @@ from rest_framework import filters
 from django.db.models.query_utils import Q
 import operator
 from glims.models import Project
+from glims.views import project
 
 
 class FollowingProjectFilter(filters.BaseFilterBackend):
@@ -24,6 +25,18 @@ class FollowingProjectFilter(filters.BaseFilterBackend):
 #             pass
         query = reduce(operator.or_,clauses)
         queryset =  queryset.filter(query)
+        return queryset
+
+class ParticipantFilter(filters.BaseFilterBackend):
+    """
+    Filter participants by first or last names, including also manager.
+    """
+    def filter_queryset(self, request, queryset, view):
+        participant = view.request.query_params.get('participant',None)
+        if not participant:
+            return queryset
+        project_ids = [int(id) for id in Project.objects.filter(Q(participants__first_name__icontains=participant)|Q(participants__last_name__icontains=participant)|Q(manager__last_name__icontains=participant)|Q(manager__first_name__icontains=participant)).values_list('id',flat=True)]
+        queryset =  queryset.filter(id__in=project_ids)
         return queryset
 
 class ProjectStatusFilter(filters.BaseFilterBackend):

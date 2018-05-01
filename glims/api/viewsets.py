@@ -17,7 +17,8 @@ from glims.models import Status
 from rest_framework.decorators import detail_route, list_route
 from glims.api.mixins import FileManagerMixin 
 from django.db.models.query_utils import Q
-from glims.api.filters import FollowingProjectFilter, ProjectStatusFilter
+from glims.api.filters import FollowingProjectFilter, ProjectStatusFilter,\
+    ParticipantFilter
 from rest_framework.response import Response
 from glims.samples.importer import ProjectExport
 from rest_framework.exceptions import PermissionDenied
@@ -79,7 +80,7 @@ class StatusSerializerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
-    filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter,ProjectStatusFilter]
+    filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter,ProjectStatusFilter,ParticipantFilter]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
