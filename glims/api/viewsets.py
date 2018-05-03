@@ -18,10 +18,11 @@ from rest_framework.decorators import detail_route, list_route
 from glims.api.mixins import FileManagerMixin 
 from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter, ProjectStatusFilter,\
-    ParticipantFilter
+    ParticipantFilter, ProjectAttachmentFilter, AttachmentTags
 from rest_framework.response import Response
 from glims.samples.importer import ProjectExport
 from rest_framework.exceptions import PermissionDenied
+from attachments.api import NoteViewSet
 
 
 # from glims.api.permissions import CustomPermission
@@ -211,3 +212,6 @@ class LabViewSet(viewsets.ModelViewSet):
         if instance.projects.all().count() > 0:
             raise PermissionDenied('Labs with projects may not be deleted.  Delete or reassign all lab projects before attempting to delete this lab.')
         return super(LabViewSet, self).destroy(request,*args,**kwargs)
+
+class ExtendedNoteViewSet(NoteViewSet):
+    filter_backends = ExtensibleViewset.filter_backends + [ProjectAttachmentFilter,AttachmentTags]#]

@@ -27,7 +27,7 @@ from django.contrib.auth import views as auth_views
 
 from rest_framework import routers
 from glims.api.viewsets import ProjectViewSet, SampleViewSet, LabViewSet, ModelTypeSerializerViewSet, PoolViewSet, JobViewset, UserViewSet, GroupViewSet,\
-    StatusSerializerViewSet, AdapterViewSet, LibraryViewSet
+    StatusSerializerViewSet, AdapterViewSet, LibraryViewSet, ExtendedNoteViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet,'User')
@@ -42,6 +42,7 @@ router.register(r'jobs', JobViewset,'Job')
 # router.register(r'submissions', JobSubmissionViewset)
 router.register(r'labs', LabViewSet,'Lab')
 router.register(r'statuses', StatusSerializerViewSet,'Status')
+router.register(r'notes', ExtendedNoteViewSet,'Note')
 
 urlpatterns = [
     # Examples:

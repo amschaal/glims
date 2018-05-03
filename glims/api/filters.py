@@ -3,7 +3,33 @@ from django.db.models.query_utils import Q
 import operator
 from glims.models import Project
 from glims.views import project
+from django.contrib.contenttypes.models import ContentType
 
+
+class ProjectAttachmentFilter(filters.BaseFilterBackend):
+    """
+    Filter attachments so that user only sees attachments that they are managing, participating in, or subscribed to
+    """
+    def filter_queryset(self, request, queryset, view):
+        following = view.request.query_params.get('following',None)
+        if following:
+            projects = Project.following_queryset(view.request.user)
+        else:
+            projects = Project.user_queryset(view.request.user)
+        ct = ContentType.objects.get_for_model(Project)
+        return queryset.filter(content_type=ct,object_id__in=[p.id for p in projects])
+
+class AttachmentTags(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        tags = view.request.query_params.getlist('tags',None)
+        not_tags = view.request.query_params.getlist('not_tags',None)
+        if tags:
+            for tag in tags:
+                queryset = queryset.filter(tags__contains=tag)
+        if not_tags:
+            for tag in not_tags:
+                queryset = queryset.exclude(tags__contains=tag)
+        return queryset
 
 class FollowingProjectFilter(filters.BaseFilterBackend):
     """
