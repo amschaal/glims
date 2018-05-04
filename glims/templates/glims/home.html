@@ -2,14 +2,20 @@
 {% block page %}Home{% endblock %}
 {% block breadcrumbs %}{% endblock %}
 {% block content %}
-<div class="row">
+<script src="/static/js/pages/home.js"></script>
+<div class="row" ng-controller="HomeController">
       <div class="col-lg-6 col-md-12">
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-bell"></i> Issues
           </div>
           <div class="widget-body" >
-          /api/notes/?tags=issue&not_tags=closed&following=true
+          <table ng-table="issueTableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+		      	<tr ng-repeat="row in $data track by row.id">
+		      		<td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
+		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><a href="{[projectLink(row.object_id)]}">{[row.content]}</a></td>
+	       		</tr>
+    		</table>
             </div>
           </div>
         </div>
