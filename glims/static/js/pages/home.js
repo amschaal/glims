@@ -4,7 +4,7 @@ app.controller('HomeController', ['$scope','$window','$http','LocationSearchStat
 
 function HomeController($scope,$window,$http,LocationSearchState,DRFNgTableParams) {
 	$scope.projectLink = function(id){return django_js_utils.urls.resolve('project', { pk: id })};
-//	$scope.tableSettings = {sorting: { created: "desc" },filter:{archived:'False',following:true}};
+//	$scope.tableSettings = {sorting: { modified: "desc" },filter:{archived:'False',following:true}};
 	$scope.issueTableParams = DRFNgTableParams('/api/notes/',{sorting: { created: "desc" },filter:{tags:'issue',not_tags:'closed',following:true}});
 //	$scope.userProfile.$promise.then(function(profile){
 //		console.log('profile',profile);

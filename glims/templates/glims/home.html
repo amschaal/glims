@@ -7,15 +7,16 @@
       <div class="col-lg-6 col-md-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-bell"></i> Issues
+            <i class="fa fa-exclamation-triangle"></i> Issues
           </div>
           <div class="widget-body" >
           <table ng-table="issueTableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      	<tr ng-repeat="row in $data track by row.id">
-		      		<td data-title="'Created'" sortable="'created'">{[row.created|date]}</td>
+		      		<td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
 		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><a href="{[projectLink(row.object_id)]}">{[row.content]}</a></td>
 	       		</tr>
     		</table>
+    		<div style="clear:both"></div>
             </div>
           </div>
         </div>
