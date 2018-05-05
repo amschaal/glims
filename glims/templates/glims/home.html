@@ -13,6 +13,7 @@
           <table ng-table="issueTableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      	<tr ng-repeat="row in $data track by row.id">
 		      		<td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
+		        	<td data-title="'Project'"><a href="{[projectLink(row.object_id)]}">{[row.project_name]}</a></td>
 		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><a href="{[projectLink(row.object_id)]}">{[row.content]}</a></td>
 	       		</tr>
     		</table>

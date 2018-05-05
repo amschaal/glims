@@ -8,7 +8,7 @@ from extensible.models import ModelType
 from glims.api.serializers import UserSerializer, ModelTypeSerializer, \
     ProjectSerializer, SampleSerializer, PoolSerializer, JobSerializer, \
     LabSerializer, GroupSerializer, StatusSerializer, UserProfileSerializer,\
-    LibrarySerializer, AdapterSerializer
+    LibrarySerializer, AdapterSerializer, ProjectNoteSerializer
 from glims.models import Project, Sample, Pool, Lab, UserProfile, \
     Library, Adapter
 from glims.api.permissions import GroupPermission, AdminOrReadOnlyPermission
@@ -18,11 +18,12 @@ from rest_framework.decorators import detail_route, list_route
 from glims.api.mixins import FileManagerMixin 
 from django.db.models.query_utils import Q
 from glims.api.filters import FollowingProjectFilter, ProjectStatusFilter,\
-    ParticipantFilter, ProjectAttachmentFilter, AttachmentTags
+    ParticipantFilter, ProjectAttachmentFilter, AttachmentTags, HasIssuesFilter
 from rest_framework.response import Response
 from glims.samples.importer import ProjectExport
 from rest_framework.exceptions import PermissionDenied
 from attachments.api import NoteViewSet
+from attachments.models import Note
 
 
 # from glims.api.permissions import CustomPermission
@@ -81,7 +82,7 @@ class StatusSerializerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(ExtensibleViewset,FileManagerMixin):
     serializer_class = ProjectSerializer
 #     permission_classes = [CustomPermission]
-    filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter,ProjectStatusFilter,ParticipantFilter]
+    filter_backends = ExtensibleViewset.filter_backends + [FollowingProjectFilter,ProjectStatusFilter,ParticipantFilter,HasIssuesFilter]
     permission_classes = [IsAuthenticated,GroupPermission]
     model = Project
     filter_fields = {'project_id':['exact','icontains'],'name':['exact', 'icontains'], 'description':['icontains'],'contact':['icontains'],'lab':['exact'],'type':['exact'],'type__name':['exact', 'icontains'],'group__id':['exact','in'],'group__name':['icontains','exact'],'archived':['exact'],'manager__last_name':['icontains'],'participants__last_name':['icontains'],'status__name':['icontains'],'created':['gte','lte','lt','gt']}
@@ -215,3 +216,5 @@ class LabViewSet(viewsets.ModelViewSet):
 
 class ExtendedNoteViewSet(NoteViewSet):
     filter_backends = ExtensibleViewset.filter_backends + [ProjectAttachmentFilter,AttachmentTags]#]
+    serializer_class = ProjectNoteSerializer
+    queryset = Note.objects.all().prefetch_related('content_object')

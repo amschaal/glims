@@ -9,6 +9,7 @@ from glims.api.fields import JSONField, ModelRelatedField
 from glims.models import Project, Sample, ModelType, Pool, Lab, UserProfile,\
     Library, Adapter
 from glims.models import Status
+from attachments.serializers import NoteSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -164,4 +165,8 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ('id','job_id','template','params','created','run_at','args','status','data')
 
+class ProjectNoteSerializer(NoteSerializer):
+    project_name = serializers.SerializerMethodField()
+    def get_project_name(self,obj):
+        return obj.content_object.name
 

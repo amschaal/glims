@@ -6,6 +6,7 @@ from glims.views import project
 from django.contrib.contenttypes.models import ContentType
 
 
+
 class ProjectAttachmentFilter(filters.BaseFilterBackend):
     """
     Filter attachments so that user only sees attachments that they are managing, participating in, or subscribed to
@@ -30,6 +31,19 @@ class AttachmentTags(filters.BaseFilterBackend):
             for tag in not_tags:
                 queryset = queryset.exclude(tags__contains=tag)
         return queryset
+
+class HasIssuesFilter(filters.BaseFilterBackend):
+    """
+    Does a project "have issues"?
+    """
+    def filter_queryset(self, request, queryset, view):
+        from attachments.models import Note
+        if not view.request.query_params.get('has_issues',False):
+            return queryset
+        ct = ContentType.objects.get_for_model(Project)
+        project_ids = list(set([int(id) for id in Note.objects.filter(content_type=ct,tags__contains='issue').exclude(tags__contains='closed').values_list('object_id',flat=True)]))
+        projects = Project.user_queryset(view.request.user)
+        return queryset.filter(id__in=projects)
 
 class FollowingProjectFilter(filters.BaseFilterBackend):
     """
