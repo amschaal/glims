@@ -123,6 +123,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 	<h4 ng-if="!logs.length">There are currently no Logs.</h4>\
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
 		      <tr ng-repeat="row in $data track by row.id">\
+				<td data-title="\'Created\'" sortable="\'created\'">{[row.created|date]}</td>\
 		        <td data-title="\'Modified\'" sortable="\'modified\'">{[row.modified|date]}</td>\
 				<td data-title="\'Status\'" sortable="\'status\'" filter="{status: \'select\'}" filter-data=\'status_options\'>{[row.status]}</td>\
 		        <td data-title="\'Hours\'" sortable="\'quantity\'">{[row.quantity]}</a></td>\
