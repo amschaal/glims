@@ -11,7 +11,10 @@ angular.module('glimsServices',['glims.formly','glims.ui','btorfs.multiselect'])
 			filterDelay: 0,
 			getData: function(params) {
 				var url_params = params.url();
-				var query_params = {page:url_params.page,page_size:url_params.count,ordering:params.orderBy().join(',').replace('+','')};
+				var ordering = params.orderBy();
+				if (ngparams.default_order)
+					ordering.push(ngparams.default_order);
+				var query_params = {page:url_params.page,page_size:url_params.count,ordering:ordering.join(',').replace('+','')};
 				angular.extend(query_params, params.filter());
 				// ajax request to api
 				return $http.get(url,{params:query_params}).then(function(response){
