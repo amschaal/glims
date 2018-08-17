@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% load compress %}
 {% block page %}Projects{% endblock %}
 {% block breadcrumbs %} Projects {% endblock %}
 {% block content %}
+{% compress js%}
 <script src="/static/js/directives/project-directives.js"></script>
 <script src="/static/js/pages/projects.js"></script>
+{% endcompress %}
 <div class="row">
       <div class="col-lg-12">
         <div class="widget" ng-controller="ProjectController">
