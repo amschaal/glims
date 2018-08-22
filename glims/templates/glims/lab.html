@@ -7,7 +7,11 @@
       <div class="col-lg-12">
         <div class="widget">
           <div class="widget-header">
-            <span><i class="fa fa-group"></i> {{lab}} ({{lab.slug}})</span> <a href="{% url 'modify_lab' pk=lab.id %}" class="btn btn-default pull-right">Edit</a>
+          <span><i class="fa fa-group"></i> {{lab}} ({{lab.slug}})</span> 
+          	<div class="pull-right" ng-controller="LabController" ng-init="init({{lab.id}});">
+				<a href="{% url 'modify_lab' pk=lab.id %}" class="btn btn-default">Edit</a>
+          		<a class="btn btn-sm btn-danger" ng-click="deleteLab()">Delete</a> 
+          	</div>
           </div>
           <div class="widget-body" >
           {% if lab.cloudstore.url %}

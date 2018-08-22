@@ -2,20 +2,26 @@
 {% block page %}Home{% endblock %}
 {% block breadcrumbs %}{% endblock %}
 {% block content %}
-<div class="row">
-      <div class="col-lg-12">
+<script src="/static/js/pages/home.js"></script>
+<div class="row" ng-controller="HomeController">
+      <div class="col-lg-12 col-md-12">
         <div class="widget">
           <div class="widget-header">
-            <i class="fa fa-bell"></i> Notifications
+            <i class="fa fa-exclamation-triangle"></i> Issues
           </div>
           <div class="widget-body" >
-          Is it useful to have notifications here on your home page??
+          <table ng-table="issueTableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
+		      	<tr ng-repeat="row in $data track by row.id">
+		      		<td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
+		        	<td data-title="'Project'"><a href="{[projectLink(row.object_id)]}">{[row.project_name]}</a></td>
+		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><show-more text="row.content" limit="50" lines="1" delimiter="'\n'"></show-more></td>
+	       		</tr>
+    		</table>
+    		<div style="clear:both"></div>
             </div>
           </div>
         </div>
-</div>
-<div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-6 col-md-12">
         <div class="widget">
           <div class="widget-header">
             <i class="fa fa-bell"></i> Activity

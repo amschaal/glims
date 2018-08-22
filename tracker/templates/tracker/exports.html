@@ -36,7 +36,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 <table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">
 		      <tr ng-repeat="row in $data track by row.id">
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
-				<td data-title="'Status'" filter="{status: 'select'}" filter-data='context.statuses'>{[row.status]}</td>
+				<td data-title="'Status'" filter="{status__in: 'multi-select'}" filter-data='context.statuses'>{[row.status]}</td>
 				<td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
 		        <td data-title="'Category'" sortable="'category__name'" filter="{category__name__icontains: 'text'}">{[row.category.name]}</td>
 				<td data-title="'User'" sortable="'user__last_name'" filter="{user_name: 'text'}">{[row.user.first_name]} {[row.user.last_name]}</a></td>
@@ -117,7 +117,7 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
 		      <tr ng-repeat="row in $data track by row.id">
 				<td header="'headerCheckbox.html'"><input type="checkbox" checklist-model="selection.logs" checklist-value="row.id"></td>
 		        <td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
-				<td data-title="'Status'" sortable="'status'" filter="{status: 'select'}" filter-data='getStatuses()'>{[row.status]}</td>
+				<td data-title="'Status'" sortable="'status'" filter="{status: 'text'}" filter-data='getStatuses()'>{[row.status]}</td>
 		        <td data-title="'Hours'" sortable="'quantity'">{[row.quantity]}</a></td>
 				<td data-title="'Category'" sortable="'category.name'" filter="{'category.name': 'text'}">{[row.category.name]}</td>				
 				<td data-title="'User'" sortable="'user.name'" filter="{'user.name': 'text'}">{[row.user.name]}</a></td>
@@ -156,5 +156,8 @@ Total: {[tableParams.total()]}, Selected: {[value.length]} <button ng-click="sel
           </div>
         </div>
 	</div>
+</script>
+<script type="text/ng-template" id="ng-table/filters/multi-select.html">
+	<multiselect multiple ng-multiple="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" options="$column.data" show-select-all="true" show-unselect-all="true" id-as-value="true" id-prop="id" display-prop="title"></multiselect>
 </script>
 {% endblock %}

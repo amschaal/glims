@@ -16,14 +16,17 @@ angular.module("tracker-plugin")
 			var category_options_deferred = $q.defer();
 			var fields = [];
 			$scope.logs = [];
-			$scope.deleteLog = function(index){
-				if (!$scope.logs[index].id)
-					$scope.logs.splice(index,1);
+			$scope.deleteLog = function(log){
+				if (!log.id){
+					$scope.logs.splice($scope.logs.indexOf(log),1);
+					$scope.tableParams.reload();
+				}
 				else {
 					if (!confirm("Are you sure you want to delete this log?"))
 						return;
-					$scope.logs[index].$remove(function(){
-						$scope.logs.splice(index,1);
+					log.$remove(function(){
+						$scope.logs.splice($scope.logs.indexOf(log),1);
+						$scope.tableParams.reload();
 					});
 				}
 			};
@@ -120,6 +123,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 	<h4 ng-if="!logs.length">There are currently no Logs.</h4>\
 			<table ng-table="tableParams" show-filter="true" class="table table-bordered table-striped table-condensed">\
 		      <tr ng-repeat="row in $data track by row.id">\
+				<td data-title="\'Created\'" sortable="\'created\'">{[row.created|date]}</td>\
 		        <td data-title="\'Modified\'" sortable="\'modified\'">{[row.modified|date]}</td>\
 				<td data-title="\'Status\'" sortable="\'status\'" filter="{status: \'select\'}" filter-data=\'status_options\'>{[row.status]}</td>\
 		        <td data-title="\'Hours\'" sortable="\'quantity\'">{[row.quantity]}</a></td>\
@@ -130,7 +134,7 @@ angular.module("tracker-plugin").run(['$templateCache', function($templateCache)
 				<td data-title="\'Description\'" filter="{description: \'text\'}">{[row.description]}</td>\
 				<td data-title="\'Exports\'"><span ng-repeat="export in row.exports"><a title="{[export.description]}" href="/tracker/exports/#/exports/{[export.id]}/">{[export.created|date:\'short\']}</a>, </span></td>\
 				<td>\
-					<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog($index)">Delete</button>\
+					<button class="btn btn-xs btn-danger pull-right" ng-click="deleteLog(row)">Delete</button>\
 					<button class="btn btn-xs pull-right" ng-if="!log.editing" ng-click="editLog(row)">Edit</button>\
 					<button class="btn btn-xs btn-success pull-right" ng-if="log.editing" ng-click="save(row)">Save</button>\
 				</td>\

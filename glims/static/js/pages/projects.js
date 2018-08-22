@@ -7,7 +7,7 @@ function ProjectController($scope,$window,$http,LocationSearchState,DRFNgTablePa
 	var defaults={};
 	$scope.projectLink = function(project){return django_js_utils.urls.resolve('project', { pk: project.id })};
 	$scope.labLink = function(project){return django_js_utils.urls.resolve('lab', { pk: project.lab.id })};
-	$scope.tableSettings = {sorting: { created: "desc" },filter:{archived:'False',following:true}}
+	$scope.tableSettings = {sorting: { created: "desc" },filter:{archived:'False',following:true},default_order:'id'}
 	$scope.cols = {'Created':true,'Modified':true,'ID':true,'Name':true,'Type':true,'Group':false,'Lab':true,'Manager':true,'Participants':false,'Description':true,'Contact':false,'Status':true,'Archived':false,'Subscription':false}
 	$scope.types = ModelType.query({content_type__model:'project'});
 	$scope.userProfile.$promise.then(function(profile){

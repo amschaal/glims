@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.settings import api_settings
 from tracker.csvrenderer import PaginatedCSVRenderer
 from django.db.models import Max, Min
+from glims.api.filters import MultiFilter
 
 
 class ExcludeExportFilter(filters.BaseFilterBackend):
@@ -22,13 +23,14 @@ class ExcludeExportFilter(filters.BaseFilterBackend):
 
 class LogViewSet(viewsets.ModelViewSet):
     serializer_class = LogSerializer
-    filter_backends = viewsets.ModelViewSet.filter_backends + [ExcludeExportFilter]
+    filter_backends = viewsets.ModelViewSet.filter_backends + [ExcludeExportFilter,MultiFilter]
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES+[PaginatedCSVRenderer]
 #     permission_classes = [CustomPermission]
 #     search_fields = ('name', 'description')
     model = Log
     filter_fields = {'exports__id':['exact'],'project':['exact'],'created':'__all__','status':['exact','icontains'],'user__last_name':['icontains'],'category__name':['icontains'],'project__name':['icontains'],'description':['icontains'],'project__lab__last_name':['icontains']}
     multi_field_filters = {'user_name':['user__last_name__icontains','user__first_name__icontains'],'lab_name':['project__lab__first_name__icontains','project__lab__last_name__icontains']}
+    multi_filters = ['status__in','category_name__in']
     ordering_fields = ('modified', 'status','user__last_name','quantity','category__name','project__name','project__lab__last_name')
     queryset = Log.objects.select_related('user','category').all()
     @list_route(methods=['post'])

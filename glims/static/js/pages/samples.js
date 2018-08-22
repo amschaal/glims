@@ -17,7 +17,7 @@ function SampleController($scope,$http,cartService,DRFNgTableParams) {
 	$scope.$on('cart',function (event, data) {
 	    $scope.cartSamples = cartService.getSamples();
 	  });
-	$scope.tableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" }});
+	$scope.tableParams = DRFNgTableParams('/api/samples/',{sorting: { created: "desc" },default_order:'id'});
 //		new NgTableParams({
 ////	      page: 1, // show first page
 //	      count: 10 // count per page

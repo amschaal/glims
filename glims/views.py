@@ -97,7 +97,7 @@ def modify_lab(request,pk):
         if form.is_valid():
             lab = form.save()
             return redirect(reverse('lab',kwargs={'pk':lab.pk})) 
-    return render(request, 'glims/modify_lab.html', {'form':form} )
+    return render(request, 'glims/modify_lab.html', {'form':form,'lab':lab} )
 
 @login_required
 def choose_project_type(request):

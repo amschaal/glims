@@ -66,6 +66,9 @@ class Lab(models.Model):
     @property
     def name(self):
         return '%s, %s'%(self.last_name,self.first_name) if self.first_name else self.last_name
+    def generate_slug(self):
+        parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
+        return make_directory_name('_'.join(parts))
     def get_directory_name(self):
         return call_directory_function('get_lab_directory_name',self)
 #         parts = [self.last_name,self.first_name] if self.first_name else [self.last_name]
@@ -127,7 +130,20 @@ class Project(ExtensibleModel):
         return make_directory_name(self.name)
     @staticmethod
     def user_queryset(user):
-        Project.objects.filter(group__in=user.groups)
+        return Project.objects.filter(group__in=user.groups.all())
+    @staticmethod
+    def following_queryset(user,queryset=None):
+        from notifications.models import UserSubscription
+        from django.contrib.contenttypes.models import ContentType
+        queryset = queryset or Project.objects.all()
+        project_ids = [int(id) for id in Project.objects.filter(participants__id=user.id).values_list('id',flat=True)]
+        clauses = [Q(manager=user)]#,Q(participants__id=request.user.id)
+        ct = ContentType.objects.get_for_model(Project)
+        project_ids += [int(id) for id in UserSubscription.objects.filter(user=user,content_type=ct,subscribed=True).values_list('object_id',flat=True)]
+        clauses.append(Q(id__in=project_ids)) 
+        query = reduce(operator.or_,clauses)
+        queryset =  queryset.filter(query)
+        return queryset
     class Meta:
         app_label = 'glims'
         permissions = (
