@@ -167,6 +167,15 @@ class JobSerializer(serializers.ModelSerializer):
 
 class ProjectNoteSerializer(NoteSerializer):
     project_name = serializers.SerializerMethodField()
+    lab_name = serializers.SerializerMethodField()
     def get_project_name(self,obj):
-        return obj.content_object.name
+        try:
+            return obj.content_object.name
+        except:
+            return None
+    def get_lab_name(self,obj):
+        try:
+            return obj.content_object.lab.name
+        except:
+            return None
 
