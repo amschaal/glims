@@ -15,7 +15,7 @@
 		      		<td data-title="'Modified'" sortable="'modified'">{[row.modified|date]}</td>
 		        	<td data-title="'Lab'">{[row.lab_name]}</td>
 		        	<td data-title="'Project'"><a href="{[projectLink(row.object_id)]}">{[row.project_name]}</a></td>
-		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><show-more text="row.content" limit="50" lines="1" delimiter="'\n'"></show-more></td>
+		        	<td data-title="'Note'" filter="{content__icontains: 'text'}"><show-more text="row.content" limit="150" lines="1" delimiter="'\n'"></show-more></td>
 	       		</tr>
     		</table>
     		<div style="clear:both"></div>
