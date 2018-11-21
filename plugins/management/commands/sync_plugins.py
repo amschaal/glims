@@ -5,10 +5,10 @@ from django.conf import settings
 from plugins.models import Plugin
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-#         make_option('--long', '-l', dest='long',
-#             help='Help for the long options'),
-    )
+#     option_list = BaseCommand.option_list + (
+# #         make_option('--long', '-l', dest='long',
+# #             help='Help for the long options'),
+#     )
     help = 'Synchronize plugin types included in PLUGINS setting'
     def handle(self, **options):
         PLUGINS = getattr(settings,'PLUGINS')

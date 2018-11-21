@@ -6,7 +6,7 @@ class ModelRelatedField(serializers.RelatedField):
     pk = 'id'
     serializer = None
     def __init__(self, **kwargs):
-        print kwargs
+#         print kwargs
         self.model = kwargs.pop('model', self.model)
         self.pk = kwargs.pop('pk', self.pk)
         self.serializer = kwargs.pop('serializer', self.serializer)
