@@ -6,7 +6,7 @@ django-filter==1.1.0
 django-guardian==1.4.9
 django-js-utils==0.0.5.dev0
 django-sendfile==0.3.10
-djangorestframework==3.7.1
+djangorestframework==3.9.1
 djangorestframework-csv==2.0.0
 djangorestframework-filters==0.10.2
 jsonfield==1.0.3
